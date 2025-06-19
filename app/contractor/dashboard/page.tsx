@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Bell, DollarSign, Star, TrendingUp, MapPin, Clock, CheckCircle, XCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { Home, Star, Briefcase, Calendar, Menu, X, Bell, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { formatCurrency } from '@/lib/utils/currency';
 
 // Dynamically import JobFeed to avoid SSR issues with WebSocket
 const JobFeed = dynamic(() => import('./components/JobFeed'), {
   ssr: false,
-  loading: () => <div className="text-center py-8">Loading job feed...</div>
+  loading: () => <div className="text-center py-8">Loading live job feed...</div>
 });
 
 interface Job {
@@ -25,14 +26,22 @@ interface Job {
 }
 
 export default function ContractorDashboard() {
-  const [activeTab, setActiveTab] = useState('available');
+  const [activeView, setActiveView] = useState('earnings');
   const [isOnline, setIsOnline] = useState(true);
-  const [showLiveFeed, setShowLiveFeed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
   
   // Mock contractor data - in real app, get from auth
   const contractorData = {
     id: 'contractor-123',
-    token: 'mock-jwt-token'
+    token: 'mock-jwt-token',
+    name: 'John',
+    fullName: 'John Smith',
+    profession: 'Master Electrician'
   };
 
   // Mock data
@@ -83,21 +92,6 @@ export default function ContractorDashboard() {
     }
   ];
 
-  const myJobs: Job[] = [
-    {
-      id: '4',
-      customerName: 'John Smith',
-      service: 'Plumbing',
-      address: '321 Elm St, Eastside',
-      date: 'Today',
-      time: '11:00 AM',
-      status: 'accepted',
-      price: 175,
-      distance: '3.5 mi',
-      urgent: false
-    }
-  ];
-
   const handleAcceptJob = (jobId: string) => {
     console.log('Accepting job:', jobId);
     // TODO: API call to accept job
@@ -109,269 +103,279 @@ export default function ContractorDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
+      {/* Uber-style Header */}
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div className="px-4 lg:px-8">
+          <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">Contractor Dashboard</h1>
-              <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
-                <span className="text-sm text-gray-600">{isOnline ? 'Online' : 'Offline'}</span>
-                <button
-                  onClick={() => setIsOnline(!isOnline)}
-                  className="text-sm text-primary hover:text-indigo-700"
-                >
-                  {isOnline ? 'Go Offline' : 'Go Online'}
-                </button>
+              <Link href="/" className="lg:hidden">
+                <Home className="w-6 h-6" />
+              </Link>
+              <h1 className="text-xl font-medium">
+                Hi, {contractorData.name}
+              </h1>
+              <div className={`flex items-center space-x-2 ${isOnline ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+                <span className="text-sm font-medium">{isOnline ? 'Online' : 'Offline'}</span>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowLiveFeed(!showLiveFeed)}
-                className={showLiveFeed ? 'bg-indigo-50 border-indigo-300' : ''}
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center space-x-6">
+              <Link href="/" className="text-sm hover:text-gray-600 transition-colors">
+                Home
+              </Link>
+              <Link href="/contractor/schedule" className="text-sm hover:text-gray-600 transition-colors">
+                Schedule
+              </Link>
+              <Link href="/contractor/analytics" className="text-sm hover:text-gray-600 transition-colors">
+                Analytics
+              </Link>
+              <Link href="/contractor/profile" className="text-sm hover:text-gray-600 transition-colors">
+                Profile
+              </Link>
+              <button
+                onClick={() => setIsOnline(!isOnline)}
+                className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${
+                  isOnline 
+                    ? 'bg-black text-white dark:bg-white dark:text-black' 
+                    : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                }`}
               >
-                <Bell className="w-4 h-4 mr-2" />
-                Live Feed {showLiveFeed ? 'On' : 'Off'}
-              </Button>
-              <button className="relative p-2 text-gray-600 hover:text-gray-900">
-                <Bell className="w-6 h-6" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+                {isOnline ? 'Go offline' : 'Go online'}
               </button>
-              <div className="text-right">
-                <p className="text-sm text-gray-600">Today&apos;s Earnings</p>
-                <p className="text-xl font-bold text-gray-900">${stats.todayEarnings}</p>
-              </div>
-            </div>
+              <button className="relative p-2">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+              </button>
+            </nav>
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+        
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <div className="px-4 py-4 space-y-3">
+              <Link href="/contractor/schedule" className="block py-2" onClick={() => setMobileMenuOpen(false)}>
+                Schedule
+              </Link>
+              <Link href="/contractor/analytics" className="block py-2" onClick={() => setMobileMenuOpen(false)}>
+                Analytics
+              </Link>
+              <Link href="/contractor/profile" className="block py-2" onClick={() => setMobileMenuOpen(false)}>
+                Profile
+              </Link>
+              <button
+                onClick={() => {
+                  setIsOnline(!isOnline);
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full text-left py-2 px-4 rounded-lg transition-colors ${
+                  isOnline 
+                    ? 'bg-black text-white dark:bg-white dark:text-black' 
+                    : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                }`}
+              >
+                {isOnline ? 'Go offline' : 'Go online'}
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Stats Overview */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Week Earnings</p>
-                <p className="text-2xl font-bold text-gray-900">${stats.weekEarnings}</p>
-              </div>
-              <DollarSign className="w-8 h-8 text-green-600" />
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Completed Jobs</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.completedJobs}</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-primary" />
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Rating</p>
-                <div className="flex items-center">
-                  <p className="text-2xl font-bold text-gray-900">{stats.rating}</p>
-                  <Star className="w-5 h-5 text-yellow-500 ml-1" fill="currentColor" />
-                </div>
-              </div>
-              <TrendingUp className="w-8 h-8 text-purple-600" />
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Reviews</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalReviews}</p>
-              </div>
-              <Star className="w-8 h-8 text-yellow-500" />
-            </div>
+      {/* View Switcher - Uber Style */}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="px-4 lg:px-8">
+          <div className="flex space-x-8">
+            <button
+              onClick={() => setActiveView('earnings')}
+              className={`py-4 text-sm font-medium border-b-2 transition-colors ${
+                activeView === 'earnings'
+                  ? 'border-black dark:border-white text-black dark:text-white'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              Earnings
+            </button>
+            <button
+              onClick={() => setActiveView('opportunities')}
+              className={`py-4 text-sm font-medium border-b-2 transition-colors ${
+                activeView === 'opportunities'
+                  ? 'border-black dark:border-white text-black dark:text-white'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              Opportunities
+            </button>
+            <button
+              onClick={() => setActiveView('scheduled')}
+              className={`py-4 text-sm font-medium border-b-2 transition-colors ${
+                activeView === 'scheduled'
+                  ? 'border-black dark:border-white text-black dark:text-white'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              Scheduled
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Job Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Live Job Feed - Shows when enabled */}
-        {showLiveFeed && isOnline && (
-          <div className="mb-6">
-            <div className="bg-white shadow rounded-lg p-6">
-              <JobFeed
-                contractorId={contractorData.id}
-                token={contractorData.token}
-                onAcceptJob={handleAcceptJob}
-                onDeclineJob={handleDeclineJob}
-              />
+      <main className="px-4 lg:px-8 py-6 max-w-7xl mx-auto">
+        {/* Earnings View */}
+        {activeView === 'earnings' && (
+          <div className={`${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}>
+            {/* Earnings Summary Card */}
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 mb-6">
+              <h2 className="text-2xl font-bold mb-6">Today's earnings</h2>
+              <div className="text-5xl font-bold mb-2">{formatCurrency(stats.todayEarnings)}</div>
+              <p className="text-gray-500 dark:text-gray-400 mb-6">{stats.completedJobs} trips</p>
+              
+              <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <p className="text-gray-500 dark:text-gray-400">This week</p>
+                    <p className="text-2xl font-semibold">{formatCurrency(stats.weekEarnings)}</p>
+                  </div>
+                  <Link href="/contractor/analytics">
+                    <button className="text-sm font-medium hover:text-gray-600 transition-colors">
+                      See details →
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Performance Stats */}
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <Star className="w-5 h-5 text-yellow-500" />
+                  <span className="text-sm text-gray-500">Rating</span>
+                </div>
+                <div className="text-2xl font-bold">{stats.rating}</div>
+                <p className="text-sm text-gray-500">{stats.totalReviews} reviews</p>
+              </div>
+              
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm text-gray-500">Acceptance</span>
+                </div>
+                <div className="text-2xl font-bold">95%</div>
+                <p className="text-sm text-gray-500">Last 7 days</p>
+              </div>
+              
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <Clock className="w-5 h-5 text-blue-500" />
+                  <span className="text-sm text-gray-500">Online hours</span>
+                </div>
+                <div className="text-2xl font-bold">32.5</div>
+                <p className="text-sm text-gray-500">This week</p>
+              </div>
             </div>
           </div>
         )}
-        
-        <div className="bg-white shadow rounded-lg">
-          <div className="border-b">
-            <div className="flex">
-              <button
-                onClick={() => setActiveTab('available')}
-                className={`px-6 py-3 text-sm font-medium ${
-                  activeTab === 'available'
-                    ? 'text-primary border-b-2 border-indigo-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Available Jobs ({availableJobs.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('my-jobs')}
-                className={`px-6 py-3 text-sm font-medium ${
-                  activeTab === 'my-jobs'
-                    ? 'text-primary border-b-2 border-indigo-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                My Jobs ({myJobs.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('completed')}
-                className={`px-6 py-3 text-sm font-medium ${
-                  activeTab === 'completed'
-                    ? 'text-primary border-b-2 border-indigo-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Completed
-              </button>
-            </div>
-          </div>
 
-          <div className="p-6">
-            {/* Available Jobs */}
-            {activeTab === 'available' && (
+        {/* Opportunities View */}
+        {activeView === 'opportunities' && (
+          <div className={`${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">Available jobs</h2>
+              <p className="text-gray-500 dark:text-gray-400">Accept jobs to start earning</p>
+            </div>
+
+            {isOnline ? (
               <div className="space-y-4">
-                {availableJobs.map((job) => (
-                  <div key={job.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{job.service}</h3>
+                {availableJobs.map((job, index) => (
+                  <div 
+                    key={job.id} 
+                    className="bg-white dark:bg-gray-900 rounded-lg p-6 animate-fadeIn"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <div className="flex items-center space-x-3 mb-2">
+                          <h3 className="text-lg font-semibold">{job.service}</h3>
                           {job.urgent && (
-                            <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                            <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded">
                               URGENT
                             </span>
                           )}
                         </div>
-                        
-                        <div className="space-y-2 text-sm text-gray-600">
-                          <div className="flex items-center space-x-2">
-                            <Clock className="w-4 h-4" />
-                            <span>{job.date} at {job.time}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <MapPin className="w-4 h-4" />
-                            <span>{job.address} • {job.distance}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-medium text-gray-900">Customer: {job.customerName}</span>
-                          </div>
+                        <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                          <p>{job.customerName}</p>
+                          <p>{job.date} at {job.time}</p>
+                          <p>{job.address}</p>
                         </div>
                       </div>
-                      
-                      <div className="text-right ml-4">
-                        <p className="text-2xl font-bold text-gray-900">${job.price}</p>
-                        <p className="text-sm text-gray-500">Est. 2 hours</p>
-                        <div className="flex space-x-2 mt-3">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDeclineJob(job.id)}
-                          >
-                            <XCircle className="w-4 h-4 mr-1" />
-                            Decline
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => handleAcceptJob(job.id)}
-                            className="bg-green-600 hover:bg-green-700"
-                          >
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            Accept
-                          </Button>
-                        </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold mb-1">{formatCurrency(job.price)}</div>
+                        <div className="text-sm text-gray-500">{job.distance} away</div>
                       </div>
                     </div>
-                  </div>
-                ))}
-                
-                {availableJobs.length === 0 && (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500">No available jobs at the moment</p>
-                    <p className="text-sm text-gray-400 mt-2">New jobs will appear here automatically</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* My Jobs */}
-            {activeTab === 'my-jobs' && (
-              <div className="space-y-4">
-                {myJobs.map((job) => (
-                  <div key={job.id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{job.service}</h3>
-                          <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                            ACCEPTED
-                          </span>
-                        </div>
-                        
-                        <div className="space-y-2 text-sm text-gray-600">
-                          <div className="flex items-center space-x-2">
-                            <Clock className="w-4 h-4" />
-                            <span>{job.date} at {job.time}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <MapPin className="w-4 h-4" />
-                            <span>{job.address}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-medium text-gray-900">Customer: {job.customerName}</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="text-right ml-4">
-                        <p className="text-2xl font-bold text-gray-900">${job.price}</p>
-                        <div className="mt-3 space-y-2">
-                          <Button size="sm" className="w-full">
-                            Get Directions
-                          </Button>
-                          <Button size="sm" variant="outline" className="w-full">
-                            Contact Customer
-                          </Button>
-                        </div>
-                      </div>
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        onClick={() => handleAcceptJob(job.id)}
+                        className="flex-1 uber-button"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleDeclineJob(job.id)}
+                        className="flex-1 uber-button-secondary"
+                      >
+                        Decline
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-            )}
-
-            {/* Completed Jobs */}
-            {activeTab === 'completed' && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">Completed jobs will appear here</p>
+            ) : (
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-12 text-center">
+                <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Briefcase className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">You're offline</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">Go online to see available jobs</p>
+                <button
+                  onClick={() => setIsOnline(true)}
+                  className="uber-button"
+                >
+                  Go online
+                </button>
               </div>
             )}
           </div>
-        </div>
-      </div>
+        )}
+
+        {/* Scheduled View */}
+        {activeView === 'scheduled' && (
+          <div className={`${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">Scheduled jobs</h2>
+              <p className="text-gray-500 dark:text-gray-400">Your upcoming appointments</p>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-12 text-center">
+              <Calendar className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No scheduled jobs</h3>
+              <p className="text-gray-500 dark:text-gray-400">Accepted jobs will appear here</p>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

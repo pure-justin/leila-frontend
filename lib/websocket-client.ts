@@ -13,6 +13,8 @@ export interface JobNotification {
     price: number;
     urgent: boolean;
     distance: string;
+    category?: string;
+    description?: string;
   };
   message?: string;
   timestamp: Date;

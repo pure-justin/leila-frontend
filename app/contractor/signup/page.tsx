@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Users, TrendingUp, Shield, Clock, DollarSign } from 'lucide-react';
+import { Users, TrendingUp, Shield, Clock, DollarSign, Home } from 'lucide-react';
 
 export default function ContractorSignup() {
   const router = useRouter();
@@ -64,13 +64,19 @@ export default function ContractorSignup() {
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <Link href="/" className="flex items-center">
-              <Image src="/leila-logo.png" alt="Leila" width={64} height={64} className="h-16 w-auto" />
-            </Link>
-            <div className="flex items-center space-x-4">
+          <div className="flex justify-between items-center py-3 md:py-4">
+            <div className="flex items-center space-x-4 md:space-x-6">
+              <Link href="/" className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition-colors">
+                <Home className="w-5 h-5" />
+                <span className="text-sm font-medium hidden sm:inline">Back to Home</span>
+              </Link>
+              <Link href="/" className="flex items-center">
+                <Image src="/leila-logo.png" alt="Leila" width={64} height={64} className="h-12 md:h-16 w-auto" />
+              </Link>
+            </div>
+            <div className="flex items-center space-x-2 md:space-x-4">
               <Link href="/">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="hidden md:inline-flex">
                   Customer Portal
                 </Button>
               </Link>
@@ -86,35 +92,35 @@ export default function ContractorSignup() {
       
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Join Leila as a Service Professional
           </h1>
-          <p className="text-xl text-indigo-100 mb-8">
+          <p className="text-lg md:text-xl text-indigo-100 mb-6 md:mb-8">
             Connect with customers, grow your business, and manage jobs efficiently
           </p>
           
           {/* Benefits */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-12">
             <div className="flex items-start space-x-3">
-              <Users className="w-8 h-8 text-indigo-200 flex-shrink-0" />
+              <Users className="w-6 md:w-8 h-6 md:h-8 text-indigo-200 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-lg">More Customers</h3>
-                <p className="text-indigo-100">Access thousands of customers looking for your services</p>
+                <h3 className="font-semibold text-base md:text-lg">More Customers</h3>
+                <p className="text-sm md:text-base text-indigo-100">Access thousands of customers looking for your services</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <TrendingUp className="w-8 h-8 text-indigo-200 flex-shrink-0" />
+              <TrendingUp className="w-6 md:w-8 h-6 md:h-8 text-indigo-200 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-lg">Grow Revenue</h3>
-                <p className="text-indigo-100">Average contractors increase revenue by 40%</p>
+                <h3 className="font-semibold text-base md:text-lg">Grow Revenue</h3>
+                <p className="text-sm md:text-base text-indigo-100">Average contractors increase revenue by 40%</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <Shield className="w-8 h-8 text-indigo-200 flex-shrink-0" />
+              <Shield className="w-6 md:w-8 h-6 md:h-8 text-indigo-200 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold text-lg">Secure Payments</h3>
-                <p className="text-indigo-100">Get paid quickly with payment protection</p>
+                <h3 className="font-semibold text-base md:text-lg">Secure Payments</h3>
+                <p className="text-sm md:text-base text-indigo-100">Get paid quickly with payment protection</p>
               </div>
             </div>
           </div>
@@ -122,8 +128,8 @@ export default function ContractorSignup() {
       </div>
 
       {/* Signup Form */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12">
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
@@ -157,7 +163,7 @@ export default function ContractorSignup() {
                     <input
                       type="text"
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 md:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base"
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     />
@@ -170,7 +176,7 @@ export default function ContractorSignup() {
                     <input
                       type="text"
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 md:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base"
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     />
@@ -184,7 +190,7 @@ export default function ContractorSignup() {
                   <input
                     type="email"
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 md:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
@@ -197,7 +203,7 @@ export default function ContractorSignup() {
                   <input
                     type="tel"
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 md:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
@@ -210,7 +216,7 @@ export default function ContractorSignup() {
                   <input
                     type="password"
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 md:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   />
@@ -309,7 +315,7 @@ export default function ContractorSignup() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Services Offered (select all that apply)
                   </label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     {services.map((service) => (
                       <label key={service} className="flex items-center">
                         <input
@@ -433,20 +439,20 @@ export default function ContractorSignup() {
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">Trusted by over 10,000 service professionals</p>
-          <div className="flex justify-center items-center space-x-8">
+        <div className="mt-8 md:mt-12 text-center">
+          <p className="text-sm md:text-base text-gray-600 mb-4">Trusted by over 10,000 service professionals</p>
+          <div className="flex justify-center items-center space-x-6 md:space-x-8">
             <div className="text-center">
-              <Clock className="w-8 h-8 text-primary mx-auto mb-2" />
-              <p className="text-sm text-gray-600">Quick Approval</p>
+              <Clock className="w-6 h-6 md:w-8 md:h-8 text-primary mx-auto mb-2" />
+              <p className="text-xs md:text-sm text-gray-600">Quick Approval</p>
             </div>
             <div className="text-center">
-              <Shield className="w-8 h-8 text-primary mx-auto mb-2" />
-              <p className="text-sm text-gray-600">Secure Platform</p>
+              <Shield className="w-6 h-6 md:w-8 md:h-8 text-primary mx-auto mb-2" />
+              <p className="text-xs md:text-sm text-gray-600">Secure Platform</p>
             </div>
             <div className="text-center">
-              <DollarSign className="w-8 h-8 text-primary mx-auto mb-2" />
-              <p className="text-sm text-gray-600">Fast Payments</p>
+              <DollarSign className="w-6 h-6 md:w-8 md:h-8 text-primary mx-auto mb-2" />
+              <p className="text-xs md:text-sm text-gray-600">Fast Payments</p>
             </div>
           </div>
         </div>

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Clock, DollarSign, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { MapPin, Clock, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getWebSocketClient, JobNotification } from '@/lib/websocket-client';
 import { formatDistanceToNow } from 'date-fns';
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface JobFeedProps {
   contractorId: string;
@@ -158,8 +159,7 @@ export default function JobFeed({ contractorId, token, onAcceptJob, onDeclineJob
                 {/* Price and Actions */}
                 <div className="ml-4 text-right">
                   <div className="flex items-center justify-end text-2xl font-bold text-gray-900">
-                    <DollarSign className="w-5 h-5" />
-                    <span>{notification.job.price}</span>
+                    <span>{formatCurrency(notification.job.price)}</span>
                   </div>
                   
                   <p className="text-xs text-gray-500 mb-3">

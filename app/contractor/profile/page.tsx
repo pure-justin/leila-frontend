@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, MapPin, Calendar, Clock, DollarSign, Phone, Mail, Shield, Award, Camera, Edit2 } from 'lucide-react';
+import { Star, MapPin, Calendar, Clock, DollarSign, Phone, Mail, Shield, Award, Camera, Edit2, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function ContractorProfile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -90,33 +91,42 @@ export default function ContractorProfile() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
+          <div className="flex justify-between items-center py-3 md:py-4">
+            <div className="flex items-center space-x-3 md:space-x-6">
+              <Link href="/" className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition-colors">
+                <Home className="w-5 h-5" />
+                <span className="text-sm font-medium hidden sm:inline">Back to Home</span>
+              </Link>
+              <h1 className="text-lg md:text-2xl font-bold text-gray-900">My Profile</h1>
+            </div>
             <Button
               onClick={() => setIsEditing(!isEditing)}
               variant={isEditing ? 'default' : 'outline'}
+              size="sm"
+              className="text-sm"
             >
-              <Edit2 className="w-4 h-4 mr-2" />
-              {isEditing ? 'Save Changes' : 'Edit Profile'}
+              <Edit2 className="w-4 h-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">{isEditing ? 'Save Changes' : 'Edit Profile'}</span>
+              <span className="sm:hidden">{isEditing ? 'Save' : 'Edit'}</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
           {/* Left Column - Basic Info */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 md:p-6">
               {/* Profile Photo */}
-              <div className="text-center mb-6">
+              <div className="text-center mb-4 md:mb-6">
                 <div className="relative inline-block">
                   {/* Profile photo - using img tag for dynamic content */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={profile.photo}
                     alt={`${profile.firstName} ${profile.lastName}`}
-                    className="w-32 h-32 rounded-full object-cover"
+                    className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover"
                   />
                   {isEditing && (
                     <label className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90">
@@ -130,18 +140,18 @@ export default function ContractorProfile() {
                     </label>
                   )}
                 </div>
-                <h2 className="text-xl font-bold text-gray-900 mt-4">
+                <h2 className="text-lg md:text-xl font-bold text-gray-900 mt-3 md:mt-4">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-gray-600">{profile.businessName}</p>
+                <p className="text-sm md:text-base text-gray-600">{profile.businessName}</p>
                 
                 {/* Rating */}
-                <div className="flex items-center justify-center mt-4">
+                <div className="flex items-center justify-center mt-3 md:mt-4">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-5 h-5 ${
+                        className={`w-4 h-4 md:w-5 md:h-5 ${
                           i < Math.floor(profile.rating)
                             ? 'text-yellow-500 fill-current'
                             : 'text-gray-300'
@@ -149,47 +159,47 @@ export default function ContractorProfile() {
                       />
                     ))}
                   </div>
-                  <span className="ml-2 text-gray-600">
+                  <span className="ml-2 text-sm md:text-base text-gray-600">
                     {profile.rating} ({profile.totalReviews} reviews)
                   </span>
                 </div>
               </div>
 
               {/* Verification Badges */}
-              <div className="space-y-3 mb-6">
+              <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                 {profile.verified && (
                   <div className="flex items-center text-green-600">
-                    <Shield className="w-5 h-5 mr-2" />
-                    <span className="text-sm">Verified Professional</span>
+                    <Shield className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                    <span className="text-xs md:text-sm">Verified Professional</span>
                   </div>
                 )}
                 {profile.insured && (
                   <div className="flex items-center text-primary">
-                    <Shield className="w-5 h-5 mr-2" />
-                    <span className="text-sm">Fully Insured</span>
+                    <Shield className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                    <span className="text-xs md:text-sm">Fully Insured</span>
                   </div>
                 )}
                 {profile.licensed && (
                   <div className="flex items-center text-purple-600">
-                    <Award className="w-5 h-5 mr-2" />
-                    <span className="text-sm">Licensed #{profile.licenseNumber}</span>
+                    <Award className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                    <span className="text-xs md:text-sm">Licensed #{profile.licenseNumber}</span>
                   </div>
                 )}
               </div>
 
               {/* Contact Info */}
-              <div className="space-y-3 border-t pt-6">
+              <div className="space-y-2 md:space-y-3 border-t pt-4 md:pt-6">
                 <div className="flex items-center text-gray-600">
-                  <Mail className="w-5 h-5 mr-3" />
-                  <span className="text-sm">{profile.email}</span>
+                  <Mail className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
+                  <span className="text-xs md:text-sm truncate">{profile.email}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
-                  <Phone className="w-5 h-5 mr-3" />
-                  <span className="text-sm">{profile.phone}</span>
+                  <Phone className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
+                  <span className="text-xs md:text-sm">{profile.phone}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
-                  <Calendar className="w-5 h-5 mr-3" />
-                  <span className="text-sm">Member since {new Date(profile.memberSince).toLocaleDateString()}</span>
+                  <Calendar className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
+                  <span className="text-xs md:text-sm">Member since {new Date(profile.memberSince).toLocaleDateString()}</span>
                 </div>
               </div>
 

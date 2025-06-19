@@ -1,23 +1,24 @@
-# Home Service Pro - Customer Frontend
+# Leila - AI Home Service Platform
 
-A Next.js application for customers to book home services, integrated with EspoCRM for backend management.
+A comprehensive Next.js application for customers to book home services with AI automation, featuring a complete CRM system and real-time monitoring.
 
 ## Features
 
-- 🏠 Service catalog with 8 different home services
-- 📝 Easy booking form with validation
-- 🤖 AI-powered chatbot for customer support
-- 🔗 Direct integration with EspoCRM
-- 📱 Responsive design for all devices
+- 🏠 Service catalog with comprehensive home services
+- 📝 Intelligent booking system with AI optimization  
+- 🤖 Advanced AI chatbot powered by Gemini Flash
+- 🔗 Firebase/Firestore integration for real-time data
+- 📱 Responsive Uber-like design
+- 👥 Complete CRM for contractors and customers
+- 📊 Real-time analytics and monitoring
+- 🎯 AI agent automation for business operations
 
-## CRM Integration
+## Architecture
 
-This frontend connects to **EspoCRM** which provides:
-- Lead management
-- Appointment scheduling
-- Task assignment for technicians
-- Customer relationship tracking
-- RESTful API for all operations
+**Frontend & CRM**: Firebase Hosting with static Next.js export
+**Database**: Firestore with comprehensive data modeling
+**API**: Cloud Functions with custom domain
+**AI**: Gemini 1.5 Flash for cost-effective automation
 
 ## Setup
 
@@ -27,12 +28,12 @@ This frontend connects to **EspoCRM** which provides:
    ```
 
 2. **Configure environment variables:**
-   Copy `.env.local.example` to `.env.local` and update:
+   Create `.env.local` with Firebase configuration:
    ```
-   NEXT_PUBLIC_CRM_API_URL=http://localhost/espocrm/api/v1
-   CRM_API_USERNAME=your_username
-   CRM_API_PASSWORD=your_password
-   OPENAI_API_KEY=your_openai_key (optional)
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=leila-platform.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=leila-platform
+   GEMINI_API_KEY=your_gemini_api_key
    ```
 
 3. **Run development server:**
@@ -42,43 +43,52 @@ This frontend connects to **EspoCRM** which provides:
 
 ## How It Works
 
-1. **Customer selects a service** from the catalog
-2. **Fills out booking form** with contact details and preferred time
-3. **System creates in EspoCRM:**
-   - Lead record with customer information
-   - Meeting/appointment for the service
-   - Task for assigning a technician
-4. **AI Chatbot** helps with questions and booking assistance
+1. **Customer** books services through the main app (heyleila.com)
+2. **AI agents** automatically assign contractors and optimize scheduling
+3. **CRM dashboard** (crm.heyleila.com) provides real-time management
+4. **API endpoints** (api.heyleila.com) handle all data operations
+5. **Firestore** maintains real-time sync across all platforms
 
-## API Routes
+## Available URLs
 
-- `/api/booking` - Creates lead, appointment, and task in CRM
-- `/api/chat` - Handles chatbot conversations
+- **Main App**: https://heyleila.com
+- **CRM Dashboard**: https://crm.heyleila.com  
+- **API Endpoints**: https://api.heyleila.com
 
 ## Technologies
 
-- Next.js 14 with App Router
-- TypeScript
-- Tailwind CSS
-- React Hook Form + Zod validation
-- Axios for API calls
-- Lucide React for icons
+- **Frontend**: Next.js 14 with App Router, TypeScript, Tailwind CSS
+- **Database**: Firebase Firestore with real-time sync
+- **Authentication**: Firebase Auth
+- **API**: Cloud Functions with custom domain
+- **AI**: Google Gemini 1.5 Flash
+- **Hosting**: Firebase Hosting with static export
+- **Infrastructure**: Google Cloud Platform
 
-## Production Deployment
+## Deployment Commands
 
-1. Build the application:
-   ```bash
-   npm run build
-   ```
+```bash
+# Deploy main app
+npm run build && firebase deploy --only hosting:main
 
-2. Set production environment variables
+# Deploy CRM
+npm run build:crm && firebase deploy --only hosting:crm
 
-3. Deploy to Vercel, Netlify, or your preferred platform
+# Deploy API functions  
+cd functions && firebase deploy --only functions
+```
 
-## Future Enhancements
+## DNS Configuration
 
-- Real-time appointment availability checking
-- Customer portal for viewing booking history
-- SMS/email notifications
-- Payment integration
-- Advanced AI chatbot with OpenAI GPT-4
+Add these records in your domain DNS:
+- **CNAME**: crm → leila-crm.web.app
+- **A Record**: api → 34.54.9.206
+
+## Key Features
+
+- ✅ Real-time activity monitoring and logging
+- ✅ AI agent system for autonomous operations  
+- ✅ Complete user and contractor management
+- ✅ Booking system with intelligent assignment
+- ✅ Custom domain setup for all services
+- ✅ Comprehensive data modeling in Firestore

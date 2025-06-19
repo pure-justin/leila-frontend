@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Settings, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Settings, AlertCircle, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ContractorSchedule } from '@/lib/crm-contractor-api';
 import { format, addDays, startOfWeek } from 'date-fns';
 import ContractorNav from '@/components/ContractorNav';
+import Link from 'next/link';
 
 export default function ContractorSchedulePage() {
   const [currentWeek, setCurrentWeek] = useState(new Date());
@@ -106,17 +107,27 @@ export default function ContractorSchedulePage() {
     <div className="min-h-screen bg-gray-50">
       <ContractorNav />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Schedule Management</h1>
-          <p className="text-gray-600 mt-2">Manage your availability and view scheduled jobs</p>
+        <div className="mb-4 md:mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center space-x-3 md:space-x-6 mb-4 md:mb-0">
+              <Link href="/" className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition-colors">
+                <Home className="w-5 h-5" />
+                <span className="text-sm font-medium hidden sm:inline">Back to Home</span>
+              </Link>
+              <div>
+                <h1 className="text-xl md:text-3xl font-bold text-gray-900">Schedule Management</h1>
+                <p className="text-sm md:text-base text-gray-600 mt-1 md:mt-2 hidden md:block">Manage your availability and view scheduled jobs</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Week Navigation */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="px-6 py-4 border-b flex justify-between items-center">
-            <div className="flex items-center space-x-4">
+        <div className="bg-white rounded-lg shadow mb-4 md:mb-6">
+          <div className="px-4 md:px-6 py-3 md:py-4 border-b flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <div className="flex items-center justify-between sm:justify-start space-x-2 md:space-x-4">
               <Button
                 variant="outline"
                 size="sm"
@@ -124,8 +135,9 @@ export default function ContractorSchedulePage() {
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <h2 className="text-lg font-semibold">
-                {format(weekDays[0], 'MMM d')} - {format(weekDays[6], 'MMM d, yyyy')}
+              <h2 className="text-sm md:text-lg font-semibold text-center flex-1 sm:flex-none">
+                {format(weekDays[0], 'MMM d')} - {format(weekDays[6], 'MMM d')}
+                <span className="hidden md:inline">, {format(weekDays[6], 'yyyy')}</span>
               </h2>
               <Button
                 variant="outline"
@@ -136,7 +148,7 @@ export default function ContractorSchedulePage() {
               </Button>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-center sm:justify-end space-x-2 md:space-x-4">
               <Button
                 variant="outline"
                 size="sm"
@@ -145,24 +157,24 @@ export default function ContractorSchedulePage() {
                 Today
               </Button>
               <Button variant="outline" size="sm">
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
+                <Settings className="w-4 h-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Settings</span>
               </Button>
             </div>
           </div>
 
           {/* Legend */}
-          <div className="px-6 py-3 bg-gray-50 border-b flex items-center space-x-6 text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-500 rounded"></div>
+          <div className="px-4 md:px-6 py-2 md:py-3 bg-gray-50 border-b flex flex-wrap items-center gap-3 md:gap-6 text-xs md:text-sm">
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <div className="w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded"></div>
               <span>Available</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-gray-300 rounded"></div>
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <div className="w-3 h-3 md:w-4 md:h-4 bg-gray-300 rounded"></div>
               <span>Unavailable</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-blue-500 rounded"></div>
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <div className="w-3 h-3 md:w-4 md:h-4 bg-blue-500 rounded"></div>
               <span>Booked</span>
             </div>
           </div>
@@ -172,15 +184,15 @@ export default function ContractorSchedulePage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="sticky left-0 bg-white px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  <th className="sticky left-0 bg-white px-2 md:px-4 py-2 md:py-3 text-left text-xs md:text-sm font-medium text-gray-700">
                     Time
                   </th>
                   {weekDays.map((day) => (
-                    <th key={day.toISOString()} className="px-2 py-3 text-center">
-                      <div className="text-sm font-medium text-gray-700">
+                    <th key={day.toISOString()} className="px-1 md:px-2 py-2 md:py-3 text-center">
+                      <div className="text-xs md:text-sm font-medium text-gray-700">
                         {format(day, 'EEE')}
                       </div>
-                      <div className="text-lg font-semibold text-gray-900">
+                      <div className="text-sm md:text-lg font-semibold text-gray-900">
                         {format(day, 'd')}
                       </div>
                     </th>
@@ -190,7 +202,7 @@ export default function ContractorSchedulePage() {
               <tbody>
                 {timeSlots.map((time) => (
                   <tr key={time} className="border-b hover:bg-gray-50">
-                    <td className="sticky left-0 bg-white px-4 py-2 text-sm font-medium text-gray-700">
+                    <td className="sticky left-0 bg-white px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm font-medium text-gray-700">
                       {time}
                     </td>
                     {weekDays.map((day) => {
@@ -198,11 +210,11 @@ export default function ContractorSchedulePage() {
                       const status = getSlotStatus(dateStr, time);
                       
                       return (
-                        <td key={day.toISOString()} className="px-2 py-2 text-center">
+                        <td key={day.toISOString()} className="px-1 md:px-2 py-1 md:py-2 text-center">
                           <button
                             onClick={() => status !== 'booked' && toggleSlotAvailability(dateStr, time)}
                             disabled={status === 'booked' || loading}
-                            className={`w-full h-10 rounded transition-colors ${
+                            className={`w-full h-8 md:h-10 rounded transition-colors text-xs md:text-sm ${
                               status === 'booked'
                                 ? 'bg-blue-500 text-white cursor-not-allowed'
                                 : status === 'available'
@@ -227,12 +239,12 @@ export default function ContractorSchedulePage() {
         </div>
 
         {/* AI Suggestions */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-4 md:p-6">
           <div className="flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-primary mt-0.5" />
+            <AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-primary mt-0.5 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-900">AI Schedule Optimization</h3>
-              <p className="text-gray-600 mt-1">
+              <h3 className="text-sm md:text-base font-semibold text-gray-900">AI Schedule Optimization</h3>
+              <p className="text-xs md:text-sm text-gray-600 mt-1">
                 Based on your past performance, we recommend keeping Tuesday and Thursday afternoons 
                 available for emergency calls. You typically receive 40% more bookings during these times.
               </p>

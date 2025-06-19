@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function ContractorLogin() {
@@ -27,20 +27,28 @@ export default function ContractorLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center px-4 py-8">
       <div className="max-w-md w-full">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-block">
-            <Image src="/leila-logo.png" alt="Leila" width={96} height={96} className="h-24 w-auto mx-auto" />
+        {/* Back to Home */}
+        <div className="mb-4">
+          <Link href="/" className="inline-flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition-colors">
+            <Home className="w-5 h-5" />
+            <span className="text-sm font-medium">Back to Home</span>
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mt-4">Welcome Back, Pro</h1>
-          <p className="text-gray-600 mt-2">Sign in to access your contractor dashboard</p>
+        </div>
+        
+        {/* Logo */}
+        <div className="text-center mb-6 md:mb-8">
+          <Link href="/" className="inline-block">
+            <Image src="/leila-logo.png" alt="Leila" width={96} height={96} className="h-20 md:h-24 w-auto mx-auto" />
+          </Link>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mt-4">Welcome Back, Pro</h1>
+          <p className="text-sm md:text-base text-gray-600 mt-2">Sign in to access your contractor dashboard</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white rounded-lg shadow-xl p-6 md:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -50,7 +58,7 @@ export default function ContractorLogin() {
                 <input
                   type="email"
                   required
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-10 pr-3 py-2.5 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base"
                   placeholder="john@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -67,7 +75,7 @@ export default function ContractorLogin() {
                 <input
                   type="password"
                   required
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-10 pr-3 py-2.5 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm md:text-base"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -75,7 +83,7 @@ export default function ContractorLogin() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <label className="flex items-center">
                 <input
                   type="checkbox"
@@ -92,7 +100,7 @@ export default function ContractorLogin() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 py-2.5 md:py-2"
               disabled={isLoading}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
@@ -133,7 +141,7 @@ export default function ContractorLogin() {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-gray-600">
+        <div className="mt-6 md:mt-8 text-center text-xs md:text-sm text-gray-600 px-4">
           <p>
             By signing in, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:text-indigo-700">
