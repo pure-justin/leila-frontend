@@ -119,7 +119,7 @@ export default function ContractorProfile() {
                     className="w-32 h-32 rounded-full object-cover"
                   />
                   {isEditing && (
-                    <label className="absolute bottom-0 right-0 bg-indigo-600 text-white p-2 rounded-full cursor-pointer hover:bg-indigo-700">
+                    <label className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90">
                       <Camera className="w-4 h-4" />
                       <input
                         type="file"
@@ -164,7 +164,7 @@ export default function ContractorProfile() {
                   </div>
                 )}
                 {profile.insured && (
-                  <div className="flex items-center text-blue-600">
+                  <div className="flex items-center text-primary">
                     <Shield className="w-5 h-5 mr-2" />
                     <span className="text-sm">Fully Insured</span>
                   </div>
@@ -216,7 +216,7 @@ export default function ContractorProfile() {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-blue-600 h-2 rounded-full"
+                        className="bg-primary h-2 rounded-full"
                         style={{ width: `${profile.stats.completionRate}%` }}
                       />
                     </div>
@@ -366,7 +366,7 @@ export default function ContractorProfile() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {profile.badges.map((badge) => (
                   <div key={badge} className="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg">
-                    <Award className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
+                    <Award className="w-8 h-8 text-primary mx-auto mb-2" />
                     <p className="font-medium text-gray-900">{badge}</p>
                   </div>
                 ))}

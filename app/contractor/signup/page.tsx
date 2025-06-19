@@ -289,7 +289,7 @@ export default function ContractorSignup() {
                   <input
                     type="checkbox"
                     id="insurance"
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-primary focus:ring-indigo-500 border-gray-300 rounded"
                     checked={formData.insurance}
                     onChange={(e) => setFormData({ ...formData, insurance: e.target.checked })}
                   />
@@ -314,7 +314,7 @@ export default function ContractorSignup() {
                       <label key={service} className="flex items-center">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-primary focus:ring-indigo-500 border-gray-300 rounded"
                           checked={formData.services.includes(service)}
                           onChange={(e) => {
                             if (e.target.checked) {
@@ -349,7 +349,7 @@ export default function ContractorSignup() {
                   <input
                     type="checkbox"
                     id="emergency"
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-primary focus:ring-indigo-500 border-gray-300 rounded"
                     checked={formData.emergencyAvailable}
                     onChange={(e) => setFormData({ ...formData, emergencyAvailable: e.target.checked })}
                   />
@@ -437,15 +437,15 @@ export default function ContractorSignup() {
           <p className="text-gray-600 mb-4">Trusted by over 10,000 service professionals</p>
           <div className="flex justify-center items-center space-x-8">
             <div className="text-center">
-              <Clock className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
+              <Clock className="w-8 h-8 text-primary mx-auto mb-2" />
               <p className="text-sm text-gray-600">Quick Approval</p>
             </div>
             <div className="text-center">
-              <Shield className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
+              <Shield className="w-8 h-8 text-primary mx-auto mb-2" />
               <p className="text-sm text-gray-600">Secure Platform</p>
             </div>
             <div className="text-center">
-              <DollarSign className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
+              <DollarSign className="w-8 h-8 text-primary mx-auto mb-2" />
               <p className="text-sm text-gray-600">Fast Payments</p>
             </div>
           </div>

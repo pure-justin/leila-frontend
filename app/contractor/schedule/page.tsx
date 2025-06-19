@@ -229,7 +229,7 @@ export default function ContractorSchedulePage() {
         {/* AI Suggestions */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-indigo-600 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-primary mt-0.5" />
             <div>
               <h3 className="font-semibold text-gray-900">AI Schedule Optimization</h3>
               <p className="text-gray-600 mt-1">

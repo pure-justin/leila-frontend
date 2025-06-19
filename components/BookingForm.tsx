@@ -89,7 +89,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
             </label>
             <input
               {...register('firstName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
             {errors.firstName && (
               <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
@@ -102,7 +102,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
             </label>
             <input
               {...register('lastName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
             {errors.lastName && (
               <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
@@ -117,7 +117,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           <input
             {...register('email')}
             type="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {errors.email && (
             <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
@@ -131,7 +131,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           <input
             {...register('phone')}
             type="tel"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {errors.phone && (
             <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
@@ -147,7 +147,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
               {...register('preferredDate')}
               type="date"
               min={new Date().toISOString().split('T')[0]}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
             {errors.preferredDate && (
               <p className="text-red-500 text-sm mt-1">{errors.preferredDate.message}</p>
@@ -160,7 +160,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
             </label>
             <select
               {...register('preferredTime')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="">Select a time</option>
               <option value="08:00">8:00 AM</option>
@@ -186,7 +186,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           </label>
           <input
             {...register('address')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {errors.address && (
             <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
@@ -200,7 +200,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           <textarea
             {...register('notes')}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="Please describe any specific issues or requirements..."
           />
         </div>
@@ -209,7 +209,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            className="flex-1 bg-primary text-white py-3 px-6 rounded-md hover:bg-primary/90 transition-colors disabled:bg-gray-400"
           >
             {isSubmitting ? 'Submitting...' : 'Submit Booking'}
           </button>

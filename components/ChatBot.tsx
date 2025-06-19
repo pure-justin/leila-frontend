@@ -95,7 +95,7 @@ export default function ChatBot() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 transition-colors"
+          className="fixed bottom-6 right-6 bg-primary text-white rounded-full p-4 shadow-lg hover:bg-primary/90 transition-colors"
         >
           <MessageCircle size={24} />
         </button>
@@ -105,11 +105,11 @@ export default function ChatBot() {
       {isOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-lg shadow-xl flex flex-col">
           {/* Header */}
-          <div className="bg-blue-600 text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
+          <div className="bg-primary text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
             <h3 className="font-semibold">Leila - AI Assistant</h3>
             <button
               onClick={() => setIsOpen(false)}
-              className="hover:bg-blue-700 rounded p-1 transition-colors"
+              className="hover:bg-primary/90 rounded p-1 transition-colors"
             >
               <X size={20} />
             </button>
@@ -125,7 +125,7 @@ export default function ChatBot() {
                 <div
                   className={`max-w-[80%] rounded-lg px-4 py-2 ${
                     message.role === 'user'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-primary text-white'
                       : 'bg-gray-100 text-gray-800'
                   }`}
                 >
@@ -159,13 +159,13 @@ export default function ChatBot() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 disabled={isLoading}
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors disabled:bg-gray-400"
               >
                 <Send size={20} />
               </button>

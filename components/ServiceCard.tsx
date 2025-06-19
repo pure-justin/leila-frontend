@@ -22,7 +22,7 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
           <span className="font-medium">{service.priceRange}</span>
         </div>
       </div>
-      <button className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+      <button className="mt-4 w-full bg-primary text-primary-foreground py-2 px-4 rounded-md hover:bg-primary/90 transition-colors">
         Book Now
       </button>
     </div>

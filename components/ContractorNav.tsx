@@ -40,7 +40,7 @@ export default function ContractorNav() {
                     href={item.href}
                     className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                       isActive
-                        ? 'text-indigo-600 bg-indigo-50'
+                        ? 'text-primary bg-indigo-50'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
@@ -75,7 +75,7 @@ export default function ContractorNav() {
                 href={item.href}
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
                   isActive
-                    ? 'text-indigo-600 bg-indigo-50'
+                    ? 'text-primary bg-indigo-50'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >

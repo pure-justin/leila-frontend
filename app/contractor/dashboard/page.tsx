@@ -121,7 +121,7 @@ export default function ContractorDashboard() {
                 <span className="text-sm text-gray-600">{isOnline ? 'Online' : 'Offline'}</span>
                 <button
                   onClick={() => setIsOnline(!isOnline)}
-                  className="text-sm text-indigo-600 hover:text-indigo-700"
+                  className="text-sm text-primary hover:text-indigo-700"
                 >
                   {isOnline ? 'Go Offline' : 'Go Online'}
                 </button>
@@ -169,7 +169,7 @@ export default function ContractorDashboard() {
                 <p className="text-sm text-gray-600">Completed Jobs</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.completedJobs}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-blue-600" />
+              <CheckCircle className="w-8 h-8 text-primary" />
             </div>
           </div>
           
@@ -221,7 +221,7 @@ export default function ContractorDashboard() {
                 onClick={() => setActiveTab('available')}
                 className={`px-6 py-3 text-sm font-medium ${
                   activeTab === 'available'
-                    ? 'text-indigo-600 border-b-2 border-indigo-600'
+                    ? 'text-primary border-b-2 border-indigo-600'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -231,7 +231,7 @@ export default function ContractorDashboard() {
                 onClick={() => setActiveTab('my-jobs')}
                 className={`px-6 py-3 text-sm font-medium ${
                   activeTab === 'my-jobs'
-                    ? 'text-indigo-600 border-b-2 border-indigo-600'
+                    ? 'text-primary border-b-2 border-indigo-600'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -241,7 +241,7 @@ export default function ContractorDashboard() {
                 onClick={() => setActiveTab('completed')}
                 className={`px-6 py-3 text-sm font-medium ${
                   activeTab === 'completed'
-                    ? 'text-indigo-600 border-b-2 border-indigo-600'
+                    ? 'text-primary border-b-2 border-indigo-600'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >

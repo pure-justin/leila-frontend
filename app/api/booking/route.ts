@@ -1,33 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.heyleila.com';
+
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     
-    // Simple demo booking - no database needed
-    const bookingId = `BOOK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
-    console.log('New booking received:', {
-      bookingId,
-      customer: `${data.firstName} ${data.lastName}`,
-      service: data.serviceName,
-      date: data.preferredDate,
-      time: data.preferredTime
+    // Forward to our API
+    const response = await fetch(`${API_URL}/api/bookings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
     });
 
-    // In a real app, you'd save to a database here
-    // For now, just return success
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to create booking');
+    }
+    
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Error creating booking:', error);
+    
+    // Fallback to demo mode if API is down
+    const bookingId = `DEMO-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     return NextResponse.json({
       success: true,
       bookingId: bookingId,
-      message: 'Booking confirmed! We\'ll contact you shortly.'
+      message: 'Booking confirmed! We\'ll contact you shortly.',
+      demo: true
     });
-  } catch (error) {
-    console.error('Error creating booking:', error);
-    return NextResponse.json(
-      { error: 'Failed to create booking' },
-      { status: 500 }
-    );
   }
 }

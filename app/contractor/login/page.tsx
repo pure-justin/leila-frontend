@@ -79,13 +79,13 @@ export default function ContractorLogin() {
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-primary focus:ring-indigo-500 border-gray-300 rounded"
                   checked={formData.rememberMe}
                   onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
                 />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <Link href="/contractor/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-700">
+              <Link href="/contractor/forgot-password" className="text-sm text-primary hover:text-indigo-700">
                 Forgot password?
               </Link>
             </div>
@@ -136,11 +136,11 @@ export default function ContractorLogin() {
         <div className="mt-8 text-center text-sm text-gray-600">
           <p>
             By signing in, you agree to our{' '}
-            <Link href="/terms" className="text-indigo-600 hover:text-indigo-700">
+            <Link href="/terms" className="text-primary hover:text-indigo-700">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="/privacy" className="text-indigo-600 hover:text-indigo-700">
+            <Link href="/privacy" className="text-primary hover:text-indigo-700">
               Privacy Policy
             </Link>
           </p>

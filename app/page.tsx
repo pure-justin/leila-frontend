@@ -54,11 +54,11 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section for Contractors */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 mb-12 text-white">
+        <div className="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-8 mb-12 text-primary-foreground">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-4">Join the Leila Network</h2>
-              <p className="text-lg mb-6 text-indigo-100">
+              <p className="text-lg mb-6 text-primary-foreground/90">
                 Connect with thousands of customers. Grow your business with our AI-powered platform.
               </p>
               <div className="space-y-2 mb-6">
@@ -76,7 +76,7 @@ export default function Home() {
                 </div>
               </div>
               <Link href="/contractor/signup">
-                <Button size="lg" className="bg-white text-indigo-600 hover:bg-gray-100">
+                <Button size="lg" variant="secondary">
                   Start Earning Today
                 </Button>
               </Link>
