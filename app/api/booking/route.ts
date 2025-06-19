@@ -1,47 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { crmApi } from '@/lib/crm-api';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     
-    // Create lead in EspoCRM
-    const lead = await crmApi.createLead({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      emailAddress: data.email,
-      description: `Service Request: ${data.serviceName}\nAddress: ${data.address}\nPhone: ${data.phone}\nNotes: ${data.notes || 'N/A'}`
-    });
+    // Create booking in Supabase
+    const { data: booking, error } = await supabase
+      .from('bookings')
+      .insert([
+        {
+          customer_first_name: data.firstName,
+          customer_last_name: data.lastName,
+          customer_email: data.email,
+          customer_phone: data.phone,
+          service: data.serviceName,
+          date: data.preferredDate,
+          time: data.preferredTime,
+          address: data.address,
+          notes: data.notes,
+          status: 'pending'
+        }
+      ])
+      .select()
+      .single();
 
-    // Create appointment/meeting
-    const dateTime = new Date(`${data.preferredDate}T${data.preferredTime}`);
-    const endTime = new Date(dateTime.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
-
-    const appointment = await crmApi.createMeeting({
-      name: `${data.serviceName} - ${data.firstName} ${data.lastName}`,
-      dateStart: dateTime.toISOString(),
-      dateEnd: endTime.toISOString(),
-      leadId: lead.id,
-      description: `Service: ${data.serviceName}\nCustomer: ${data.firstName} ${data.lastName}\nPhone: ${data.phone}\nEmail: ${data.email}\nAddress: ${data.address}\nNotes: ${data.notes || 'None'}`,
-      status: 'Planned'
-    });
-
-    // Create task for service team
-    const task = await crmApi.createTask({
-      name: `Schedule ${data.serviceName} technician`,
-      status: 'Not Started',
-      priority: 'High',
-      dateEnd: dateTime.toISOString(),
-      description: `Assign technician for ${data.serviceName} service\nAppointment ID: ${appointment.id}`,
-      parentType: 'Meeting',
-      parentId: appointment.id
-    });
+    if (error) {
+      console.error('Supabase error:', error);
+      // Fallback to demo mode if Supabase not configured
+      if (error.message?.includes('Invalid URL') || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        return NextResponse.json({
+          success: true,
+          bookingId: `DEMO-${Date.now()}`,
+          message: 'Booking received! (Demo mode - configure Supabase for real bookings)'
+        });
+      }
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,
-      leadId: lead.id,
-      appointmentId: appointment.id,
-      taskId: task.id
+      bookingId: booking.id,
+      appointmentId: booking.id,
+      message: 'Booking confirmed! We\'ll contact you shortly.'
     });
   } catch (error) {
     console.error('Error creating booking:', error);
