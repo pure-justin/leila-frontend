@@ -1,47 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     
-    // Create booking in Supabase
-    const { data: booking, error } = await supabase
-      .from('bookings')
-      .insert([
-        {
-          customer_first_name: data.firstName,
-          customer_last_name: data.lastName,
-          customer_email: data.email,
-          customer_phone: data.phone,
-          service: data.serviceName,
-          date: data.preferredDate,
-          time: data.preferredTime,
-          address: data.address,
-          notes: data.notes,
-          status: 'pending'
-        }
-      ])
-      .select()
-      .single();
+    // Simple demo booking - no database needed
+    const bookingId = `BOOK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    console.log('New booking received:', {
+      bookingId,
+      customer: `${data.firstName} ${data.lastName}`,
+      service: data.serviceName,
+      date: data.preferredDate,
+      time: data.preferredTime
+    });
 
-    if (error) {
-      console.error('Supabase error:', error);
-      // Fallback to demo mode if Supabase not configured
-      if (error.message?.includes('Invalid URL') || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
-        return NextResponse.json({
-          success: true,
-          bookingId: `DEMO-${Date.now()}`,
-          message: 'Booking received! (Demo mode - configure Supabase for real bookings)'
-        });
-      }
-      throw error;
-    }
-
+    // In a real app, you'd save to a database here
+    // For now, just return success
+    
     return NextResponse.json({
       success: true,
-      bookingId: booking.id,
-      appointmentId: booking.id,
+      bookingId: bookingId,
       message: 'Booking confirmed! We\'ll contact you shortly.'
     });
   } catch (error) {
