@@ -25,8 +25,7 @@ export default function ContractorNav() {
           <div className="flex">
             {/* Logo */}
             <Link href="/contractor/dashboard" className="flex items-center">
-              <Image src="/leila-logo.png" alt="Leila Pro" width={40} height={40} className="h-10 w-auto mr-2" />
-              <span className="text-2xl font-bold text-indigo-600">Pro</span>
+              <Image src="/leila-logo.png" alt="Leila Pro" width={64} height={64} className="h-16 w-auto" />
             </Link>
 
             {/* Navigation Items */}

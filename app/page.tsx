@@ -30,10 +30,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <Image src="/leila-logo.png" alt="Leila" width={48} height={48} className="h-12 w-auto mr-3" />
+              <Image src="/leila-logo.png" alt="Leila" width={80} height={80} className="h-20 w-auto mr-4" />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Leila</h1>
-                <p className="mt-1 text-gray-600">Your AI assistant for home services - just say &ldquo;Hey Leila&rdquo;</p>
+                <p className="text-lg text-gray-600">Your AI assistant for home services - just say &ldquo;Hey Leila&rdquo;</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">

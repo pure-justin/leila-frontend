@@ -32,7 +32,7 @@ export default function ContractorLogin() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <Image src="/leila-logo.png" alt="Leila" width={64} height={64} className="h-16 w-auto mx-auto" />
+            <Image src="/leila-logo.png" alt="Leila" width={96} height={96} className="h-24 w-auto mx-auto" />
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 mt-4">Welcome Back, Pro</h1>
           <p className="text-gray-600 mt-2">Sign in to access your contractor dashboard</p>
