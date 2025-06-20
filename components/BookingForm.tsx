@@ -5,6 +5,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { services } from '@/lib/services';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, Clock, MapPin, User, Mail, Phone, FileText, ArrowLeft, Sparkles, CheckCircle } from 'lucide-react';
+import { fadeIn, fadeInUp, scaleIn, stagger } from '@/lib/animations';
+import AnimatedLogo from '@/components/AnimatedLogo';
+import GradientBackground from '@/components/GradientBackground';
 
 const bookingSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -69,116 +74,270 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
   if (!service) return null;
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
-      <div className="mb-6">
-        <button
-          onClick={onCancel}
-          className="text-gray-600 hover:text-gray-800 mb-4"
+    <GradientBackground variant="subtle">
+      <motion.div 
+        className="max-w-2xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div 
+          className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-purple-100"
+          whileHover={{ scale: 1.01 }}
+          transition={{ type: "spring", stiffness: 300 }}
         >
-          ← Back to services
-        </button>
-        <h2 className="text-2xl font-bold">Book {service.name}</h2>
-        <p className="text-gray-600 mt-2">{service.description}</p>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              First Name
-            </label>
-            <input
-              {...register('firstName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          {/* Header with gradient */}
+          <motion.div 
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-white relative overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {/* Animated background pattern */}
+            <motion.div
+              className="absolute inset-0 opacity-20"
+              animate={{
+                backgroundImage: [
+                  "radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 50%)",
+                  "radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 50%)",
+                ],
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
             />
-            {errors.firstName && (
-              <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Last Name
-            </label>
-            <input
-              {...register('lastName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            {errors.lastName && (
-              <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email
-          </label>
-          <input
-            {...register('email')}
-            type="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Phone Number
-          </label>
-          <input
-            {...register('phone')}
-            type="tel"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-          {errors.phone && (
-            <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Preferred Date
-            </label>
-            <input
-              {...register('preferredDate')}
-              type="date"
-              min={new Date().toISOString().split('T')[0]}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            {errors.preferredDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.preferredDate.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Preferred Time
-            </label>
-            <select
-              {...register('preferredTime')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            
+            <motion.button
+              onClick={onCancel}
+              className="flex items-center text-purple-200 hover:text-white mb-4 transition-colors relative z-10"
+              whileHover={{ x: -5 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <option value="">Select a time</option>
-              <option value="08:00">8:00 AM</option>
-              <option value="09:00">9:00 AM</option>
-              <option value="10:00">10:00 AM</option>
-              <option value="11:00">11:00 AM</option>
-              <option value="12:00">12:00 PM</option>
-              <option value="13:00">1:00 PM</option>
-              <option value="14:00">2:00 PM</option>
-              <option value="15:00">3:00 PM</option>
-              <option value="16:00">4:00 PM</option>
-              <option value="17:00">5:00 PM</option>
-            </select>
-            {errors.preferredTime && (
-              <p className="text-red-500 text-sm mt-1">{errors.preferredTime.message}</p>
-            )}
-          </div>
-        </div>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to services
+            </motion.button>
+            
+            <div className="relative z-10">
+              <motion.div 
+                className="flex items-center mb-4"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <motion.span 
+                  className="text-5xl mr-4"
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  {service.icon}
+                </motion.span>
+                <div>
+                  <h2 className="text-3xl font-bold">Book {service.name}</h2>
+                  <p className="text-purple-200 mt-1">{service.description}</p>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+          
+          {/* Form content */}
+          <div className="p-8">
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <motion.div 
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                variants={stagger}
+                initial="initial"
+                animate="animate"
+              >
+                <motion.div variants={fadeInUp}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <User className="w-4 h-4 mr-1 text-purple-600" />
+                    First Name
+                  </label>
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <input
+                      {...register('firstName')}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-300"
+                      placeholder="John"
+                    />
+                  </motion.div>
+                  <AnimatePresence>
+                    {errors.firstName && (
+                      <motion.p 
+                        className="text-red-500 text-sm mt-1"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {errors.firstName.message}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+
+                <motion.div variants={fadeInUp}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <User className="w-4 h-4 mr-1 text-purple-600" />
+                    Last Name
+                  </label>
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <input
+                      {...register('lastName')}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-300"
+                      placeholder="Doe"
+                    />
+                  </motion.div>
+                  <AnimatePresence>
+                    {errors.lastName && (
+                      <motion.p 
+                        className="text-red-500 text-sm mt-1"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {errors.lastName.message}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <Mail className="w-4 h-4 mr-1 text-purple-600" />
+                    Email
+                  </label>
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <input
+                      {...register('email')}
+                      type="email"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-300"
+                      placeholder="john.doe@example.com"
+                    />
+                  </motion.div>
+                  <AnimatePresence>
+                    {errors.email && (
+                      <motion.p 
+                        className="text-red-500 text-sm mt-1"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {errors.email.message}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <Phone className="w-4 h-4 mr-1 text-purple-600" />
+                    Phone Number
+                  </label>
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <input
+                      {...register('phone')}
+                      type="tel"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-300"
+                      placeholder="(555) 123-4567"
+                    />
+                  </motion.div>
+                  <AnimatePresence>
+                    {errors.phone && (
+                      <motion.p 
+                        className="text-red-500 text-sm mt-1"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {errors.phone.message}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <Calendar className="w-4 h-4 mr-1 text-purple-600" />
+                    Preferred Date
+                  </label>
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <input
+                      {...register('preferredDate')}
+                      type="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-300"
+                    />
+                  </motion.div>
+                  <AnimatePresence>
+                    {errors.preferredDate && (
+                      <motion.p 
+                        className="text-red-500 text-sm mt-1"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {errors.preferredDate.message}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <Clock className="w-4 h-4 mr-1 text-purple-600" />
+                    Preferred Time
+                  </label>
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <select
+                      {...register('preferredTime')}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-purple-300 appearance-none bg-white"
+                    >
+                      <option value="">Select a time</option>
+                      <option value="08:00">8:00 AM</option>
+                      <option value="09:00">9:00 AM</option>
+                      <option value="10:00">10:00 AM</option>
+                      <option value="11:00">11:00 AM</option>
+                      <option value="12:00">12:00 PM</option>
+                      <option value="13:00">1:00 PM</option>
+                      <option value="14:00">2:00 PM</option>
+                      <option value="15:00">3:00 PM</option>
+                      <option value="16:00">4:00 PM</option>
+                      <option value="17:00">5:00 PM</option>
+                    </select>
+                  </motion.div>
+                  <AnimatePresence>
+                    {errors.preferredTime && (
+                      <motion.p 
+                        className="text-red-500 text-sm mt-1"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {errors.preferredTime.message}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -205,23 +364,50 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           />
         </div>
 
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex-1 bg-primary text-white py-3 px-6 rounded-md hover:bg-primary/90 transition-colors disabled:bg-gray-400"
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit Booking'}
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-6 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
+              <motion.div 
+                className="flex gap-4 pt-6"
+                variants={fadeInUp}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 px-6 rounded-xl hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <motion.div
+                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Book Now
+                    </>
+                  )}
+                </motion.button>
+                <motion.button
+                  type="button"
+                  onClick={onCancel}
+                  className="flex-1 bg-white border-2 border-gray-200 text-gray-700 py-4 px-6 rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 font-medium transition-all duration-300"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Cancel
+                </motion.button>
+              </motion.div>
+            </form>
+          </div>
+        </motion.div>
+      </motion.div>
+    </GradientBackground>
   );
 }
