@@ -1,4 +1,5 @@
 export interface Service {
+  basePrice(basePrice: any): import("react").ReactNode;
   id: string;
   name: string;
   description: string;
@@ -16,7 +17,10 @@ export const services: Service[] = [
     icon: '🔧',
     category: 'Plumbing',
     estimatedDuration: '1-3 hours',
-    priceRange: '$150-$500'
+    priceRange: '$150-$500',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   },
   {
     id: 'electrical-service',
@@ -25,7 +29,10 @@ export const services: Service[] = [
     icon: '⚡',
     category: 'Electrical',
     estimatedDuration: '2-4 hours',
-    priceRange: '$200-$800'
+    priceRange: '$200-$800',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   },
   {
     id: 'hvac-maintenance',
@@ -34,7 +41,10 @@ export const services: Service[] = [
     icon: '❄️',
     category: 'HVAC',
     estimatedDuration: '2-6 hours',
-    priceRange: '$200-$1500'
+    priceRange: '$200-$1500',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   },
   {
     id: 'house-cleaning',
@@ -43,7 +53,10 @@ export const services: Service[] = [
     icon: '🧹',
     category: 'Cleaning',
     estimatedDuration: '2-4 hours',
-    priceRange: '$100-$300'
+    priceRange: '$100-$300',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   },
   {
     id: 'lawn-care',
@@ -52,7 +65,10 @@ export const services: Service[] = [
     icon: '🌿',
     category: 'Landscaping',
     estimatedDuration: '1-3 hours',
-    priceRange: '$50-$200'
+    priceRange: '$50-$200',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   },
   {
     id: 'pest-control',
@@ -61,7 +77,10 @@ export const services: Service[] = [
     icon: '🐛',
     category: 'Pest Control',
     estimatedDuration: '1-2 hours',
-    priceRange: '$150-$400'
+    priceRange: '$150-$400',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   },
   {
     id: 'appliance-repair',
@@ -70,7 +89,10 @@ export const services: Service[] = [
     icon: '🔌',
     category: 'Appliances',
     estimatedDuration: '1-3 hours',
-    priceRange: '$100-$500'
+    priceRange: '$100-$500',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   },
   {
     id: 'painting',
@@ -79,60 +101,9 @@ export const services: Service[] = [
     icon: '🎨',
     category: 'Painting',
     estimatedDuration: '4-8 hours',
-    priceRange: '$300-$2000'
-  },
-  {
-    id: 'solar-installation',
-    name: 'Solar Panel Installation',
-    description: 'Complete solar system design and installation',
-    icon: '☀️',
-    category: 'Solar',
-    estimatedDuration: '2-3 days',
-    priceRange: '$15,000-$30,000'
-  },
-  {
-    id: 'solar-consultation',
-    name: 'Solar Consultation',
-    description: 'Free solar potential analysis and savings estimate',
-    icon: '📊',
-    category: 'Solar',
-    estimatedDuration: '1-2 hours',
-    priceRange: 'Free'
-  },
-  {
-    id: 'solar-maintenance',
-    name: 'Solar Panel Maintenance',
-    description: 'Cleaning, inspection, and performance optimization',
-    icon: '🔧',
-    category: 'Solar',
-    estimatedDuration: '2-4 hours',
-    priceRange: '$200-$500'
-  },
-  {
-    id: 'roofing-replacement',
-    name: 'Roof Replacement',
-    description: 'Complete roof replacement with warranty',
-    icon: '🏠',
-    category: 'Roofing',
-    estimatedDuration: '2-5 days',
-    priceRange: '$5,000-$15,000'
-  },
-  {
-    id: 'roofing-repair',
-    name: 'Roof Repair',
-    description: 'Fix leaks, replace shingles, repair damage',
-    icon: '🔨',
-    category: 'Roofing',
-    estimatedDuration: '2-6 hours',
-    priceRange: '$300-$2,000'
-  },
-  {
-    id: 'gutter-service',
-    name: 'Gutter Cleaning & Repair',
-    description: 'Clean, repair, or replace gutters',
-    icon: '🏗️',
-    category: 'Roofing',
-    estimatedDuration: '2-4 hours',
-    priceRange: '$150-$500'
+    priceRange: '$300-$2000',
+    basePrice: function (basePrice: any): import("react").ReactNode {
+      throw new Error("Function not implemented.");
+    }
   }
 ];

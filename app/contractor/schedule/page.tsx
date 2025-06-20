@@ -18,6 +18,13 @@ interface ContractorSchedule {
   }[];
 }
 
+// Generate time slots - moved outside component to prevent recreation
+const timeSlots = Array.from({ length: 20 }, (_, i) => {
+  const hour = Math.floor(i / 2) + 8; // Start at 8 AM
+  const minute = i % 2 === 0 ? '00' : '30';
+  return `${hour.toString().padStart(2, '0')}:${minute}`;
+});
+
 export default function ContractorSchedulePage() {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [schedule, setSchedule] = useState<{ [date: string]: ContractorSchedule }>({});
@@ -25,13 +32,6 @@ export default function ContractorSchedulePage() {
   
   // Mock contractor ID - in real app, get from auth
   const contractorId = 'contractor-123';
-  
-  // Generate time slots
-  const timeSlots = Array.from({ length: 20 }, (_, i) => {
-    const hour = Math.floor(i / 2) + 8; // Start at 8 AM
-    const minute = i % 2 === 0 ? '00' : '30';
-    return `${hour.toString().padStart(2, '0')}:${minute}`;
-  });
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const start = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Start on Monday
@@ -42,15 +42,20 @@ export default function ContractorSchedulePage() {
     const loadWeekSchedule = async () => {
     setLoading(true);
     try {
-      // const start = startOfWeek(currentWeek, { weekStartsOn: 1 });
+      const start = startOfWeek(currentWeek, { weekStartsOn: 1 });
       // const end = endOfWeek(currentWeek, { weekStartsOn: 1 });
       
       // In real app, fetch from API
       // const schedules = await contractorCrmApi.getContractorSchedule(contractorId, format(start, 'yyyy-MM-dd'));
       
+      // Generate weekDays inside the effect to avoid dependency issues
+      const weekDaysForSchedule = Array.from({ length: 7 }, (_, i) => {
+        return addDays(start, i);
+      });
+      
       // Mock data
       const mockSchedule: { [date: string]: ContractorSchedule } = {};
-      weekDays.forEach(day => {
+      weekDaysForSchedule.forEach(day => {
         const dateStr = format(day, 'yyyy-MM-dd');
         mockSchedule[dateStr] = {
           contractorId,
@@ -72,7 +77,7 @@ export default function ContractorSchedulePage() {
   };
     
     loadWeekSchedule();
-  }, [currentWeek, weekDays, timeSlots]);
+  }, [currentWeek, contractorId]);
 
   const toggleSlotAvailability = async (date: string, time: string) => {
     const dateSchedule = schedule[date];

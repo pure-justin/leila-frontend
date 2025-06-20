@@ -1,25 +1,23 @@
-# Leila - AI Home Service Platform
+# Home Service Pro - Customer Frontend
 
-A comprehensive Next.js application for customers to book home services with AI automation and real-time contractor matching.
+A Next.js application for customers to book home services, integrated with EspoCRM for backend management.
 
 ## Features
 
-- 🏠 Service catalog with comprehensive home services
-- 📝 Intelligent booking system with AI optimization  
-- 🤖 Advanced AI chatbot powered by Gemini Flash
-- 🔗 Firebase/Firestore integration for real-time data
-- 📱 Responsive Uber-like design
-- 👥 Complete contractor portal
-- 📊 Real-time analytics and monitoring
-- 🎯 Voice control with "Hey Leila"
+- 🏠 Service catalog with 8 different home services
+- 📝 Easy booking form with validation
+- 🤖 AI-powered chatbot for customer support
+- 🔗 Direct integration with EspoCRM
+- 📱 Responsive design for all devices
 
-## Architecture
+## CRM Integration
 
-**Frontend**: Next.js 14 with App Router
-**Database**: Firebase Firestore  
-**Authentication**: Firebase Auth
-**AI**: Google Gemini 1.5 Flash
-**Hosting**: Vercel
+This frontend connects to **EspoCRM** which provides:
+- Lead management
+- Appointment scheduling
+- Task assignment for technicians
+- Customer relationship tracking
+- RESTful API for all operations
 
 ## Setup
 
@@ -29,15 +27,12 @@ A comprehensive Next.js application for customers to book home services with AI 
    ```
 
 2. **Configure environment variables:**
-   Create `.env.local` with Firebase configuration:
+   Copy `.env.local.example` to `.env.local` and update:
    ```
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
+   NEXT_PUBLIC_CRM_API_URL=http://localhost/espocrm/api/v1
+   CRM_API_USERNAME=your_username
+   CRM_API_PASSWORD=your_password
+   OPENAI_API_KEY=your_openai_key (optional)
    ```
 
 3. **Run development server:**
@@ -47,67 +42,43 @@ A comprehensive Next.js application for customers to book home services with AI 
 
 ## How It Works
 
-1. **Customer** books services through the main app
-2. **AI agents** automatically match with available contractors
-3. **Contractors** receive real-time job notifications
-4. **Firebase** maintains real-time sync across all platforms
+1. **Customer selects a service** from the catalog
+2. **Fills out booking form** with contact details and preferred time
+3. **System creates in EspoCRM:**
+   - Lead record with customer information
+   - Meeting/appointment for the service
+   - Task for assigning a technician
+4. **AI Chatbot** helps with questions and booking assistance
 
-## Key Features
+## API Routes
 
-### Customer Portal
-- Browse and book services
-- Track booking status
-- Chat with AI assistant
-- Voice-activated booking
-
-### Contractor Portal (/contractor)
-- Real-time job feed
-- Schedule management
-- Performance analytics
-- Profile management
+- `/api/booking` - Creates lead, appointment, and task in CRM
+- `/api/chat` - Handles chatbot conversations
 
 ## Technologies
 
-- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
-- **Database**: Firebase Firestore with real-time sync
-- **Authentication**: Firebase Auth with role-based access
-- **AI**: Google Gemini 1.5 Flash for intelligent automation
-- **Hosting**: Vercel with edge optimization
+- Next.js 14 with App Router
+- TypeScript
+- Tailwind CSS
+- React Hook Form + Zod validation
+- Axios for API calls
+- Lucide React for icons
 
-## Available Services
+## Production Deployment
 
-- Plumbing ($150-$500)
-- Electrical ($200-$800)
-- HVAC ($200-$1500)
-- House Cleaning ($100-$300)
-- Lawn Care ($50-$200)
-- Pest Control ($150-$400)
-- Appliance Repair ($100-$500)
-- Painting ($300-$2000)
+1. Build the application:
+   ```bash
+   npm run build
+   ```
 
-## Development
+2. Set production environment variables
 
-```bash
-# Install dependencies
-npm install
+3. Deploy to Vercel, Netlify, or your preferred platform
 
-# Run development server
-npm run dev
+## Future Enhancements
 
-# Run tests
-npm test
-
-# Build for production
-npm run build
-
-# Run production build
-npm start
-```
-
-## Deployment
-
-The app is automatically deployed to Vercel on push to the main branch.
-
-## License
-
-MIT
+- Real-time appointment availability checking
+- Customer portal for viewing booking history
+- SMS/email notifications
+- Payment integration
+- Advanced AI chatbot with OpenAI GPT-4
