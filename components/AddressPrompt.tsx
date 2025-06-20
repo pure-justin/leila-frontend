@@ -17,6 +17,36 @@ export default function AddressPrompt({ onAddressSubmit, onClose }: AddressPromp
   const [error, setError] = useState('');
   const [showPermissionHint, setShowPermissionHint] = useState(false);
 
+  const fetchAddressFromServer = async (latitude: number, longitude: number) => {
+    try {
+      const response = await fetch('/api/geocode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ lat: latitude, lng: longitude }),
+      });
+      
+      const data = await response.json();
+      console.log('Server geocoding response:', data);
+      
+      if (data.success && data.address) {
+        setAddress(data.address);
+        setIsLocating(false);
+        setShowPermissionHint(false);
+      } else {
+        setError(data.error || 'Could not find address for your location. Please enter manually.');
+        setIsLocating(false);
+        setShowPermissionHint(false);
+      }
+    } catch (err) {
+      console.error('Server geocoding error:', err);
+      setError('Unable to get your address. Please enter it manually.');
+      setIsLocating(false);
+      setShowPermissionHint(false);
+    }
+  };
+
   const handleGeolocation = () => {
     setIsLocating(true);
     setError('');
@@ -42,26 +72,27 @@ export default function AddressPrompt({ onAddressSubmit, onClose }: AddressPromp
           const { latitude, longitude } = position.coords;
           console.log('Got coordinates:', latitude, longitude);
           
-          // Reverse geocode to get address using our API route
-          const response = await fetch('/api/geocode', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ lat: latitude, lng: longitude }),
-          });
-          
-          const data = await response.json();
-          console.log('Geocoding response:', data);
-          
-          if (data.success && data.address) {
-            setAddress(data.address);
-            setIsLocating(false);
-            setShowPermissionHint(false);
+          // Try client-side geocoding first if Google Maps is loaded
+          if (window.google && window.google.maps && window.google.maps.Geocoder) {
+            console.log('Using client-side Google Maps geocoding...');
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode(
+              { location: { lat: latitude, lng: longitude } },
+              (results, status) => {
+                if (status === 'OK' && results && results[0]) {
+                  setAddress(results[0].formatted_address);
+                  setIsLocating(false);
+                  setShowPermissionHint(false);
+                } else {
+                  console.error('Geocoding failed:', status);
+                  // Fallback to server-side geocoding
+                  fetchAddressFromServer(latitude, longitude);
+                }
+              }
+            );
           } else {
-            setError(data.error || 'Could not find address for your location. Please enter manually.');
-            setIsLocating(false);
-            setShowPermissionHint(false);
+            // Fallback to server-side geocoding
+            fetchAddressFromServer(latitude, longitude);
           }
         } catch (err) {
           console.error('Geocoding error:', err);

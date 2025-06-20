@@ -12,12 +12,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use server-side API key to avoid CORS issues
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-    );
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    
+    if (!apiKey) {
+      console.error('Google Maps API key not found');
+      return NextResponse.json(
+        { error: 'API configuration error' },
+        { status: 500 }
+      );
+    }
 
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+    console.log('Geocoding request for:', lat, lng);
+    
+    const response = await fetch(url);
     const data = await response.json();
+    
+    console.log('Geocoding response status:', data.status);
+    if (data.error_message) {
+      console.error('Geocoding error message:', data.error_message);
+    }
 
     if (data.status === 'OK' && data.results && data.results[0]) {
       return NextResponse.json({
@@ -26,9 +40,28 @@ export async function POST(request: NextRequest) {
         components: data.results[0].address_components
       });
     } else {
-      console.error('Geocoding API error:', data);
+      console.error('Geocoding API error:', {
+        status: data.status,
+        error_message: data.error_message,
+        results_count: data.results?.length || 0
+      });
+      
+      // Provide more specific error messages
+      let errorMessage = 'Unable to geocode location';
+      if (data.status === 'REQUEST_DENIED') {
+        errorMessage = 'Geocoding API access denied. Please check API key configuration.';
+      } else if (data.status === 'ZERO_RESULTS') {
+        errorMessage = 'No address found for this location.';
+      } else if (data.status === 'OVER_QUERY_LIMIT') {
+        errorMessage = 'API quota exceeded. Please try again later.';
+      }
+      
       return NextResponse.json(
-        { error: 'Unable to geocode location', details: data.status },
+        { 
+          error: errorMessage, 
+          details: data.status,
+          message: data.error_message 
+        },
         { status: 400 }
       );
     }

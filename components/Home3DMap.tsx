@@ -42,7 +42,9 @@ export default function Home3DMap({ address, className = '' }: Home3DMapProps) {
       rotateControl: true,
       scaleControl: false,
       zoomControl: true,
-      // Enable 3D buildings (mapId is optional for basic 3D view)
+      // Enable new 3D features
+      isFractionalZoomEnabled: true,
+      mapId: '3d_home_service_map', // Custom map ID for 3D features
       center: { lat: 37.7749, lng: -122.4194 }, // Default to San Francisco
       styles: [
         {
