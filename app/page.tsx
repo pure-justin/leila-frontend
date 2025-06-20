@@ -469,7 +469,7 @@ export default function Home() {
                   </motion.button>
                 ))}
               </motion.div>
-            </section>
+            </motion.section>
 
             {/* Trust Section - Epic Stats with Animations */}
             <motion.section 
@@ -680,6 +680,6 @@ export default function Home() {
           onClose={() => setShowAddressPrompt(false)}
         />
       )}
-    </div>
+    </GradientBackground>
   );
 }
