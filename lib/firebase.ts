@@ -32,7 +32,7 @@ export const analytics = typeof window !== 'undefined' ?
 // Connect to emulators in development
 if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   // Uncomment to use local emulators
-  // connectFunctionsEmulator(functions, 'localhost', 5001);
+  // connectFunctionsEmulator(functions, 'localhost', 5555);
 }
 
 export default app;

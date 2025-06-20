@@ -155,24 +155,3 @@ export async function getServiceStats() {
   return stats;
 }
 
-// Legacy API compatibility layer
-export const legacyApi = {
-  async getBookings() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/apiBookings`);
-    return response.json();
-  },
-  
-  async createBooking(data: any) {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/apiBookings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    return response.json();
-  },
-  
-  async getContractors() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/apiContractors`);
-    return response.json();
-  }
-};

@@ -9,42 +9,20 @@
   --card-foreground: 0 0% 0%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 0%;
-  --primary: 0 0% 0%;
+  --primary: 262 83% 58%; /* Purple: #7C3AED */
   --primary-foreground: 0 0% 100%;
   --secondary: 0 0% 96%;
   --secondary-foreground: 0 0% 0%;
   --muted: 0 0% 96%;
   --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 0%;
+  --accent: 262 83% 58%; /* Purple accent */
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
   --border: 0 0% 89%;
   --input: 0 0% 89%;
-  --ring: 0 0% 0%;
+  --ring: 262 83% 58%; /* Purple ring */
   --radius: 0.5rem;
-}
-
-.dark {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --card: 0 0% 0%;
-  --card-foreground: 0 0% 100%;
-  --popover: 0 0% 0%;
-  --popover-foreground: 0 0% 100%;
-  --primary: 0 0% 100%;
-  --primary-foreground: 0 0% 0%;
-  --secondary: 0 0% 10%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 10%;
-  --muted-foreground: 0 0% 60%;
-  --accent: 0 0% 10%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 20%;
-  --input: 0 0% 20%;
-  --ring: 0 0% 100%;
 }
 
 body {
@@ -53,45 +31,39 @@ body {
 
 @layer base {
   body {
-    @apply bg-white text-black dark:bg-black dark:text-white;
+    @apply bg-white text-black;
   }
 }
 
 /* Uber-style components */
 .uber-button {
-  @apply bg-black text-white font-medium px-6 py-3 rounded-lg transition-all duration-200;
-  @apply hover:bg-gray-800 active:scale-95;
-  @apply dark:bg-white dark:text-black dark:hover:bg-gray-200;
+  @apply bg-purple-600 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200;
+  @apply hover:bg-purple-700 active:scale-95;
 }
 
 .uber-button-secondary {
   @apply bg-gray-200 text-black font-medium px-6 py-3 rounded-lg transition-all duration-200;
   @apply hover:bg-gray-300 active:scale-95;
-  @apply dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700;
 }
 
 .uber-card {
   @apply bg-white rounded-lg shadow-sm border border-gray-200 transition-all duration-200;
   @apply hover:shadow-md;
-  @apply dark:bg-gray-900 dark:border-gray-800;
 }
 
 .uber-input {
   @apply w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-base transition-all duration-200;
-  @apply focus:bg-white focus:ring-2 focus:ring-black focus:outline-none;
-  @apply dark:bg-gray-800 dark:focus:bg-gray-700 dark:focus:ring-white;
+  @apply focus:bg-white focus:ring-2 focus:ring-purple-600 focus:outline-none;
 }
 
 /* Service selection cards - Uber style */
 .service-tile {
   @apply bg-gray-100 rounded-lg p-6 cursor-pointer transition-all duration-200;
   @apply hover:bg-gray-200 hover:scale-[1.02] active:scale-[0.98];
-  @apply dark:bg-gray-800 dark:hover:bg-gray-700;
 }
 
 .service-tile-selected {
-  @apply bg-black text-white;
-  @apply dark:bg-white dark:text-black;
+  @apply bg-purple-600 text-white;
 }
 
 /* Bottom sheet animation */
@@ -110,7 +82,7 @@ body {
 
 /* Map placeholder style */
 .map-container {
-  @apply relative bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden;
+  @apply relative bg-gray-100 rounded-lg overflow-hidden;
   background-image: 
     linear-gradient(45deg, #f3f4f6 25%, transparent 25%),
     linear-gradient(-45deg, #f3f4f6 25%, transparent 25%),
@@ -142,36 +114,36 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
-  @apply hover:bg-gray-400 dark:hover:bg-gray-600;
+  @apply bg-gray-300 rounded-full;
+  @apply hover:bg-gray-400;
 }
 
 /* Loading skeleton */
 .skeleton {
-  @apply bg-gray-200 dark:bg-gray-800 rounded animate-pulse;
+  @apply bg-gray-200 rounded animate-pulse;
 }
 
 /* Price tag style */
 .price-tag {
   @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
-  @apply bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100;
+  @apply bg-gray-100 text-gray-900;
 }
 
 /* Time estimate badge */
 .time-badge {
   @apply inline-flex items-center px-2 py-1 rounded text-xs font-medium;
-  @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
+  @apply bg-blue-100 text-blue-800;
 }
 
 /* Divider with text */
 .divider-text {
-  @apply relative text-center text-sm text-gray-500 dark:text-gray-400;
+  @apply relative text-center text-sm text-gray-500;
 }
 
 .divider-text::before,
 .divider-text::after {
   content: '';
-  @apply absolute top-1/2 w-full h-px bg-gray-200 dark:bg-gray-800;
+  @apply absolute top-1/2 w-full h-px bg-gray-200;
 }
 
 .divider-text::before {
@@ -184,21 +156,158 @@ html {
 
 /* Floating action button */
 .fab {
-  @apply fixed bottom-6 right-6 w-14 h-14 bg-black text-white rounded-full shadow-lg;
+  @apply fixed bottom-6 right-6 w-14 h-14 bg-purple-600 text-white rounded-full shadow-lg;
   @apply flex items-center justify-center transition-all duration-200;
   @apply hover:scale-110 active:scale-95;
-  @apply dark:bg-white dark:text-black;
+}
+
+/* Gradient animations */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #7C3AED, #EC4899, #3B82F6);
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899);
+  background-size: 200% 200%;
+  animation: gradient-shift 20s ease infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7C3AED, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated elements */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Gradient buttons */
+.gradient-button {
+  @apply relative overflow-hidden text-white font-medium px-6 py-3 rounded-lg transition-all duration-300;
+  background: linear-gradient(135deg, #7C3AED, #EC4899);
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
+  @apply hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl;
+}
+
+.gradient-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.gradient-button:hover::before {
+  left: 100%;
+}
+
+/* Gradient cards */
+.gradient-card {
+  @apply relative overflow-hidden rounded-xl p-6 text-white;
+  background: linear-gradient(135deg, #7C3AED, #8B5CF6);
+  @apply shadow-xl;
+}
+
+.gradient-card-hover {
+  @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl;
+}
+
+/* Glassmorphism effect */
+.glass {
+  @apply backdrop-blur-md bg-white/80 border border-white/20 shadow-xl;
+}
+
+.glass-dark {
+  @apply backdrop-blur-md bg-gray-900/80 border border-gray-700/20 shadow-xl;
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+}
+
+/* Animated border gradient */
+.border-gradient {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1px;
+}
+
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0.5rem;
+  padding: 2px;
+  background: linear-gradient(135deg, #7C3AED, #EC4899, #3B82F6);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
 }
 
 /* Tab indicator */
 .tab-indicator {
-  @apply absolute bottom-0 left-0 h-1 bg-black transition-all duration-300;
-  @apply dark:bg-white;
+  @apply absolute bottom-0 left-0 h-1 bg-purple-600 transition-all duration-300;
 }
 
 /* List item hover */
 .list-item {
   @apply px-4 py-3 transition-colors duration-200 cursor-pointer;
   @apply hover:bg-gray-50 active:bg-gray-100;
-  @apply dark:hover:bg-gray-900 dark:active:bg-gray-800;
 }

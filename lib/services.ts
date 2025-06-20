@@ -80,5 +80,59 @@ export const services: Service[] = [
     category: 'Painting',
     estimatedDuration: '4-8 hours',
     priceRange: '$300-$2000'
+  },
+  {
+    id: 'solar-installation',
+    name: 'Solar Panel Installation',
+    description: 'Complete solar system design and installation',
+    icon: '☀️',
+    category: 'Solar',
+    estimatedDuration: '2-3 days',
+    priceRange: '$15,000-$30,000'
+  },
+  {
+    id: 'solar-consultation',
+    name: 'Solar Consultation',
+    description: 'Free solar potential analysis and savings estimate',
+    icon: '📊',
+    category: 'Solar',
+    estimatedDuration: '1-2 hours',
+    priceRange: 'Free'
+  },
+  {
+    id: 'solar-maintenance',
+    name: 'Solar Panel Maintenance',
+    description: 'Cleaning, inspection, and performance optimization',
+    icon: '🔧',
+    category: 'Solar',
+    estimatedDuration: '2-4 hours',
+    priceRange: '$200-$500'
+  },
+  {
+    id: 'roofing-replacement',
+    name: 'Roof Replacement',
+    description: 'Complete roof replacement with warranty',
+    icon: '🏠',
+    category: 'Roofing',
+    estimatedDuration: '2-5 days',
+    priceRange: '$5,000-$15,000'
+  },
+  {
+    id: 'roofing-repair',
+    name: 'Roof Repair',
+    description: 'Fix leaks, replace shingles, repair damage',
+    icon: '🔨',
+    category: 'Roofing',
+    estimatedDuration: '2-6 hours',
+    priceRange: '$300-$2,000'
+  },
+  {
+    id: 'gutter-service',
+    name: 'Gutter Cleaning & Repair',
+    description: 'Clean, repair, or replace gutters',
+    icon: '🏗️',
+    category: 'Roofing',
+    estimatedDuration: '2-4 hours',
+    priceRange: '$150-$500'
   }
 ];

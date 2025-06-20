@@ -107,7 +107,7 @@ class FirestoreService {
           createdAt: new Date(),
           updatedAt: new Date()
         }
-      } as T & { id: string };
+      } as unknown as T & { id: string };
     } catch (error) {
       console.error(`Error creating document in ${collection}:`, error);
       throw error;

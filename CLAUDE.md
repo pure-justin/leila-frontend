@@ -5,17 +5,14 @@ Leila is an AI-powered home service platform that connects customers with contra
 
 ## Active Architecture
 
-### Domains
-- **Main App**: heyleila.com (customer-facing)
-- **CRM**: crm.heyleila.com (business operations)
-- **API**: api.heyleila.com (backend services)
+### Domain
+- **Main App**: heyleila.com (customer and contractor portal)
 
 ### Tech Stack
-- **Frontend**: Next.js 15.3.4, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
 - **Backend**: Firebase (Firestore, Auth, Functions, Storage)
-- **API Gateway**: Express.js with WebSocket support
-- **CRM**: EspoCRM (PHP/MySQL)
 - **AI**: Google Gemini 1.5 Flash
+- **Hosting**: Vercel
 
 ## Current Features
 
@@ -27,7 +24,7 @@ Leila is an AI-powered home service platform that connects customers with contra
 - Dark mode support
 
 ### Contractor Dashboard (/contractor)
-- Live job feed with WebSocket updates
+- Live job feed with real-time updates
 - Analytics dashboard
 - Schedule management
 - Profile management
@@ -64,23 +61,18 @@ Leila is an AI-powered home service platform that connects customers with contra
 - Entry: `/app/page.tsx` - Main landing page
 - Contractor: `/app/contractor/` - Contractor portal
 - Components: `/components/` - Shared UI components
-- Lib: `/lib/` - Core functionality (AI, Firebase, WebSocket)
-
-### Backend
-- API Gateway: `/api-gateway/server.js`
-- Cloud Functions: `/functions/src/index.ts`
-- WebSocket: `/lib/websocket-client.ts`
+- Lib: `/lib/` - Core functionality (AI, Firebase)
 
 ### Configuration
 - Firebase: `/firebase.json`, `/firestore.rules`
 - Next.js: `/next.config.js`
 - TypeScript: `/tsconfig.json`
+- Environment: `.env.local`
 
 ## Development Commands
 
 ```bash
 # Frontend development
-cd home-service-frontend
 npm run dev
 
 # Run tests
@@ -89,23 +81,22 @@ npm test
 # Build for production
 npm run build
 
-# Deploy to Firebase
-firebase deploy
+# Start production server
+npm start
 ```
 
 ## Recent Updates
-- Implemented real-time job notifications
-- Enhanced contractor dashboard
-- Fixed dark mode theming
-- Added PWA support
-- Consolidated deployment to Firebase
+- Removed API Gateway - now using Firebase directly
+- Removed CRM integration - simplified architecture
+- Removed MySQL - fully migrated to Firestore
+- Cleaned up Docker configurations
+- Updated all documentation
 
 ## Important Notes
-- Always use Firebase services (not Supabase)
-- WebSocket server runs on api.heyleila.com
+- Always use Firebase services
 - Base prices configured in Firestore, not hardcoded
 - All contractor features under /contractor route
-- CRM integration via EspoCRM API
+- Deployment via Vercel (automatic on push to main)
 
 ## Current Focus Areas
 1. Real-time job matching system

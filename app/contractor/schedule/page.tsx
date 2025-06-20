@@ -3,10 +3,20 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Settings, AlertCircle, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ContractorSchedule } from '@/lib/crm-contractor-api';
 import { format, addDays, startOfWeek } from 'date-fns';
 import ContractorNav from '@/components/ContractorNav';
 import Link from 'next/link';
+
+// Define types locally
+interface ContractorSchedule {
+  contractorId: string;
+  date: string;
+  slots: {
+    time: string;
+    available: boolean;
+    jobId?: string;
+  }[];
+}
 
 export default function ContractorSchedulePage() {
   const [currentWeek, setCurrentWeek] = useState(new Date());

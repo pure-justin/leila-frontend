@@ -3,16 +3,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, User, DollarSign, MessageSquare, Settings, LogOut } from 'lucide-react';
+import { Home, Calendar, User, DollarSign, MessageSquare, Settings, LogOut, FileText, Database } from 'lucide-react';
 
 const navItems = [
   { href: '/contractor/dashboard', label: 'Dashboard', icon: Home },
   { href: '/contractor/schedule', label: 'Schedule', icon: Calendar },
   { href: '/contractor/jobs', label: 'My Jobs', icon: Calendar },
+  { href: '/contractor/documents', label: 'Documents', icon: FileText },
   { href: '/contractor/earnings', label: 'Earnings', icon: DollarSign },
   { href: '/contractor/messages', label: 'Messages', icon: MessageSquare },
   { href: '/contractor/profile', label: 'Profile', icon: User },
   { href: '/contractor/settings', label: 'Settings', icon: Settings },
+  { href: '/crm', label: 'CRM', icon: Database },
 ];
 
 export default function ContractorNav() {

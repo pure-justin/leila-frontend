@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove output: 'export' for local development
+  // Removed 'output: export' to enable dynamic routes
   images: {
     domains: ['heyleila.com', 'api.heyleila.com', 'storage.googleapis.com', 'firebasestorage.googleapis.com'],
+    // Keep unoptimized for now but can be removed later
     unoptimized: true,
   },
   eslint: {

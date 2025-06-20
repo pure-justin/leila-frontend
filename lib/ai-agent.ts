@@ -1,9 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { db } from './firebase';
+import { collection, doc, setDoc, getDoc, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface AIAgentContext {
   customerId?: string;
@@ -346,13 +342,9 @@ async function checkContractorAvailability(
   date: string,
   time?: string
 ): Promise<any[]> {
-  const { data } = await supabase
-    .from('contractors')
-    .select('*')
-    .contains('services', [service])
-    .eq('available', true);
-  
-  return data || [];
+  // TODO: Implement Firebase query for contractor availability
+  console.warn('checkContractorAvailability: Firebase implementation needed');
+  return [];
 }
 
 async function findNextAvailableSlot(service: string): Promise<any> {
@@ -401,20 +393,13 @@ async function getAvailableSlots(service: string): Promise<any[]> {
 }
 
 async function getBookingStatus(bookingId: string): Promise<any> {
-  const { data } = await supabase
-    .from('bookings')
-    .select('*, contractors(*)')
-    .eq('id', bookingId)
-    .single();
-  
+  // TODO: Implement Firebase query for booking status
+  console.warn('getBookingStatus: Firebase implementation needed');
   return {
-    service: data?.service || 'Service',
-    status: data?.status || 'pending',
-    contractor: data?.contractors ? {
-      name: `${data.contractors.first_name} ${data.contractors.last_name}`,
-      location: null
-    } : null,
-    eta: data?.scheduled_time || 'TBD'
+    service: 'Service',
+    status: 'pending',
+    contractor: null,
+    eta: 'TBD'
   };
 }
 
@@ -467,9 +452,9 @@ export class LeilaAIAgent {
       content: response.message,
       timestamp: new Date(),
       metadata: {
-        intent: response.intent,
-        entities: response.entities,
-        confidence: response.confidence
+        intent: 'response',
+        entities: { actions: response.actions, suggestions: response.suggestions },
+        confidence: response.requiresHuman ? 50 : 95
       }
     });
 

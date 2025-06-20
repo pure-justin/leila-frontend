@@ -103,9 +103,9 @@ export default function ContractorDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
+    <div className="min-h-screen bg-gray-50">
       {/* Uber-style Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="px-4 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -139,8 +139,8 @@ export default function ContractorDashboard() {
                 onClick={() => setIsOnline(!isOnline)}
                 className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${
                   isOnline 
-                    ? 'bg-black text-white dark:bg-white dark:text-black' 
-                    : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                    ? 'gradient-button' 
+                    : 'uber-button-secondary'
                 }`}
               >
                 {isOnline ? 'Go offline' : 'Go online'}
@@ -163,7 +163,7 @@ export default function ContractorDashboard() {
         
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+          <div className="lg:hidden border-t border-gray-200 bg-white">
             <div className="px-4 py-4 space-y-3">
               <Link href="/contractor/schedule" className="block py-2" onClick={() => setMobileMenuOpen(false)}>
                 Schedule
@@ -181,8 +181,8 @@ export default function ContractorDashboard() {
                 }}
                 className={`w-full text-left py-2 px-4 rounded-lg transition-colors ${
                   isOnline 
-                    ? 'bg-black text-white dark:bg-white dark:text-black' 
-                    : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                    ? 'gradient-button' 
+                    : 'uber-button-secondary'
                 }`}
               >
                 {isOnline ? 'Go offline' : 'Go online'}
@@ -193,15 +193,15 @@ export default function ContractorDashboard() {
       </header>
 
       {/* View Switcher - Uber Style */}
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+      <div className="bg-white border-b border-gray-200">
         <div className="px-4 lg:px-8">
           <div className="flex space-x-8">
             <button
               onClick={() => setActiveView('earnings')}
               className={`py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeView === 'earnings'
-                  ? 'border-black dark:border-white text-black dark:text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               Earnings
@@ -210,8 +210,8 @@ export default function ContractorDashboard() {
               onClick={() => setActiveView('opportunities')}
               className={`py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeView === 'opportunities'
-                  ? 'border-black dark:border-white text-black dark:text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               Opportunities
@@ -220,8 +220,8 @@ export default function ContractorDashboard() {
               onClick={() => setActiveView('scheduled')}
               className={`py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeView === 'scheduled'
-                  ? 'border-black dark:border-white text-black dark:text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               Scheduled
@@ -235,15 +235,15 @@ export default function ContractorDashboard() {
         {activeView === 'earnings' && (
           <div className={`${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}>
             {/* Earnings Summary Card */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 mb-6">
+            <div className="gradient-card gradient-card-hover mb-6">
               <h2 className="text-2xl font-bold mb-6">Today's earnings</h2>
               <div className="text-5xl font-bold mb-2">{formatCurrency(stats.todayEarnings)}</div>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">{stats.completedJobs} trips</p>
+              <p className="text-gray-500 mb-6">{stats.completedJobs} trips</p>
               
-              <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+              <div className="border-t border-gray-200 pt-6">
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <p className="text-gray-500 dark:text-gray-400">This week</p>
+                    <p className="text-gray-500">This week</p>
                     <p className="text-2xl font-semibold">{formatCurrency(stats.weekEarnings)}</p>
                   </div>
                   <Link href="/contractor/analytics">
@@ -257,7 +257,7 @@ export default function ContractorDashboard() {
 
             {/* Performance Stats */}
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
+              <div className="glass rounded-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <Star className="w-5 h-5 text-yellow-500" />
                   <span className="text-sm text-gray-500">Rating</span>
@@ -266,7 +266,7 @@ export default function ContractorDashboard() {
                 <p className="text-sm text-gray-500">{stats.totalReviews} reviews</p>
               </div>
               
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
+              <div className="glass rounded-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   <span className="text-sm text-gray-500">Acceptance</span>
@@ -275,7 +275,7 @@ export default function ContractorDashboard() {
                 <p className="text-sm text-gray-500">Last 7 days</p>
               </div>
               
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
+              <div className="glass rounded-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <Clock className="w-5 h-5 text-blue-500" />
                   <span className="text-sm text-gray-500">Online hours</span>
@@ -292,7 +292,7 @@ export default function ContractorDashboard() {
           <div className={`${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}>
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">Available jobs</h2>
-              <p className="text-gray-500 dark:text-gray-400">Accept jobs to start earning</p>
+              <p className="text-gray-500">Accept jobs to start earning</p>
             </div>
 
             {isOnline ? (
@@ -300,7 +300,7 @@ export default function ContractorDashboard() {
                 {availableJobs.map((job, index) => (
                   <div 
                     key={job.id} 
-                    className="bg-white dark:bg-gray-900 rounded-lg p-6 animate-fadeIn"
+                    className="border-gradient p-6 animate-fadeIn"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="flex justify-between items-start mb-4">
@@ -313,7 +313,7 @@ export default function ContractorDashboard() {
                             </span>
                           )}
                         </div>
-                        <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="space-y-1 text-sm text-gray-600">
                           <p>{job.customerName}</p>
                           <p>{job.date} at {job.time}</p>
                           <p>{job.address}</p>
@@ -343,12 +343,12 @@ export default function ContractorDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-12 text-center">
-                <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="glass rounded-lg p-12 text-center">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Briefcase className="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">You're offline</h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">Go online to see available jobs</p>
+                <p className="text-gray-500 mb-6">Go online to see available jobs</p>
                 <button
                   onClick={() => setIsOnline(true)}
                   className="uber-button"
@@ -365,13 +365,13 @@ export default function ContractorDashboard() {
           <div className={`${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}>
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">Scheduled jobs</h2>
-              <p className="text-gray-500 dark:text-gray-400">Your upcoming appointments</p>
+              <p className="text-gray-500">Your upcoming appointments</p>
             </div>
             
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-12 text-center">
+            <div className="bg-white rounded-lg p-12 text-center">
               <Calendar className="w-20 h-20 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">No scheduled jobs</h3>
-              <p className="text-gray-500 dark:text-gray-400">Accepted jobs will appear here</p>
+              <p className="text-gray-500">Accepted jobs will appear here</p>
             </div>
           </div>
         )}
