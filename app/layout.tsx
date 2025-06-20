@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import Script from 'next/script';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +44,7 @@ export default function RootLayout({
         <script
           async
           defer
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyD88ucXoxhnfJzKQqLW2PWAwhMsxhQrm4s'}&libraries=places,drawing,geometry&callback=Function.prototype`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyD88ucXoxhnfJzKQqLW2PWAwhMsxhQrm4s'}&libraries=places,drawing,geometry&v=beta&callback=Function.prototype`}
         />
       </head>
       <body

@@ -9,6 +9,11 @@ import ChatBot from '@/components/ChatBot';
 import { Menu, X, Clock, Calendar, MapPin, User, ChevronRight, Star, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils/currency';
+import GoogleMapsLoader from '@/components/GoogleMapsLoader';
+import Home3DMap from '@/components/Home3DMap';
+import AddressPrompt from '@/components/AddressPrompt';
+import { motion } from 'framer-motion';
+import { fadeIn } from '@/lib/animations';
 
 export default function Home() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -16,9 +21,21 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeServiceCategory, setActiveServiceCategory] = useState('popular');
+  const [userAddress, setUserAddress] = useState<string | null>(null);
+  const [showAddressPrompt, setShowAddressPrompt] = useState(false);
+  const [mapsLoaded, setMapsLoaded] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
+    
+    // Check if user has saved address
+    const savedAddress = localStorage.getItem('userAddress');
+    if (!savedAddress) {
+      // Show address prompt after a short delay
+      setTimeout(() => setShowAddressPrompt(true), 1000);
+    } else {
+      setUserAddress(savedAddress);
+    }
   }, []);
 
   const handleServiceSelect = (serviceId: string) => {
@@ -31,12 +48,19 @@ export default function Home() {
     setSelectedService(null);
   };
 
+  const handleAddressSubmit = (address: string) => {
+    setUserAddress(address);
+    localStorage.setItem('userAddress', address);
+    setShowAddressPrompt(false);
+  };
+
   const popularServices = services.slice(0, 4);
   const homeServices = services.filter(s => ['plumbing', 'electrical', 'hvac', 'cleaning'].includes(s.id));
   const maintenanceServices = services.filter(s => ['handyman', 'painting', 'gardening', 'pest-control'].includes(s.id));
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
+      <GoogleMapsLoader onLoad={() => setMapsLoaded(true)} />
       {/* Uber-style Header */}
       <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="px-4 lg:px-8">
@@ -139,18 +163,34 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {/* Map/Visual Section */}
-                <div className={`hidden lg:block ${isVisible ? 'animate-fadeIn animation-delay-300' : 'opacity-0'}`}>
-                  <div className="map-container h-[500px] rounded-2xl p-8 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="bg-white dark:bg-black rounded-full p-6 shadow-lg mb-4 inline-block">
-                        <MapPin className="w-12 h-12" />
+                {/* 3D Map Section */}
+                <motion.div 
+                  className={`hidden lg:block ${isVisible ? 'animate-fadeIn animation-delay-300' : 'opacity-0'}`}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                >
+                  {mapsLoaded ? (
+                    <Home3DMap 
+                      address={userAddress || undefined} 
+                      className="h-[500px] rounded-2xl shadow-2xl"
+                    />
+                  ) : (
+                    <div className="h-[500px] rounded-2xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+                      <div className="text-center">
+                        <motion.div
+                          className="bg-white rounded-full p-6 shadow-lg mb-4 inline-block"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        >
+                          <MapPin className="w-12 h-12 text-purple-600" />
+                        </motion.div>
+                        <h3 className="text-xl font-semibold mb-2">Loading map...</h3>
+                        <p className="text-gray-600">Finding pros in your area</p>
                       </div>
-                      <h3 className="text-xl font-semibold mb-2">Available in your area</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Trusted pros ready to help</p>
                     </div>
-                  </div>
-                </div>
+                  )}
+                </motion.div>
               </div>
             </section>
 
@@ -295,6 +335,14 @@ export default function Home() {
       </main>
 
       <ChatBot />
+      
+      {/* Address Prompt Modal */}
+      {showAddressPrompt && (
+        <AddressPrompt
+          onAddressSubmit={handleAddressSubmit}
+          onClose={() => setShowAddressPrompt(false)}
+        />
+      )}
     </div>
   );
 }
