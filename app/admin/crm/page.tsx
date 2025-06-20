@@ -1,110 +1,291 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ExternalLink, Database, Users, Calendar, BarChart3, Settings, Phone, Mail, FileText, Loader2 } from 'lucide-react';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, limit, onSnapshot, where } from 'firebase/firestore';
+import { 
+  Users, 
+  UserCheck, 
+  Calendar, 
+  Activity, 
+  TrendingUp,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Bot
+} from 'lucide-react';
 import Link from 'next/link';
 
-export default function CRMPortalPage() {
-  const [isProduction, setIsProduction] = useState(false);
-  // Use production URL when deployed, local for development
-  const crmUrl = isProduction 
-    ? 'https://crm.heyleila.com' 
-    : (process.env.NEXT_PUBLIC_ESPOCRM_URL || 'http://localhost:8080');
+interface DashboardStats {
+  totalCustomers: number;
+  totalContractors: number;
+  activeBookings: number;
+  completedToday: number;
+  aiActionsToday: number;
+  pendingOnboarding: number;
+  responseTime: string;
+  conversionRate: number;
+}
+
+interface Activity {
+  id: string;
+  timestamp: any;
+  actor?: {
+    id: string;
+    type: string;
+    name: string;
+  };
+  action: string;
+  userId?: string;
+}
+
+export default function CRMDashboard() {
+  const [stats, setStats] = useState<DashboardStats>({
+    totalCustomers: 0,
+    totalContractors: 0,
+    activeBookings: 0,
+    completedToday: 0,
+    aiActionsToday: 0,
+    pendingOnboarding: 0,
+    responseTime: '< 2 min',
+    conversionRate: 0
+  });
+  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
+  const [upcomingBookings, setUpcomingBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if we're in production
-    setIsProduction(window.location.hostname !== 'localhost');
+    // Get real-time stats
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Customers count
+    const customersQuery = query(collection(db, 'users'), where('role', '==', 'customer'));
+    const unsubCustomers = onSnapshot(customersQuery, (snapshot) => {
+      setStats(prev => ({ ...prev, totalCustomers: snapshot.size }));
+    });
+
+    // Contractors count
+    const contractorsQuery = query(collection(db, 'users'), where('role', '==', 'contractor'));
+    const unsubContractors = onSnapshot(contractorsQuery, (snapshot) => {
+      setStats(prev => ({ ...prev, totalContractors: snapshot.size }));
+    });
+
+    // Active bookings
+    const bookingsQuery = query(
+      collection(db, 'bookings'), 
+      where('status', 'in', ['pending', 'confirmed', 'in_progress'])
+    );
+    const unsubBookings = onSnapshot(bookingsQuery, (snapshot) => {
+      setStats(prev => ({ ...prev, activeBookings: snapshot.size }));
+    });
+
+    // Recent activities
+    const activitiesQuery = query(
+      collection(db, 'activity_logs'), 
+      orderBy('timestamp', 'desc'), 
+      limit(10)
+    );
+    const unsubActivities = onSnapshot(activitiesQuery, (snapshot) => {
+      const activities = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        timestamp: doc.data().timestamp?.toDate(),
+        action: doc.data().action || 'Unknown action',
+        actor: doc.data().actor || { id: 'unknown', type: 'unknown', name: 'Unknown' }
+      })) as Activity[];
+      setRecentActivities(activities);
+      
+      // Count AI actions today
+      const aiActionsToday = activities.filter(a => 
+        a.actor?.id === 'gemini-ai' && 
+        a.timestamp >= today
+      ).length;
+      setStats(prev => ({ ...prev, aiActionsToday }));
+      setLoading(false);
+    });
+
+    // Upcoming bookings
+    const upcomingQuery = query(
+      collection(db, 'bookings'),
+      where('status', '==', 'confirmed'),
+      orderBy('scheduledDate', 'asc'),
+      limit(5)
+    );
+    const unsubUpcoming = onSnapshot(upcomingQuery, (snapshot) => {
+      setUpcomingBookings(snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        scheduledDate: doc.data().scheduledDate?.toDate()
+      })));
+    });
+
+    return () => {
+      unsubCustomers();
+      unsubContractors();
+      unsubBookings();
+      unsubActivities();
+      unsubUpcoming();
+    };
   }, []);
 
-  const crmFeatures = [
-    {
-      icon: Users,
-      title: 'Contact Management',
-      description: 'Manage customers and contractors',
-      link: `${crmUrl}/#Contact`
-    },
-    {
-      icon: Calendar,
-      title: 'Bookings & Tasks',
-      description: 'Track service bookings and tasks',
-      link: `${crmUrl}/#Task`
-    },
-    {
-      icon: Phone,
-      title: 'Call Tracking',
-      description: 'Log and manage customer calls',
-      link: `${crmUrl}/#Call`
-    },
-    {
-      icon: Mail,
-      title: 'Email Campaigns',
-      description: 'Send marketing emails',
-      link: `${crmUrl}/#Campaign`
-    },
-    {
-      icon: BarChart3,
-      title: 'Reports & Analytics',
-      description: 'View business insights',
-      link: `${crmUrl}/#Report`
-    },
-    {
-      icon: FileText,
-      title: 'Documents',
-      description: 'Manage contracts and files',
-      link: `${crmUrl}/#Document`
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg">Loading CRM dashboard...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
-      <div className="max-w-md w-full p-8 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
-        <div className="text-center mb-8">
-          <div className="mb-6">
-            <Loader2 className="h-12 w-12 mx-auto text-purple-600 animate-spin" />
-          </div>
-          
-          <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-            Opening Leila CRM
-          </h1>
-          
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Redirecting to your business management system...
-          </p>
-        </div>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">CRM Dashboard</h1>
+        <p className="text-gray-600 mt-2">AI-powered customer and contractor management</p>
+      </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <Users className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-            <p className="text-sm font-medium">Customer Management</p>
-          </div>
-          <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <Calendar className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-            <p className="text-sm font-medium">Booking Tracking</p>
-          </div>
-          <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <Database className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-            <p className="text-sm font-medium">Contractor Database</p>
-          </div>
-          <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <BarChart3 className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-            <p className="text-sm font-medium">Business Analytics</p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <a
-            href={crmUrl}
-            className="w-full inline-flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
-          >
-            <ExternalLink className="w-4 h-4 mr-2" />
-            Open CRM Now
-          </a>
-          
-          {!isProduction && (
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              <p>Development Mode: {crmUrl}</p>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Link href="/admin/crm/customers" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Customers</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalCustomers}</p>
+              <p className="text-xs text-green-600 mt-1">+12% from last month</p>
             </div>
-          )}
+            <Users className="w-10 h-10 text-blue-600" />
+          </div>
+        </Link>
+
+        <Link href="/admin/crm/contractors" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Active Contractors</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalContractors}</p>
+              <p className="text-xs text-green-600 mt-1">98% availability</p>
+            </div>
+            <UserCheck className="w-10 h-10 text-purple-600" />
+          </div>
+        </Link>
+
+        <Link href="/admin/crm/bookings" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Active Bookings</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.activeBookings}</p>
+              <p className="text-xs text-gray-600 mt-1">{stats.completedToday} completed today</p>
+            </div>
+            <Calendar className="w-10 h-10 text-green-600" />
+          </div>
+        </Link>
+
+        <Link href="/admin/crm/ai-activity" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">AI Actions Today</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.aiActionsToday}</p>
+              <p className="text-xs text-gray-600 mt-1">{stats.responseTime} avg response</p>
+            </div>
+            <Bot className="w-10 h-10 text-orange-600" />
+          </div>
+        </Link>
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Recent AI Activity */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Recent AI Activity</h2>
+              <Link href="/admin/crm/ai-activity" className="text-sm text-purple-600 hover:text-purple-700">
+                View all →
+              </Link>
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {recentActivities.map((activity) => (
+                <div key={activity.id} className="flex items-start space-x-3">
+                  <div className={`w-2 h-2 rounded-full mt-2 ${
+                    activity.actor?.id === 'gemini-ai' ? 'bg-purple-600' : 'bg-gray-400'
+                  }`} />
+                  <div className="flex-1">
+                    <p className="text-sm">
+                      <span className="font-medium">{activity.actor?.id === 'gemini-ai' ? 'AI Assistant' : activity.userId}</span>
+                      {' '}{activity.action}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {activity.timestamp?.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Upcoming Bookings */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Upcoming Bookings</h2>
+              <Link href="/admin/crm/bookings" className="text-sm text-purple-600 hover:text-purple-700">
+                View all →
+              </Link>
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {upcomingBookings.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No upcoming bookings</p>
+              ) : (
+                upcomingBookings.map((booking) => (
+                  <div key={booking.id} className="border-l-4 border-purple-600 pl-4 py-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{booking.serviceType}</p>
+                        <p className="text-sm text-gray-600">
+                          {booking.customerName} • {booking.address}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">
+                          {booking.scheduledDate?.toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {booking.scheduledTime || 'Time TBD'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="mt-8 bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Link href="/admin/crm/customers/new" className="text-center p-4 border rounded-lg hover:bg-gray-50">
+            <Users className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+            <p className="text-sm">Add Customer</p>
+          </Link>
+          <Link href="/admin/crm/contractors/new" className="text-center p-4 border rounded-lg hover:bg-gray-50">
+            <UserCheck className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+            <p className="text-sm">Add Contractor</p>
+          </Link>
+          <Link href="/admin/crm/bookings/new" className="text-center p-4 border rounded-lg hover:bg-gray-50">
+            <Calendar className="w-8 h-8 mx-auto mb-2 text-green-600" />
+            <p className="text-sm">New Booking</p>
+          </Link>
+          <Link href="/admin/crm/messages" className="text-center p-4 border rounded-lg hover:bg-gray-50">
+            <Activity className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+            <p className="text-sm">Send Message</p>
+          </Link>
         </div>
       </div>
     </div>
