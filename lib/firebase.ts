@@ -6,13 +6,13 @@ import { getStorage } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCForPQtgKrRBb21vu5MrAMLKvgYOVOKgI",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDHXHgYwVT5SoQht-TNQ2-AzSA6mR7bqjw",
   authDomain: "leila-platform.firebaseapp.com",
   projectId: "leila-platform",
-  storageBucket: "leila-platform.appspot.com",
+  storageBucket: "leila-platform.firebasestorage.app",
   messagingSenderId: "242136952710",
-  appId: "1:242136952710:web:YOUR_APP_ID", // You'll get this after firebase init
-  measurementId: "G-YOUR_MEASUREMENT_ID"
+  appId: "1:242136952710:web:b76f7c1c8aaaab9e724607",
+  measurementId: "G-6X3ETQ9RGZ"
 };
 
 // Initialize Firebase only once
