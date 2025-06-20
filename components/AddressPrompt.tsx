@@ -15,42 +15,87 @@ export default function AddressPrompt({ onAddressSubmit, onClose }: AddressPromp
   const [address, setAddress] = useState('');
   const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState('');
+  const [showPermissionHint, setShowPermissionHint] = useState(false);
 
   const handleGeolocation = () => {
     setIsLocating(true);
     setError('');
+    setShowPermissionHint(true);
 
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser');
       setIsLocating(false);
+      setShowPermissionHint(false);
       return;
     }
+
+    // Show hint about browser permission
+    setTimeout(() => {
+      if (isLocating) {
+        setShowPermissionHint(true);
+      }
+    }, 1000);
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
+          console.log('Got coordinates:', latitude, longitude);
           
-          // Reverse geocode to get address
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-          );
+          // Reverse geocode to get address using our API route
+          const response = await fetch('/api/geocode', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ lat: latitude, lng: longitude }),
+          });
           
           const data = await response.json();
+          console.log('Geocoding response:', data);
           
-          if (data.results && data.results[0]) {
-            const formattedAddress = data.results[0].formatted_address;
-            setAddress(formattedAddress);
+          if (data.success && data.address) {
+            setAddress(data.address);
             setIsLocating(false);
+            setShowPermissionHint(false);
+          } else {
+            setError(data.error || 'Could not find address for your location. Please enter manually.');
+            setIsLocating(false);
+            setShowPermissionHint(false);
           }
         } catch (err) {
+          console.error('Geocoding error:', err);
           setError('Unable to get your address. Please enter it manually.');
           setIsLocating(false);
+          setShowPermissionHint(false);
         }
       },
       (error) => {
-        setError('Unable to access your location. Please enter your address manually.');
+        console.error('Geolocation error:', error);
+        let errorMessage = 'Unable to access your location. ';
+        
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied. Please enable location permissions and try again.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information unavailable. Please enter your address manually.';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out. Please try again.';
+            break;
+          default:
+            errorMessage += 'Please enter your address manually.';
+        }
+        
+        setError(errorMessage);
         setIsLocating(false);
+        setShowPermissionHint(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
       }
     );
   };
@@ -136,6 +181,19 @@ export default function AddressPrompt({ onAddressSubmit, onClose }: AddressPromp
               >
                 {error}
               </motion.p>
+            )}
+
+            {showPermissionHint && isLocating && !error && (
+              <motion.div
+                className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <p className="text-sm text-blue-700">
+                  <strong>Tip:</strong> Look for a location permission popup in your browser. 
+                  You may need to click "Allow" to share your location.
+                </p>
+              </motion.div>
             )}
 
             <motion.div
