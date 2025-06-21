@@ -38,10 +38,15 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
       
       // Check if Google Maps is loaded
       if (typeof window === 'undefined' || !window.google || !window.google.maps) {
-        console.warn('Google Maps not loaded yet');
+        console.error('Google Maps not loaded:', {
+          windowDefined: typeof window !== 'undefined',
+          googleExists: typeof window !== 'undefined' && !!window.google,
+          mapsExists: typeof window !== 'undefined' && !!window.google?.maps
+        });
         // Don't set error immediately, wait a bit for maps to load
         const timeout = setTimeout(() => {
           if (!window.google || !window.google.maps) {
+            console.error('Google Maps still not loaded after 3 seconds');
             setMapError(true);
           }
         }, 3000);
@@ -63,15 +68,20 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     // Check for Solar API availability
     const checkSolarAPI = async (lat: number, lng: number) => {
       try {
+        console.log('Checking for Solar API...');
         if (window.google && window.google.maps && (window.google.maps as any).SolarApi) {
+          console.log('Solar API found! Testing...');
           const solarApi = new (window.google.maps as any).SolarApi();
           const response = await solarApi.findClosestBuilding({
             location: { latitude: lat, longitude: lng }
           });
+          console.log('Solar API response:', response);
           return response && response.solarPotential;
+        } else {
+          console.log('Solar API not found in google.maps');
         }
       } catch (error) {
-        console.log('Solar API not available:', error);
+        console.log('Solar API error:', error);
       }
       return false;
     };
@@ -257,7 +267,12 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
         }
       };
       } catch (error) {
-        console.error('Error initializing map:', error);
+        console.error('CRITICAL: Error initializing map:', error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          googleMapsLoaded: !!window.google?.maps
+        });
         setMapError(true);
       }
     };
