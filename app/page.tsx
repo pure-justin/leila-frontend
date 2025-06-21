@@ -78,7 +78,6 @@ export default function Home() {
               whileHover={{ scale: 1.05 }}
             >
               <AnimatedLogo size={48} />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent ml-2">Leila</h1>
             </motion.div>
             
             {/* Desktop Navigation */}

@@ -113,6 +113,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Hide scrollbars globally */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* WebKit */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure content is still scrollable */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 /* Remove all underlines globally */
 * {
   text-decoration: none !important;
@@ -136,17 +153,55 @@ input[type="file"] {
   cursor: pointer;
 }
 
-/* Custom scrollbar - minimal like Uber */
-::-webkit-scrollbar {
+/* Mobile native app feel */
+body {
+  touch-action: pan-y; /* Allow vertical scrolling only */
+  -webkit-touch-callout: none; /* Disable callout on long press */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+}
+
+/* Prevent text selection on mobile */
+@media (max-width: 768px) {
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection in input fields */
+  input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  /* Ensure buttons feel native */
+  button, a {
+    -webkit-tap-highlight-color: rgba(124, 58, 237, 0.1);
+  }
+}
+
+/* Custom scrollbar - hidden by default */
+/* Note: Scrollbars are hidden globally above */
+/* If you need to show scrollbars for specific elements, use the .show-scrollbar class */
+.show-scrollbar {
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+}
+
+.show-scrollbar::-webkit-scrollbar {
+  display: block;
   width: 6px;
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
+.show-scrollbar::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
 
-::-webkit-scrollbar-thumb {
+.show-scrollbar::-webkit-scrollbar-thumb {
   @apply bg-gray-300 rounded-full;
   @apply hover:bg-gray-400;
 }

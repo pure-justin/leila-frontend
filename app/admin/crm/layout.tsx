@@ -60,7 +60,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="px-6 py-5 border-b border-gray-800">
-            <h2 className="text-2xl font-bold text-white">Leila CRM</h2>
+            <h2 className="text-2xl font-bold text-white">CRM</h2>
             <p className="text-sm text-gray-400 mt-1">AI-Powered Management</p>
           </div>
 

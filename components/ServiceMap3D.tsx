@@ -8,6 +8,7 @@ import {
   Home, TreePine, Droplets, Wrench, Paintbrush
 } from 'lucide-react';
 import { fadeIn, fadeInUp, scaleIn, pulseAnimation } from '@/lib/animations';
+import { useContractors } from '@/lib/hooks/useContractors';
 
 interface ServiceMap3DProps {
   userAddress?: string;
@@ -31,6 +32,9 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   const [serviceHotspots, setServiceHotspots] = useState<ServiceHotspot[]>([]);
   const [showARMode, setShowARMode] = useState(false);
   const [mapError, setMapError] = useState(false);
+  
+  // Get real contractor data from Firestore
+  const { contractors: firestoreContractors, loading: contractorsLoading } = useContractors(selectedService, 20);
   
   useEffect(() => {
     const initializeMap = async () => {
@@ -279,6 +283,13 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     
     initializeMap();
   }, []);
+  
+  // Regenerate contractors when Firestore data changes
+  useEffect(() => {
+    if (map && !contractorsLoading && firestoreContractors.length > 0) {
+      generateLiveContractors(map);
+    }
+  }, [map, contractorsLoading, firestoreContractors]);
 
   const animateMap = (map: google.maps.Map) => {
     let heading = 0;
@@ -790,9 +801,9 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                   <div className="text-right">
                     <div className="flex items-center text-sm">
                       <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                      <span className="font-semibold">{contractor.rating}</span>
+                      <span className="font-semibold">{Number(contractor.rating || 0).toFixed(1)}</span>
                     </div>
-                    <p className="text-xs text-gray-500">{contractor.jobsCompleted} jobs</p>
+                    <p className="text-xs text-gray-500">{contractor.jobsCompleted || 0} jobs</p>
                   </div>
                 </div>
 

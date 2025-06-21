@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Star, Briefcase, Calendar, Menu, X, Bell, CheckCircle, Clock, TrendingUp, DollarSign, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils/currency';
@@ -27,13 +28,15 @@ export default function ContractorDashboard() {
   const [isOnline, setIsOnline] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // Mock contractor data - in real app, get from auth
+  const { user } = useAuth();
+  
+  // Get contractor data from auth context
   const contractorData = {
-    id: 'contractor-123',
+    id: user?.uid || 'contractor-123',
     token: 'mock-jwt-token',
-    name: 'John',
-    fullName: 'John Smith',
-    profession: 'Master Electrician'
+    name: user?.displayName?.split(' ')[0] || 'Contractor',
+    fullName: user?.displayName || 'Contractor',
+    profession: user?.profession || 'Professional'
   };
 
   // Mock data
