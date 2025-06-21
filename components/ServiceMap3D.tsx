@@ -33,21 +33,22 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   const [mapError, setMapError] = useState(false);
   
   useEffect(() => {
-    if (!mapRef.current) return;
-    
-    // Check if Google Maps is loaded
-    if (typeof window === 'undefined' || !window.google || !window.google.maps) {
-      console.warn('Google Maps not loaded yet');
-      // Don't set error immediately, wait a bit for maps to load
-      const timeout = setTimeout(() => {
-        if (!window.google || !window.google.maps) {
-          setMapError(true);
-        }
-      }, 3000);
-      return () => clearTimeout(timeout);
-    }
-    
-    try {
+    const initializeMap = async () => {
+      if (!mapRef.current) return;
+      
+      // Check if Google Maps is loaded
+      if (typeof window === 'undefined' || !window.google || !window.google.maps) {
+        console.warn('Google Maps not loaded yet');
+        // Don't set error immediately, wait a bit for maps to load
+        const timeout = setTimeout(() => {
+          if (!window.google || !window.google.maps) {
+            setMapError(true);
+          }
+        }, 3000);
+        return () => clearTimeout(timeout);
+      }
+      
+      try {
 
     // Try to initialize with Solar API first, then fallback gracefully
     let mapConfig: google.maps.MapOptions = {
@@ -250,15 +251,18 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
       });
     }
 
-    return () => {
-      if (mapInstance && mapInstance.unbindAll) {
-        mapInstance.unbindAll();
+      return () => {
+        if (mapInstance && mapInstance.unbindAll) {
+          mapInstance.unbindAll();
+        }
+      };
+      } catch (error) {
+        console.error('Error initializing map:', error);
+        setMapError(true);
       }
     };
-    } catch (error) {
-      console.error('Error initializing map:', error);
-      setMapError(true);
-    }
+    
+    initializeMap();
   }, []);
 
   const animateMap = (map: google.maps.Map) => {
