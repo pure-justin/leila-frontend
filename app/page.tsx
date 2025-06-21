@@ -92,8 +92,18 @@ export default function Home() {
 
   const featuredCategories = getFeaturedCategories();
   const allServices = getAllServices();
+  const totalServices = allServices.length;
   const popularServices = allServices.filter(s => 
     ['lawn-mowing', 'house-cleaning', 'mobile-car-wash', 'dog-walking', 'furniture-assembly', 'mobile-haircut'].includes(s.id)
+  ).slice(0, 6);
+  
+  // Define service categories
+  const homeServices = allServices.filter(s => 
+    ['house-cleaning', 'electrical-repair', 'plumbing-repair', 'hvac-service', 'appliance-repair', 'furniture-assembly'].includes(s.id)
+  ).slice(0, 6);
+  
+  const maintenanceServices = allServices.filter(s => 
+    ['lawn-mowing', 'pressure-washing', 'gutter-cleaning', 'window-cleaning', 'handyman-service', 'painting-interior'].includes(s.id)
   ).slice(0, 6);
 
   // Check for referral code in URL
@@ -258,7 +268,7 @@ export default function Home() {
                               animate={{ rotate: [0, 10, -10, 0] }}
                               transition={{ duration: 2, delay: index * 0.2, repeat: Infinity }}
                             >
-                              {service.icon}
+                              {service.categoryIcon}
                             </motion.span>
                             <div className="text-left">
                               <h3 className="font-semibold mb-1 text-gray-800">{service.name}</h3>
@@ -501,7 +511,7 @@ export default function Home() {
                         repeatType: "reverse"
                       }}
                     >
-                      {service.icon}
+                      {service.categoryIcon}
                     </motion.div>
                     
                     {/* Content */}
