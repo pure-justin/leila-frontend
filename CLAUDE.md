@@ -75,22 +75,67 @@ Leila is an AI-powered home service platform that connects customers with contra
 # Frontend development
 npm run dev
 
-# Run tests
-npm test
-
 # Build for production
 npm run build
 
 # Start production server
 npm start
+
+# Type checking
+npm run type-check
+
+# Linting
+npm run lint
+```
+
+## Deployment Commands
+
+```bash
+# Deploy to Vercel (production)
+npm run deploy
+
+# Deploy preview to Vercel
+npm run deploy:preview
+
+# Alternative: Deploy to Firebase (legacy)
+npm run deploy:firebase
+```
+
+## Payment System
+
+### Stripe Integration
+- Complete payment workflow integrated into booking process
+- Secure payment processing with Stripe Elements
+- Support for cards, Apple Pay, and Google Pay
+- Real-time payment status updates
+
+### Tiered Commission Structure
+- **Starter (0-$1K)**: 30% commission
+- **Growing ($1K-$5K)**: 25% commission  
+- **Established ($5K-$15K)**: 20% commission
+- **Professional ($15K-$50K)**: 15% commission
+- **Enterprise ($50K+)**: 10% commission
+
+### Commission Calculation
+```typescript
+import { calculatePlatformFee } from '@/lib/stripe-config';
+
+const fee = calculatePlatformFee(amount, contractorMonthlyVolume);
+// Returns: { feeAmount, feePercentage, tierName, netAmount }
 ```
 
 ## Recent Updates
+- ✅ Complete Stripe payment integration with booking workflow
+- ✅ Tiered commission structure based on contractor volume
+- ✅ 200+ comprehensive service catalog (professional to entry-level)
+- ✅ Professional 404 pages for all sections
+- ✅ Fixed CRM formatting and spacing issues
+- ✅ Fixed map UI issues (rotation speed, clipping, overlays)
+- ✅ Resolved all build errors and deployment issues
 - Removed API Gateway - now using Firebase directly
 - Removed CRM integration - simplified architecture
 - Removed MySQL - fully migrated to Firestore
 - Cleaned up Docker configurations
-- Updated all documentation
 
 ## Important Notes
 - Always use Firebase services
