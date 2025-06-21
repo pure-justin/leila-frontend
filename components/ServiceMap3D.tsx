@@ -36,10 +36,15 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     if (!mapRef.current) return;
     
     // Check if Google Maps is loaded
-    if (!window.google || !window.google.maps) {
+    if (typeof window === 'undefined' || !window.google || !window.google.maps) {
       console.warn('Google Maps not loaded yet');
-      setMapError(true);
-      return;
+      // Don't set error immediately, wait a bit for maps to load
+      const timeout = setTimeout(() => {
+        if (!window.google || !window.google.maps) {
+          setMapError(true);
+        }
+      }, 3000);
+      return () => clearTimeout(timeout);
     }
     
     try {
