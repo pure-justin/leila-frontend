@@ -103,18 +103,36 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
 
     setMap(mapInstance);
 
-    // Initialize Street View
+    // Initialize Street View with epic settings
     const streetViewInstance = new google.maps.StreetViewPanorama(
-      document.createElement('div'),
+      mapRef.current,
       {
         position: mapInstance.getCenter(),
         pov: { heading: 34, pitch: 10 },
-        visible: false
+        visible: false,
+        enableCloseButton: true,
+        fullscreenControl: true,
+        linksControl: true,
+        panControl: true,
+        zoomControl: true,
+        imageDateControl: true,
+        motionTracking: true,
+        motionTrackingControl: true
       }
     );
     
     mapInstance.setStreetView(streetViewInstance);
     setStreetView(streetViewInstance);
+    
+    // Hide street view by default
+    streetViewInstance.setVisible(false);
+    
+    // Listen for street view close
+    streetViewInstance.addListener('visible_changed', () => {
+      if (!streetViewInstance.getVisible()) {
+        setViewMode('3d');
+      }
+    });
 
     // Add sick animations
     animateMap(mapInstance);
@@ -451,22 +469,22 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   // Show fallback UI if map fails to load
   if (mapError) {
     return (
-      <div className="relative w-full h-full bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center">
+      <div className="relative w-full h-full bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-2xl flex items-center justify-center">
         <div className="text-center p-8">
           <motion.div
-            className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            className="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <MapPin className="w-10 h-10 text-purple-600" />
+            <MapPin className="w-10 h-10 text-purple-600 dark:text-purple-400" />
           </motion.div>
-          <h3 className="text-xl font-semibold mb-2">Interactive Map</h3>
-          <p className="text-gray-600 mb-4">Loading your area...</p>
+          <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Interactive Map</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">Loading your area...</p>
           <div className="flex justify-center space-x-2">
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                className="w-3 h-3 bg-purple-600 rounded-full"
+                className="w-3 h-3 bg-purple-600 dark:bg-purple-400 rounded-full"
                 animate={{ scale: [1, 1.5, 1] }}
                 transition={{ duration: 1, delay: i * 0.2, repeat: Infinity }}
               />
@@ -492,11 +510,11 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
         >
           {/* Live Activity Feed */}
           <motion.div 
-            className="bg-black/80 backdrop-blur-xl rounded-2xl p-4 text-white max-w-sm"
+            className="bg-white/90 dark:bg-black/80 backdrop-blur-xl rounded-2xl p-4 text-gray-900 dark:text-white max-w-sm shadow-lg border border-purple-100 dark:border-purple-900/50"
             whileHover={{ scale: 1.02 }}
           >
             <h3 className="text-sm font-bold mb-2 flex items-center">
-              <Zap className="w-4 h-4 mr-2 text-yellow-400" />
+              <Zap className="w-4 h-4 mr-2 text-yellow-500 dark:text-yellow-400" />
               LIVE ACTIVITY
             </h3>
             <div className="space-y-2 text-xs">
@@ -531,7 +549,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
 
           {/* View Mode Switcher */}
           <motion.div 
-            className="bg-black/80 backdrop-blur-xl rounded-2xl p-2 flex space-x-2"
+            className="bg-white/90 dark:bg-black/80 backdrop-blur-xl rounded-2xl p-2 flex space-x-2 shadow-lg border border-purple-100 dark:border-purple-900/50"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
@@ -540,30 +558,85 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 viewMode === '3d' 
                   ? 'bg-purple-600 text-white' 
-                  : 'text-gray-300 hover:text-white'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              3D View
+              3D View {viewMode === '3d' ? '🌆' : '🏙️'}
             </button>
             <button
-              onClick={() => setViewMode('street')}
+              onClick={() => {
+                setViewMode('street');
+                if (map && streetView && activeContractors.length > 0) {
+                  // Show street view
+                  streetView.setVisible(true);
+                  
+                  // Animate to the nearest contractor's location
+                  const contractor = activeContractors[0];
+                  streetView.setPosition(contractor.position);
+                  
+                  // Epic driving animation - pull up like a G!
+                  let heading = 0;
+                  let pitch = 10;
+                  const animateDrive = setInterval(() => {
+                    heading = (heading + 1) % 360;
+                    pitch = 10 + Math.sin(Date.now() * 0.001) * 5; // Slight up/down motion
+                    
+                    streetView.setPov({
+                      heading: heading,
+                      pitch: pitch
+                    });
+                    
+                    // Move forward slightly to simulate driving
+                    const currentPos = streetView.getPosition();
+                    if (currentPos) {
+                      const moveDistance = 0.00002;
+                      const newLat = currentPos.lat() + Math.sin(heading * Math.PI / 180) * moveDistance;
+                      const newLng = currentPos.lng() + Math.cos(heading * Math.PI / 180) * moveDistance;
+                      streetView.setPosition({ lat: newLat, lng: newLng });
+                    }
+                  }, 50);
+                  
+                  // Stop after 5 seconds and focus on contractor
+                  setTimeout(() => {
+                    clearInterval(animateDrive);
+                    // Point camera at contractor location
+                    if (contractor.position) {
+                      const contractorHeading = google.maps.geometry.spherical.computeHeading(
+                        streetView.getPosition()!,
+                        new google.maps.LatLng(contractor.position.lat, contractor.position.lng)
+                      );
+                      streetView.setPov({
+                        heading: contractorHeading,
+                        pitch: 0
+                      });
+                    }
+                  }, 5000);
+                } else if (map && !streetView) {
+                  // Initialize street view if not already created
+                  const sv = map.getStreetView();
+                  if (sv) {
+                    sv.setVisible(true);
+                    setStreetView(sv);
+                  }
+                }
+              }}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 viewMode === 'street' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'text-gray-300 hover:text-white'
+                  ? 'bg-purple-600 text-white animate-pulse' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              Street View
+              Street View {viewMode === 'street' ? '🚗' : '🛣️'}
             </button>
             <button
               onClick={() => setViewMode('heat')}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 viewMode === 'heat' 
                   ? 'bg-purple-600 text-white' 
-                  : 'text-gray-300 hover:text-white'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              Heat Map
+              Heat Map {viewMode === 'heat' ? '🔥' : '📊'}
             </button>
           </motion.div>
         </motion.div>
