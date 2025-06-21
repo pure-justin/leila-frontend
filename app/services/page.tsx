@@ -362,15 +362,15 @@ export default function ServicesPage() {
       {showServiceSelector && selectedService && (
         <ServiceSelector
           serviceId={selectedService}
-          onClose={() => {
+          onCancel={() => {
             setShowServiceSelector(false);
             setSelectedService(null);
           }}
-          onStandardBooking={() => {
+          onSelectStandard={() => {
             setShowServiceSelector(false);
             setShowBookingForm(true);
           }}
-          onServiceXBooking={() => {
+          onSelectServiceX={() => {
             // Handle ServiceX booking
             setShowServiceSelector(false);
           }}
