@@ -36,12 +36,14 @@ export default function Home3DMap({ address, className = '' }: Home3DMapProps) {
       tilt: 60, // Enable 3D tilt
       heading: 0,
       mapTypeId: 'satellite',
+      // DISABLE ALL DEFAULT UI CONTROLS
+      disableDefaultUI: true,
       mapTypeControl: false,
       fullscreenControl: false,
       streetViewControl: false,
-      rotateControl: true,
+      rotateControl: false,
       scaleControl: false,
-      zoomControl: true,
+      zoomControl: false,
       // Enable new 3D features
       isFractionalZoomEnabled: true,
       mapId: '3d_home_service_map', // Custom map ID for 3D features
@@ -56,6 +58,20 @@ export default function Home3DMap({ address, className = '' }: Home3DMapProps) {
           featureType: "all",
           elementType: "labels.text.stroke",
           stylers: [{ color: "#000000" }, { lightness: 13 }]
+        },
+        {
+          featureType: "poi",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }]
+        },
+        {
+          featureType: "poi.business",
+          stylers: [{ visibility: "off" }]
+        },
+        {
+          featureType: "transit",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }]
         }
       ]
     });

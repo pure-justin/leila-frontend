@@ -64,10 +64,36 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     let mapConfig: google.maps.MapOptions = {
       center: { lat: 37.7749, lng: -122.4194 },
       zoom: 17,
+      // DISABLE ALL DEFAULT UI CONTROLS
+      disableDefaultUI: true,
       mapTypeControl: false,
-      fullscreenControl: true,
-      streetViewControl: true,
-      zoomControl: true,
+      fullscreenControl: false,
+      streetViewControl: false,
+      zoomControl: false,
+      scaleControl: false,
+      rotateControl: false,
+      // Clean minimal styles
+      styles: [
+        {
+          featureType: "poi",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }]
+        },
+        {
+          featureType: "poi.business",
+          stylers: [{ visibility: "off" }]
+        },
+        {
+          featureType: "transit",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }]
+        },
+        {
+          featureType: "road",
+          elementType: "labels.icon",
+          stylers: [{ visibility: "off" }]
+        }
+      ]
     };
     
     // Check for Solar API availability
@@ -150,18 +176,13 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           stylers: [{ color: "#242f3e" }]
         },
         {
-          featureType: "all",
-          elementType: "labels.text.stroke",
-          stylers: [{ color: "#242f3e" }]
-        },
-        {
-          featureType: "all",
-          elementType: "labels.text.fill",
-          stylers: [{ color: "#746855" }]
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#17263c" }]
         },
         {
           featureType: "road",
-          elementType: "geometry",
+          elementType: "geometry.stroke",
           stylers: [{ color: "#7C3AED" }, { lightness: 20 }]
         },
         {
@@ -214,293 +235,214 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
       console.log('✅ Using standard map view (3D not available)');
       setMapMode('standard');
     }
-
-    // Initialize Street View with epic settings
-    const streetViewInstance = new google.maps.StreetViewPanorama(
-      mapRef.current,
-      {
-        position: mapInstance.getCenter(),
-        pov: { heading: 34, pitch: 10 },
-        visible: false,
-        enableCloseButton: true,
-        fullscreenControl: true,
-        linksControl: true,
-        panControl: true,
-        zoomControl: true,
-        imageDateControl: true,
-        motionTracking: true,
-        motionTrackingControl: true
-      }
-    );
     
-    mapInstance.setStreetView(streetViewInstance);
-    setStreetView(streetViewInstance);
-    
-    // Hide street view by default
-    streetViewInstance.setVisible(false);
-    
-    // Listen for street view close
-    streetViewInstance.addListener('visible_changed', () => {
-      if (!streetViewInstance.getVisible()) {
-        setViewMode('3d');
-      }
-    });
-
-    // Add sick animations
-    const cleanupAnimation = animateMap(mapInstance);
-    
-    // Generate dynamic data
-    generateLiveContractors(mapInstance);
-    generateServiceHeatmap(mapInstance);
-    
-    // Add real-time updates
-    startRealTimeUpdates(mapInstance);
-    
-    // If Solar API is available, add solar layer
-    if (hasSolar && (window.google.maps as any).SolarLayer) {
-      const solarLayer = new (window.google.maps as any).SolarLayer();
-      solarLayer.setMap(mapInstance);
-      
-      // Add solar data overlays
-      mapInstance.addListener('click', async (e: google.maps.MapMouseEvent) => {
-        if (e.latLng && (window.google.maps as any).SolarApi) {
-          const solarApi = new (window.google.maps as any).SolarApi();
-          try {
-            const building = await solarApi.findClosestBuilding({
-              location: { 
-                latitude: e.latLng.lat(), 
-                longitude: e.latLng.lng() 
-              }
-            });
-            
-            if (building && building.solarPotential) {
-              // Show solar potential in a cool overlay
-              const infoWindow = new google.maps.InfoWindow({
-                content: `
-                  <div class="p-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg text-white">
-                    <h3 class="font-bold text-lg mb-2">☀️ Solar Potential</h3>
-                    <p>Annual sunshine: ${building.solarPotential.maxSunshineHoursPerYear}h</p>
-                    <p>Roof area: ${building.solarPotential.roofSegmentStats?.[0]?.pitchDegrees || 'N/A'}°</p>
-                    <p class="mt-2 text-sm">Perfect for solar panels!</p>
-                  </div>
-                `,
-                position: e.latLng
-              });
-              infoWindow.open(map);
+    // Geocode user address or use default
+    if (userAddress) {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: userAddress }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          const location = results[0].geometry.location;
+          mapInstance.setCenter(location);
+          
+          // Add user marker
+          new google.maps.Marker({
+            position: location,
+            map: mapInstance,
+            title: 'Your Location',
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: '#7C3AED',
+              fillOpacity: 0.8,
+              strokeColor: '#fff',
+              strokeWeight: 2
             }
-          } catch (error) {
-            console.log('Solar data not available for this location');
-          }
+          });
         }
       });
     }
-
-      return () => {
-        if (cleanupAnimation) {
-          cleanupAnimation();
-        }
-        // Cleanup real-time updates
-        if ((mapInstance as any)?._realTimeUpdatesCleanup) {
-          (mapInstance as any)._realTimeUpdatesCleanup();
-        }
-        // Cleanup street view animations
-        if (streetViewInstance && (streetViewInstance as any)?._animationCleanup) {
-          (streetViewInstance as any)._animationCleanup();
-        }
-        if (mapInstance && mapInstance.unbindAll) {
-          mapInstance.unbindAll();
-        }
-      };
+    
+    // Initialize features
+    setupContractors(mapInstance);
+    generateServiceHeatmap(mapInstance);
+    startRealTimeUpdates(mapInstance);
+    
+    // Epic rotating animation with slower speed
+    const rotateMap = () => {
+      const currentHeading = mapInstance.getHeading() || 0;
+      const newHeading = (currentHeading + 0.05) % 360; // Reduced from 0.2 to 0.05
+      mapInstance.setHeading(newHeading);
+    };
+    
+    const rotationInterval = setInterval(rotateMap, 50);
+    
+    // Store cleanup function on map instance
+    (mapInstance as any)._rotationCleanup = () => {
+      clearInterval(rotationInterval);
+    };
+    
+    // Cleanup function
+    return () => {
+      if ((mapInstance as any)._rotationCleanup) {
+        (mapInstance as any)._rotationCleanup();
+      }
+      if ((mapInstance as any)._markersCleanup) {
+        (mapInstance as any)._markersCleanup();
+      }
+      if ((mapInstance as any)._realTimeUpdatesCleanup) {
+        (mapInstance as any)._realTimeUpdatesCleanup();
+      }
+    };
+    
       } catch (error) {
-        console.error('CRITICAL: Error initializing map:', error);
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-          googleMapsLoaded: !!window.google?.maps
-        });
+        console.error('Error initializing map:', error);
         setMapError(true);
       }
     };
-    
+
     initializeMap();
-  }, []);
-  
-  // Regenerate contractors when Firestore data changes
-  useEffect(() => {
-    if (map && !contractorsLoading && firestoreContractors.length > 0) {
-      generateLiveContractors(map);
-    }
-  }, [map, contractorsLoading, firestoreContractors]);
+  }, [userAddress, selectedService]);
 
-  const animateMap = (map: google.maps.Map) => {
-    let heading = 0;
-    let tilt = 60;
-    let animationId: number;
-    
-    const animate = () => {
-      try {
-        heading = (heading + 0.1) % 360; // Slowed down rotation from 0.5 to 0.1
-        tilt = 60 + Math.sin(Date.now() * 0.001) * 5; // Reduced tilt variation from 10 to 5
-        
-        // Check if 3D features are supported before animating
-        if (map.getTilt && typeof map.getTilt === 'function') {
-          map.moveCamera({
-            heading,
-            tilt,
-            zoom: map.getZoom()
-          });
-          
-          animationId = requestAnimationFrame(animate);
-        }
-      } catch (error) {
-        console.log('3D animation not supported, using standard view');
-        // Don't continue animation if 3D features aren't supported
-      }
-    };
-    
-    animate();
-    
-    // Return cleanup function
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-    };
-  };
-
-  const generateLiveContractors = (map: google.maps.Map) => {
+  const setupContractors = (map: google.maps.Map) => {
     const center = map.getCenter();
     if (!center) return;
 
-    const contractors = [];
-    const services = ['Plumbing', 'Electrical', 'HVAC', 'Cleaning', 'Lawn Care'];
-    
-    for (let i = 0; i < 20; i++) {
-      const contractor = {
-        id: `contractor-${i}`,
-        name: `Pro ${i + 1}`,
-        service: services[Math.floor(Math.random() * services.length)],
-        rating: (4.5 + Math.random() * 0.5).toFixed(1),
-        price: Math.floor(50 + Math.random() * 200),
-        eta: Math.floor(5 + Math.random() * 25),
-        position: {
-          lat: center.lat() + (Math.random() - 0.5) * 0.02,
-          lng: center.lng() + (Math.random() - 0.5) * 0.02
-        },
-        isMoving: Math.random() > 0.5,
-        speed: 20 + Math.random() * 40, // mph
-        jobsCompleted: Math.floor(100 + Math.random() * 400),
-        responseRate: Math.floor(85 + Math.random() * 15),
-        specialties: getRandomSpecialties(),
-        vehicle: getRandomVehicle()
-      };
-      
-      contractors.push(contractor);
-      createAdvancedMarker(map, contractor);
-    }
-    
+    // Use real contractors from Firestore
+    const contractors = firestoreContractors.length > 0 
+      ? firestoreContractors.map((contractor, index) => ({
+          ...contractor,
+          position: {
+            lat: center.lat() + (Math.random() - 0.5) * 0.02,
+            lng: center.lng() + (Math.random() - 0.5) * 0.02
+          },
+          eta: 5 + Math.floor(Math.random() * 25),
+          isMoving: index < 3,
+          specialties: contractor.specialties || getRandomSpecialties(),
+          vehicle: contractor.vehicle || getRandomVehicle()
+        }))
+      : generateMockContractors(center);
+
     setActiveContractors(contractors);
-  };
-
-  const createAdvancedMarker = (map: google.maps.Map, contractor: any) => {
-    // Create custom 3D marker
-    const markerDiv = document.createElement('div');
-    markerDiv.className = 'contractor-marker-3d';
-    markerDiv.innerHTML = `
-      <div class="marker-container">
-        <div class="pulse-ring"></div>
-        <div class="marker-icon">
-          ${getServiceIcon(contractor.service)}
-        </div>
-        <div class="marker-info">
-          <div class="rating">⭐ ${contractor.rating}</div>
-          <div class="eta">${contractor.eta}min</div>
-        </div>
-      </div>
-    `;
-
-    // Use regular marker if AdvancedMarkerElement is not available
-    if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
-      const advancedMarker = new google.maps.marker.AdvancedMarkerElement({
-        map,
-        position: contractor.position,
-        content: markerDiv,
-        title: contractor.name
-      });
-      
-      // Animate moving contractors
-      if (contractor.isMoving) {
-        animateContractorMovement(advancedMarker, contractor);
-      }
-    } else {
-      // Fallback to regular marker
+    
+    // Create markers with custom animations
+    const markers: google.maps.Marker[] = [];
+    
+    contractors.forEach((contractor, index) => {
+      // Create contractor marker
       const marker = new google.maps.Marker({
-        map,
         position: contractor.position,
+        map,
         title: contractor.name,
         icon: {
-          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+          url: `data:image/svg+xml,${encodeURIComponent(`
             <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="20" cy="20" r="18" fill="#7C3AED" stroke="white" stroke-width="2"/>
-              <text x="20" y="26" font-family="Arial" font-size="20" fill="white" text-anchor="middle">${getServiceIcon(contractor.service)}</text>
+              <circle cx="20" cy="20" r="18" fill="${contractor.isMoving ? '#10B981' : '#7C3AED'}" opacity="0.9"/>
+              <text x="20" y="25" text-anchor="middle" fill="white" font-size="20">${getServiceIcon(contractor.service)}</text>
             </svg>
-          `),
-          scaledSize: new google.maps.Size(40, 40)
-        }
+          `)}`,
+          scaledSize: new google.maps.Size(40, 40),
+          anchor: new google.maps.Point(20, 20)
+        },
+        zIndex: contractor.isMoving ? 1000 : 100
       });
-      
+
+      // Info window
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div class="p-4 min-w-[200px]">
+            <h3 class="font-bold text-lg mb-2">${contractor.name}</h3>
+            <p class="text-sm text-gray-600 mb-2">${contractor.service}</p>
+            <div class="flex items-center mb-2">
+              <span class="text-yellow-500">★</span>
+              <span class="ml-1 text-sm">${contractor.rating}</span>
+              <span class="text-gray-400 text-sm ml-2">(${contractor.reviews} reviews)</span>
+            </div>
+            <p class="text-sm"><strong>ETA:</strong> ${contractor.eta} min</p>
+            <p class="text-sm"><strong>Rate:</strong> $${contractor.hourlyRate}/hr</p>
+            ${contractor.isMoving ? '<p class="text-green-600 text-sm mt-2">🚗 En route</p>' : ''}
+          </div>
+        `
+      });
+
       marker.addListener('click', () => {
-        showContractorDetails(contractor);
+        infoWindow.open(map, marker);
         if (onContractorSelect) {
           onContractorSelect(contractor);
         }
       });
-    }
 
-    // Add hover effects
-    markerDiv.addEventListener('mouseenter', () => {
-      markerDiv.classList.add('hover');
-      showContractorPreview(contractor);
-    });
+      markers.push(marker);
 
-    markerDiv.addEventListener('click', () => {
-      showContractorDetails(contractor);
-      if (onContractorSelect) {
-        onContractorSelect(contractor);
+      // Animate moving contractors
+      if (contractor.isMoving) {
+        animateContractorMovement(map, marker, contractor);
       }
     });
 
+    // Store cleanup function on map for later cleanup
+    (map as any)._markersCleanup = () => {
+      markers.forEach(marker => {
+        if ((marker as any)._cleanupAnimation) {
+          (marker as any)._cleanupAnimation();
+        }
+        marker.setMap(null);
+      });
+    };
   };
 
-  const animateContractorMovement = (marker: any, contractor: any) => {
-    const destinations = generateRandomPath(contractor.position, 5);
+  const generateMockContractors = (center: google.maps.LatLng) => {
+    const services = ['Plumbing', 'Electrical', 'HVAC', 'Cleaning', 'Lawn Care'];
+    const names = ['Mike', 'Sarah', 'John', 'Emily', 'David', 'Lisa', 'Tom', 'Jessica'];
+    
+    return Array.from({ length: 12 }, (_, i) => ({
+      id: `contractor-${i}`,
+      name: `${names[i % names.length]} ${['Smith', 'Johnson', 'Williams', 'Brown'][i % 4]}`,
+      service: services[i % services.length],
+      position: {
+        lat: center.lat() + (Math.random() - 0.5) * 0.02,
+        lng: center.lng() + (Math.random() - 0.5) * 0.02
+      },
+      rating: (4 + Math.random()).toFixed(1),
+      reviews: Math.floor(50 + Math.random() * 200),
+      hourlyRate: Math.floor(50 + Math.random() * 100),
+      eta: 5 + Math.floor(Math.random() * 25),
+      isMoving: i < 3,
+      specialties: getRandomSpecialties(),
+      vehicle: getRandomVehicle()
+    }));
+  };
+
+  const animateContractorMovement = (map: google.maps.Map, marker: google.maps.Marker, contractor: any) => {
+    // Generate a path for the contractor to follow
+    const path = generateRandomPath(contractor.position, 5);
     let currentIndex = 0;
-    let timeoutId: NodeJS.Timeout;
-    let animationId: number;
+    
+    // Store animation state
+    let animationId: number | null = null;
     const activeTimeouts: NodeJS.Timeout[] = [];
 
     const move = () => {
-      if (currentIndex >= destinations.length) {
-        currentIndex = 0;
+      if (currentIndex >= path.length) {
+        currentIndex = 0; // Loop back
       }
 
-      const start = marker.position;
-      const end = destinations[currentIndex];
-      const duration = 3000; // 3 seconds per segment
-      const startTime = Date.now();
+      const target = path[currentIndex];
+      const current = marker.getPosition();
+      if (!current || !target) return;
+
+      const steps = 60;
+      let step = 0;
 
       const animate = () => {
-        const progress = Math.min((Date.now() - startTime) / duration, 1);
-        const lat = start.lat + (end.lat - start.lat) * progress;
-        const lng = start.lng + (end.lng - start.lng) * progress;
-
-        marker.position = { lat, lng };
-
-        if (progress < 1) {
+        if (step < steps) {
+          const lat = current.lat() + (target.lat - current.lat()) * (step / steps);
+          const lng = current.lng() + (target.lng - current.lng()) * (step / steps);
+          marker.setPosition({ lat, lng });
+          step++;
           animationId = requestAnimationFrame(animate);
         } else {
           currentIndex++;
-          timeoutId = setTimeout(move, 1000); // Pause at each point
+          const timeoutId = setTimeout(move, 1000); // Pause at each point
           activeTimeouts.push(timeoutId);
         }
       };
@@ -511,7 +453,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     move();
 
     // Store cleanup function on marker for later cleanup
-    marker._cleanupAnimation = () => {
+    (marker as any)._cleanupAnimation = () => {
       if (animationId) {
         cancelAnimationFrame(animationId);
       }
@@ -710,88 +652,50 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
       {/* Main 3D Map - properly clipped */}
       <div ref={mapRef} className="absolute inset-0" />
 
-      {/* Epic UI Overlay - properly layered */}
+      {/* Minimal UI Overlay */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Top Stats Bar - adjusted spacing to avoid map controls */}
+        {/* Top Stats Bar - minimal glass effect */}
         <motion.div 
-          className="absolute top-6 left-6 right-24 flex justify-between items-start gap-4 pointer-events-auto"
+          className="absolute top-4 left-4 right-4 flex justify-between items-start gap-3 pointer-events-auto"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          {/* Live Activity Feed */}
+          {/* Live Activity Feed - minimal and clean */}
           <motion.div 
-            className="bg-white/95 backdrop-blur-xl rounded-2xl p-5 text-gray-900 max-w-sm shadow-xl border border-purple-100"
+            className="bg-white/60 backdrop-blur-sm rounded-lg p-3 text-gray-800 max-w-[240px] shadow-sm border border-white/20"
             whileHover={{ scale: 1.02 }}
           >
-            <h3 className="text-base font-bold mb-3 flex items-center">
-              <Zap className="w-5 h-5 mr-2 text-yellow-500 dark:text-yellow-400" />
-              LIVE ACTIVITY
+            <h3 className="text-xs font-semibold mb-1.5 flex items-center text-gray-600">
+              <Zap className="w-3 h-3 mr-1 text-yellow-500" />
+              LIVE
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-1">
               <motion.div 
-                className="flex items-center space-x-3 text-sm"
-                initial={{ opacity: 0, x: -20 }}
+                className="flex items-center space-x-2 text-xs"
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
               >
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0" />
-                <span className="text-gray-700">John booked Plumbing - 2 min ago</span>
-              </motion.div>
-              <motion.div 
-                className="flex items-center space-x-3 text-sm"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse flex-shrink-0" />
-                <span className="text-gray-700">Mike completed HVAC repair - 5 min ago</span>
-              </motion.div>
-              <motion.div 
-                className="flex items-center space-x-3 text-sm"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse flex-shrink-0" />
-                <span className="text-gray-700">Sarah requested Emergency Electric - Just now</span>
+                <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse flex-shrink-0" />
+                <span className="text-gray-600 truncate">New booking - 2m ago</span>
               </motion.div>
             </div>
           </motion.div>
 
-          {/* Map Mode Indicator */}
+          {/* View Mode Switcher - minimal */}
           <motion.div 
-            className="bg-white/90 backdrop-blur-xl rounded-2xl px-4 py-2 shadow-lg border border-purple-100 mr-2"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <div className="flex items-center space-x-2">
-              <div className={`w-3 h-3 rounded-full ${
-                mapMode === 'solar' ? 'bg-yellow-400' : 
-                mapMode === '3d' ? 'bg-blue-400' : 
-                'bg-gray-400'
-              }`} />
-              <span className="text-sm font-medium text-gray-700">
-                {mapMode === 'solar' ? '🌞 Solar 3D' : 
-                 mapMode === '3d' ? '🏔️ 3D View' : 
-                 '🗺️ Standard Map'}
-              </span>
-            </div>
-          </motion.div>
-
-          {/* View Mode Switcher */}
-          <motion.div 
-            className="bg-white/90 backdrop-blur-xl rounded-2xl p-2 flex space-x-2 shadow-lg border border-purple-100"
+            className="bg-white/60 backdrop-blur-sm rounded-lg p-1 flex space-x-1 shadow-sm border border-white/20"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
             <button
               onClick={() => setViewMode('3d')}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                 viewMode === '3d' 
                   ? 'bg-purple-600 text-white' 
-                  : 'text-gray-700 hover:text-gray-900'
+                  : 'text-gray-600 hover:text-gray-800'
               }`}
             >
-              3D View {viewMode === '3d' ? '🌆' : '🏙️'}
+              3D
             </button>
             <button
               onClick={() => {
@@ -856,81 +760,61 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                   }
                 }
               }}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'street' 
-                  ? 'bg-purple-600 text-white animate-pulse' 
-                  : 'text-gray-700 hover:text-gray-900'
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-600 hover:text-gray-800'
               }`}
             >
-              Street View {viewMode === 'street' ? '🚗' : '🛣️'}
+              Street
             </button>
             <button
               onClick={() => setViewMode('heat')}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                 viewMode === 'heat' 
                   ? 'bg-purple-600 text-white' 
-                  : 'text-gray-700 hover:text-gray-900'
+                  : 'text-gray-600 hover:text-gray-800'
               }`}
             >
-              Heat Map {viewMode === 'heat' ? '🔥' : '📊'}
+              Heat
             </button>
           </motion.div>
         </motion.div>
 
-        {/* Bottom Service Cards - properly positioned above map controls */}
+        {/* Bottom Service Cards - minimal and clean */}
         <motion.div 
-          className="absolute bottom-8 left-6 right-6 pointer-events-auto"
+          className="absolute bottom-4 left-4 right-4 pointer-events-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-            {activeContractors.slice(0, 5).map((contractor, index) => (
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {activeContractors.slice(0, 3).map((contractor, index) => (
               <motion.div
                 key={contractor.id}
-                className="bg-white/95 backdrop-blur-xl rounded-2xl p-5 min-w-[300px] shadow-xl border border-purple-100"
-                initial={{ opacity: 0, x: 50 }}
+                className="bg-white/60 backdrop-blur-sm rounded-lg p-3 min-w-[200px] shadow-sm border border-white/20"
+                initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.03, y: -5 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => onContractorSelect && onContractorSelect(contractor)}
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="font-bold text-gray-900 text-base">{contractor.name}</h4>
-                    <p className="text-sm text-purple-600 mt-1">{contractor.service}</p>
+                    <h4 className="font-medium text-gray-800 text-sm">{contractor.name}</h4>
+                    <p className="text-xs text-purple-600">{contractor.service}</p>
                   </div>
                   <div className="text-right">
-                    <div className="flex items-center text-sm">
-                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                      <span className="font-semibold text-gray-900">{Number(contractor.rating || 0).toFixed(1)}</span>
+                    <div className="flex items-center text-xs">
+                      <Star className="w-3 h-3 text-yellow-500 mr-0.5" />
+                      <span className="text-gray-700">{contractor.rating}</span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{contractor.jobsCompleted || 0} jobs</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{contractor.eta}m</p>
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center text-sm">
-                      <Clock className="w-4 h-4 text-gray-400 mr-1.5" />
-                      <span className="font-medium text-gray-700">{contractor.eta}min</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <DollarSign className="w-4 h-4 text-gray-400 mr-1" />
-                      <span className="font-medium text-gray-700">${contractor.price}/hr</span>
-                    </div>
-                  </div>
-                  <motion.button
-                    className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-medium shadow-lg"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Book Now
-                  </motion.button>
-                </div>
-
                 {contractor.isMoving && (
-                  <div className="mt-3 flex items-center text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">
-                    <Navigation className="w-4 h-4 mr-2 animate-pulse" />
-                    <span className="font-medium">En route • {contractor.speed} mph</span>
+                  <div className="mt-2 flex items-center text-xs text-green-600">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-1" />
+                    En route
                   </div>
                 )}
               </motion.div>
@@ -938,153 +822,42 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           </div>
         </motion.div>
 
-        {/* AR Mode Toggle - repositioned to avoid map controls */}
-        <motion.button
-          className="absolute top-1/2 right-6 transform -translate-y-1/2 bg-purple-600 text-white p-4 rounded-full shadow-xl pointer-events-auto z-10"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setShowARMode(!showARMode)}
-        >
-          <Sparkles className="w-6 h-6" />
-        </motion.button>
+        {/* AR Mode Toggle - minimal floating button */}
+        {viewMode === '3d' && (
+          <motion.button
+            className="absolute bottom-20 right-4 bg-white/60 backdrop-blur-sm rounded-full p-3 shadow-sm border border-white/20 pointer-events-auto"
+            onClick={() => setShowARMode(!showARMode)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            {showARMode ? '🏙️' : '📱'}
+          </motion.button>
+        )}
 
-        {/* Service Demand Indicators - better positioned */}
-        {viewMode === 'heat' && (
-          <div className="absolute top-24 right-6 bg-white/95 backdrop-blur-xl rounded-2xl p-5 shadow-xl pointer-events-auto border border-purple-100">
-            <h3 className="text-base font-bold mb-4 text-gray-900">Service Demand</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm font-medium text-gray-700">Plumbing</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                    <motion.div 
-                      className="h-full bg-gradient-to-r from-purple-500 to-red-500"
-                      initial={{ width: 0 }}
-                      animate={{ width: '85%' }}
-                      transition={{ duration: 1 }}
-                    />
-                  </div>
-                  <Flame className="w-4 h-4 text-red-500" />
-                </div>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm font-medium text-gray-700">Electrical</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                    <motion.div 
-                      className="h-full bg-gradient-to-r from-purple-500 to-yellow-500"
-                      initial={{ width: 0 }}
-                      animate={{ width: '65%' }}
-                      transition={{ duration: 1, delay: 0.2 }}
-                    />
-                  </div>
-                  <TrendingUp className="w-4 h-4 text-yellow-500" />
-                </div>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-sm font-medium text-gray-700">HVAC</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                    <motion.div 
-                      className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
-                      initial={{ width: 0 }}
-                      animate={{ width: '45%' }}
-                      transition={{ duration: 1, delay: 0.4 }}
-                    />
-                  </div>
-                  <span className="text-sm text-gray-600">Normal</span>
-                </div>
+        {/* AR Overlay */}
+        {showARMode && (
+          <motion.div 
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+              <motion.div
+                className="text-white text-xl font-bold mb-4"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                📱 Point your phone at a building
+              </motion.div>
+              <div className="text-white/80 text-sm">
+                See available services in AR
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
-
-      {/* Custom CSS */}
-      <style jsx>{`
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .scrollbar-hide {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-        }
-        
-        .contractor-marker-3d {
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        
-        .marker-container {
-          position: relative;
-          width: 60px;
-          height: 60px;
-        }
-        
-        .pulse-ring {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          background: rgba(124, 58, 237, 0.3);
-          animation: pulse 2s infinite;
-        }
-        
-        .marker-icon {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 40px;
-          height: 40px;
-          background: linear-gradient(135deg, #7C3AED, #6366F1);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 20px;
-          box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-        }
-        
-        .marker-info {
-          position: absolute;
-          bottom: -25px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: white;
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-size: 10px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-          white-space: nowrap;
-        }
-        
-        .contractor-marker-3d.hover .marker-icon {
-          transform: translate(-50%, -50%) scale(1.2);
-          box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
-        }
-        
-        @keyframes pulse {
-          0% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 0.3;
-          }
-          50% {
-            transform: translate(-50%, -50%) scale(1.5);
-            opacity: 0.1;
-          }
-          100% {
-            transform: translate(-50%, -50%) scale(2);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }
