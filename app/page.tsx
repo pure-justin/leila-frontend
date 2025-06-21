@@ -66,7 +66,7 @@ export default function Home() {
       <GoogleMapsLoader onLoad={() => setMapsLoaded(true)} />
       {/* Animated Header */}
       <motion.header 
-        className="bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b border-purple-100 dark:border-purple-900 sticky top-0 z-50"
+        className="bg-white/80 backdrop-blur-lg border-b border-purple-100 sticky top-0 z-50"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 200 }}
@@ -124,7 +124,7 @@ export default function Home() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div 
-              className="md:hidden border-t border-purple-100 dark:border-purple-900 bg-white/95 dark:bg-black/95 backdrop-blur-lg"
+              className="md:hidden border-t border-purple-100 bg-white/95 backdrop-blur-lg"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
@@ -172,7 +172,7 @@ export default function Home() {
                     Home services at the tap of a button
                   </motion.h2>
                   <motion.p 
-                    className="text-xl text-gray-600 dark:text-gray-400 mb-8"
+                    className="text-xl text-gray-600 mb-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
@@ -341,7 +341,7 @@ export default function Home() {
                         {step.icon}
                       </motion.span>
                       <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-gray-600">
                         {step.desc}
                       </p>
                     </motion.div>

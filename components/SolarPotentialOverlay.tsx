@@ -78,7 +78,7 @@ export default function SolarPotentialOverlay({ map, position, onClose }: SolarP
   return (
     <AnimatePresence>
       <motion.div
-        className="absolute top-4 right-4 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 max-w-sm"
+        className="absolute top-4 right-4 bg-white rounded-2xl shadow-2xl p-6 max-w-sm"
         initial={{ opacity: 0, scale: 0.8, y: -20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.8, y: -20 }}
@@ -94,14 +94,14 @@ export default function SolarPotentialOverlay({ map, position, onClose }: SolarP
             >
               <Sun className="w-6 h-6 text-white" />
             </motion.div>
-            <h3 className="ml-3 text-lg font-bold text-gray-900 dark:text-white">
+            <h3 className="ml-3 text-lg font-bold text-gray-900">
               Solar Potential
             </h3>
           </div>
           {onClose && (
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="text-gray-400 hover:text-gray-600"
             >
               ×
             </button>
@@ -115,7 +115,7 @@ export default function SolarPotentialOverlay({ map, position, onClose }: SolarP
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             />
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Analyzing solar potential...</p>
+            <p className="mt-4 text-gray-600">Analyzing solar potential...</p>
           </div>
         ) : error ? (
           <div className="text-center py-8">
@@ -126,43 +126,43 @@ export default function SolarPotentialOverlay({ map, position, onClose }: SolarP
             {/* Key Metrics */}
             <div className="grid grid-cols-2 gap-4">
               <motion.div
-                className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl p-4"
+                className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4"
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="flex items-center text-yellow-600 dark:text-yellow-400 mb-1">
+                <div className="flex items-center text-yellow-600 mb-1">
                   <Sun className="w-4 h-4 mr-1" />
                   <span className="text-xs font-medium">Sunshine Hours</span>
                 </div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900">
                   {solarData.maxSunshineHoursPerYear.toLocaleString()}h
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">per year</p>
+                <p className="text-xs text-gray-600">per year</p>
               </motion.div>
 
               <motion.div
-                className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-4"
+                className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4"
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="flex items-center text-green-600 dark:text-green-400 mb-1">
+                <div className="flex items-center text-green-600 mb-1">
                   <Zap className="w-4 h-4 mr-1" />
                   <span className="text-xs font-medium">Energy Production</span>
                 </div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900">
                   {Math.round(solarData.yearlyEnergyDcKwh).toLocaleString()}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">kWh/year</p>
+                <p className="text-xs text-gray-600">kWh/year</p>
               </motion.div>
             </div>
 
             {/* Savings */}
             <motion.div
-              className="bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4"
+              className="bg-gradient-to-r from-purple-100 to-indigo-100 rounded-xl p-4"
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-purple-600 dark:text-purple-400 mb-1">Potential Annual Savings</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-sm text-purple-600 mb-1">Potential Annual Savings</p>
+                  <p className="text-3xl font-bold text-gray-900">
                     ${potentialSavings.toLocaleString()}
                   </p>
                 </div>
@@ -171,26 +171,26 @@ export default function SolarPotentialOverlay({ map, position, onClose }: SolarP
             </motion.div>
 
             {/* Environmental Impact */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <div className="bg-gray-50 rounded-xl p-4">
+              <p className="text-sm font-medium text-gray-700 mb-3">
                 Environmental Impact
               </p>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Home className="w-4 h-4 text-gray-500 mr-2" />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">CO₂ Offset</span>
+                    <span className="text-sm text-gray-600">CO₂ Offset</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  <span className="text-sm font-medium text-gray-900">
                     {co2Offset} tons/year
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <TreePine className="w-4 h-4 text-green-500 mr-2" />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Equivalent to</span>
+                    <span className="text-sm text-gray-600">Equivalent to</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  <span className="text-sm font-medium text-gray-900">
                     {treesEquivalent} trees
                   </span>
                 </div>

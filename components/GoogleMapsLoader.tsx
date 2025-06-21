@@ -21,16 +21,19 @@ export default function GoogleMapsLoader({ onLoad }: GoogleMapsLoaderProps) {
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   
-  console.log('GoogleMapsLoader: API Key status:', {
-    exists: !!apiKey,
-    length: apiKey?.length,
-    prefix: apiKey?.substring(0, 10) + '...'
-  });
+  // Only log in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('GoogleMapsLoader: API Key status:', {
+      exists: !!apiKey,
+      length: apiKey?.length,
+      prefix: apiKey?.substring(0, 10) + '...'
+    });
+  }
   
   if (!apiKey) {
-    console.error('CRITICAL: Google Maps API key is missing!');
-    console.error('Expected env var: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
-    return <div className="p-4 bg-red-100 text-red-700 rounded">Google Maps API key is missing!</div>;
+    console.error('Google Maps API key is missing. Please add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your environment variables.');
+    // Return null instead of error UI - let the map component handle the fallback
+    return null;
   }
 
   return (

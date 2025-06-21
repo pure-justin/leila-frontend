@@ -594,22 +594,22 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   // Show fallback UI if map fails to load
   if (mapError) {
     return (
-      <div className="relative w-full h-full bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-2xl flex items-center justify-center">
+      <div className="relative w-full h-full bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center">
         <div className="text-center p-8">
           <motion.div
-            className="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <MapPin className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+            <MapPin className="w-10 h-10 text-purple-600" />
           </motion.div>
-          <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Interactive Map</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">Loading your area...</p>
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">Interactive Map</h3>
+          <p className="text-gray-600 mb-4">Loading your area...</p>
           <div className="flex justify-center space-x-2">
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                className="w-3 h-3 bg-purple-600 dark:bg-purple-400 rounded-full"
+                className="w-3 h-3 bg-purple-600 rounded-full"
                 animate={{ scale: [1, 1.5, 1] }}
                 transition={{ duration: 1, delay: i * 0.2, repeat: Infinity }}
               />
@@ -635,7 +635,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
         >
           {/* Live Activity Feed */}
           <motion.div 
-            className="bg-white/90 dark:bg-black/80 backdrop-blur-xl rounded-2xl p-4 text-gray-900 dark:text-white max-w-sm shadow-lg border border-purple-100 dark:border-purple-900/50"
+            className="bg-white/90 backdrop-blur-xl rounded-2xl p-4 text-gray-900 max-w-sm shadow-lg border border-purple-100"
             whileHover={{ scale: 1.02 }}
           >
             <h3 className="text-sm font-bold mb-2 flex items-center">
@@ -674,7 +674,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
 
           {/* View Mode Switcher */}
           <motion.div 
-            className="bg-white/90 dark:bg-black/80 backdrop-blur-xl rounded-2xl p-2 flex space-x-2 shadow-lg border border-purple-100 dark:border-purple-900/50"
+            className="bg-white/90 backdrop-blur-xl rounded-2xl p-2 flex space-x-2 shadow-lg border border-purple-100"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
@@ -683,7 +683,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 viewMode === '3d' 
                   ? 'bg-purple-600 text-white' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  : 'text-gray-700 hover:text-gray-900'
               }`}
             >
               3D View {viewMode === '3d' ? '🌆' : '🏙️'}
@@ -748,7 +748,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 viewMode === 'street' 
                   ? 'bg-purple-600 text-white animate-pulse' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  : 'text-gray-700 hover:text-gray-900'
               }`}
             >
               Street View {viewMode === 'street' ? '🚗' : '🛣️'}
@@ -758,7 +758,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 viewMode === 'heat' 
                   ? 'bg-purple-600 text-white' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  : 'text-gray-700 hover:text-gray-900'
               }`}
             >
               Heat Map {viewMode === 'heat' ? '🔥' : '📊'}
