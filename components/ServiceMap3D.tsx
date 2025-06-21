@@ -49,17 +49,68 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     
     try {
 
-    // Initialize EPIC 3D map
-    const mapInstance = new google.maps.Map(mapRef.current, {
+    // Try to initialize with Solar API first, then fallback gracefully
+    let mapConfig: google.maps.MapOptions = {
       center: { lat: 37.7749, lng: -122.4194 },
-      zoom: 16,
-      tilt: 60,
-      heading: 0,
-      mapTypeId: 'satellite',
-      mapId: 'epic_service_map',
-      
-      // Sick custom styles
-      styles: [
+      zoom: 17,
+      mapTypeControl: false,
+      fullscreenControl: true,
+      streetViewControl: true,
+      zoomControl: true,
+    };
+    
+    // Check for Solar API availability
+    const checkSolarAPI = async (lat: number, lng: number) => {
+      try {
+        if (window.google && window.google.maps && (window.google.maps as any).SolarApi) {
+          const solarApi = new (window.google.maps as any).SolarApi();
+          const response = await solarApi.findClosestBuilding({
+            location: { latitude: lat, longitude: lng }
+          });
+          return response && response.solarPotential;
+        }
+      } catch (error) {
+        console.log('Solar API not available:', error);
+      }
+      return false;
+    };
+    
+    // Try Solar Layer first (most epic)
+    const hasSolar = await checkSolarAPI(37.7749, -122.4194);
+    
+    if (hasSolar) {
+      console.log('🌞 Solar API available - using EPIC solar view!');
+      mapConfig = {
+        ...mapConfig,
+        mapId: 'solar_epic_map',
+        mapTypeId: 'satellite',
+        tilt: 60,
+        heading: 0,
+        // Solar-specific styles
+        styles: [
+          {
+            featureType: "all",
+            elementType: "geometry",
+            stylers: [{ color: "#1a1a2e" }]
+          },
+          {
+            featureType: "all",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#ffd700" }]
+          }
+        ]
+      };
+    } else if (window.google.maps.ElevationService) {
+      // Fallback to 3D with elevation
+      console.log('🏔️ Using 3D view with elevation');
+      mapConfig = {
+        ...mapConfig,
+        mapId: 'epic_service_map',
+        mapTypeId: 'satellite',
+        tilt: 60,
+        heading: 0,
+        // 3D optimized styles
+        styles: [
         {
           featureType: "all",
           elementType: "geometry",
@@ -84,22 +135,38 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           featureType: "poi.business",
           stylers: [{ visibility: "off" }]
         }
-      ],
-      
-      // Enable all the cool features
-      zoomControl: true,
-      mapTypeControl: false,
-      scaleControl: false,
-      streetViewControl: true,
-      rotateControl: true,
-      fullscreenControl: true,
-      
-      // Gesture handling for smooth UX
+        ],
+      };
+    } else {
+      // Final fallback to standard map
+      console.log('🗺️ Using standard Google Maps');
+      mapConfig = {
+        ...mapConfig,
+        mapTypeId: 'roadmap',
+        // Clean standard map styles
+        styles: [
+          {
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{ visibility: "off" }]
+          },
+          {
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: "#7C3AED" }, { lightness: 40 }]
+          }
+        ]
+      };
+    }
+    
+    // Add common config
+    mapConfig = {
+      ...mapConfig,
       gestureHandling: 'greedy',
-      
-      // Enable WebGL for performance
-      renderingType: google.maps.RenderingType.VECTOR,
-    });
+      renderingType: google.maps.RenderingType?.VECTOR || undefined,
+    };
+    
+    const mapInstance = new google.maps.Map(mapRef.current, mapConfig);
 
     setMap(mapInstance);
 
@@ -143,6 +210,45 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     
     // Add real-time updates
     startRealTimeUpdates(mapInstance);
+    
+    // If Solar API is available, add solar layer
+    if (hasSolar && (window.google.maps as any).SolarLayer) {
+      const solarLayer = new (window.google.maps as any).SolarLayer();
+      solarLayer.setMap(mapInstance);
+      
+      // Add solar data overlays
+      mapInstance.addListener('click', async (e: google.maps.MapMouseEvent) => {
+        if (e.latLng && (window.google.maps as any).SolarApi) {
+          const solarApi = new (window.google.maps as any).SolarApi();
+          try {
+            const building = await solarApi.findClosestBuilding({
+              location: { 
+                latitude: e.latLng.lat(), 
+                longitude: e.latLng.lng() 
+              }
+            });
+            
+            if (building && building.solarPotential) {
+              // Show solar potential in a cool overlay
+              const infoWindow = new google.maps.InfoWindow({
+                content: `
+                  <div class="p-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg text-white">
+                    <h3 class="font-bold text-lg mb-2">☀️ Solar Potential</h3>
+                    <p>Annual sunshine: ${building.solarPotential.maxSunshineHoursPerYear}h</p>
+                    <p>Roof area: ${building.solarPotential.roofSegmentStats?.[0]?.pitchDegrees || 'N/A'}°</p>
+                    <p class="mt-2 text-sm">Perfect for solar panels!</p>
+                  </div>
+                `,
+                position: e.latLng
+              });
+              infoWindow.open(map);
+            }
+          } catch (error) {
+            console.log('Solar data not available for this location');
+          }
+        }
+      });
+    }
 
     return () => {
       if (mapInstance && mapInstance.unbindAll) {
