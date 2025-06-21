@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fadeIn, fadeInUp, stagger, scaleIn, pulseAnimation } from '@/lib/animations';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import GradientBackground from '@/components/GradientBackground';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function Home() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -239,14 +240,16 @@ export default function Home() {
                   whileHover={{ scale: 1.02 }}
                 >
                   {mapsLoaded ? (
-                    <ServiceMap3D 
-                      userAddress={userAddress || undefined}
-                      selectedService={selectedService || undefined}
-                      onContractorSelect={(contractor) => {
-                        console.log('Selected contractor:', contractor);
-                        // Could trigger booking flow here
-                      }}
-                    />
+                    <ErrorBoundary>
+                      <ServiceMap3D 
+                        userAddress={userAddress || undefined}
+                        selectedService={selectedService || undefined}
+                        onContractorSelect={(contractor) => {
+                          console.log('Selected contractor:', contractor);
+                          // Could trigger booking flow here
+                        }}
+                      />
+                    </ErrorBoundary>
                   ) : (
                     <div className="h-[600px] rounded-2xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center overflow-hidden relative">
                       <motion.div

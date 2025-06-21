@@ -30,9 +30,19 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   const [activeContractors, setActiveContractors] = useState<any[]>([]);
   const [serviceHotspots, setServiceHotspots] = useState<ServiceHotspot[]>([]);
   const [showARMode, setShowARMode] = useState(false);
+  const [mapError, setMapError] = useState(false);
   
   useEffect(() => {
-    if (!mapRef.current || !window.google) return;
+    if (!mapRef.current) return;
+    
+    // Check if Google Maps is loaded
+    if (!window.google || !window.google.maps) {
+      console.warn('Google Maps not loaded yet');
+      setMapError(true);
+      return;
+    }
+    
+    try {
 
     // Initialize EPIC 3D map
     const mapInstance = new google.maps.Map(mapRef.current, {
@@ -112,8 +122,14 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     startRealTimeUpdates(mapInstance);
 
     return () => {
-      mapInstance.unbindAll();
+      if (mapInstance && mapInstance.unbindAll) {
+        mapInstance.unbindAll();
+      }
     };
+    } catch (error) {
+      console.error('Error initializing map:', error);
+      setMapError(true);
+    }
   }, []);
 
   const animateMap = (map: google.maps.Map) => {
@@ -187,13 +203,43 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
       </div>
     `;
 
-    // Advanced marker with custom element
-    const advancedMarker = new google.maps.marker.AdvancedMarkerElement({
-      map,
-      position: contractor.position,
-      content: markerDiv,
-      title: contractor.name
-    });
+    // Use regular marker if AdvancedMarkerElement is not available
+    if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
+      const advancedMarker = new google.maps.marker.AdvancedMarkerElement({
+        map,
+        position: contractor.position,
+        content: markerDiv,
+        title: contractor.name
+      });
+      
+      // Animate moving contractors
+      if (contractor.isMoving) {
+        animateContractorMovement(advancedMarker, contractor);
+      }
+    } else {
+      // Fallback to regular marker
+      const marker = new google.maps.Marker({
+        map,
+        position: contractor.position,
+        title: contractor.name,
+        icon: {
+          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+            <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18" fill="#7C3AED" stroke="white" stroke-width="2"/>
+              <text x="20" y="26" font-family="Arial" font-size="20" fill="white" text-anchor="middle">${getServiceIcon(contractor.service)}</text>
+            </svg>
+          `),
+          scaledSize: new google.maps.Size(40, 40)
+        }
+      });
+      
+      marker.addListener('click', () => {
+        showContractorDetails(contractor);
+        if (onContractorSelect) {
+          onContractorSelect(contractor);
+        }
+      });
+    }
 
     // Add hover effects
     markerDiv.addEventListener('mouseenter', () => {
@@ -208,10 +254,6 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
       }
     });
 
-    // Animate moving contractors
-    if (contractor.isMoving) {
-      animateContractorMovement(advancedMarker, contractor);
-    }
   };
 
   const animateContractorMovement = (marker: any, contractor: any) => {
@@ -276,19 +318,22 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
       weight: spot.intensity * 10
     }));
 
-    new google.maps.visualization.HeatmapLayer({
-      data: heatmapData,
-      map: viewMode === 'heat' ? map : null,
-      radius: 50,
-      opacity: 0.6,
-      gradient: [
-        'rgba(124, 58, 237, 0)',
-        'rgba(124, 58, 237, 0.5)',
-        'rgba(99, 102, 241, 0.7)',
-        'rgba(239, 68, 68, 0.9)',
-        'rgba(239, 68, 68, 1)'
-      ]
-    });
+    // Only create heatmap if visualization library is loaded
+    if (google.maps.visualization && google.maps.visualization.HeatmapLayer) {
+      new google.maps.visualization.HeatmapLayer({
+        data: heatmapData,
+        map: viewMode === 'heat' ? map : null,
+        radius: 50,
+        opacity: 0.6,
+        gradient: [
+          'rgba(124, 58, 237, 0)',
+          'rgba(124, 58, 237, 0.5)',
+          'rgba(99, 102, 241, 0.7)',
+          'rgba(239, 68, 68, 0.9)',
+          'rgba(239, 68, 68, 1)'
+        ]
+      });
+    }
   };
 
   const startRealTimeUpdates = (map: google.maps.Map) => {
@@ -398,10 +443,39 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     return path;
   };
 
+  // Show fallback UI if map fails to load
+  if (mapError) {
+    return (
+      <div className="relative w-full h-full bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center">
+        <div className="text-center p-8">
+          <motion.div
+            className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <MapPin className="w-10 h-10 text-purple-600" />
+          </motion.div>
+          <h3 className="text-xl font-semibold mb-2">Interactive Map</h3>
+          <p className="text-gray-600 mb-4">Loading your area...</p>
+          <div className="flex justify-center space-x-2">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="w-3 h-3 bg-purple-600 rounded-full"
+                animate={{ scale: [1, 1.5, 1] }}
+                transition={{ duration: 1, delay: i * 0.2, repeat: Infinity }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="relative w-full h-full">
       {/* Main 3D Map */}
-      <div ref={mapRef} className="w-full h-full" />
+      <div ref={mapRef} className="w-full h-full rounded-2xl overflow-hidden" />
 
       {/* Epic UI Overlay */}
       <div className="absolute inset-0 pointer-events-none">
