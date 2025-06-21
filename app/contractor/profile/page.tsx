@@ -252,16 +252,33 @@ export default function ContractorProfile() {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     
+    // Check file size (limit to 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+    
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+    
     try {
       setUploadingPhoto(true);
       
+      // Create unique filename with timestamp
+      const timestamp = Date.now();
+      const filename = `contractors/${user.uid}/profile_${timestamp}.jpg`;
+      
       // Upload to Firebase Storage
-      const storageRef = ref(storage, `contractors/${user.uid}/profile.jpg`);
+      const storageRef = ref(storage, filename);
       const snapshot = await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
       
-      // Update profile locally
+      // Update profile locally first for immediate feedback
       setProfile(prev => ({ ...prev, photo: downloadURL }));
+      setOriginalProfile(prev => ({ ...prev, photo: downloadURL }));
       
       // Update in Firestore
       await updateDoc(doc(db, 'contractors', user.uid), {
@@ -273,9 +290,13 @@ export default function ContractorProfile() {
       await updateDoc(doc(db, 'users', user.uid), {
         photoURL: downloadURL,
       });
+      
+      console.log('Photo uploaded successfully:', downloadURL);
     } catch (error) {
       console.error('Error uploading photo:', error);
       alert('Failed to upload photo. Please try again.');
+      // Revert to original photo on error
+      setProfile(prev => ({ ...prev, photo: originalProfile.photo }));
     } finally {
       setUploadingPhoto(false);
     }
@@ -374,7 +395,7 @@ export default function ContractorProfile() {
                     </div>
                   )}
                   {isEditing && (
-                    <label className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90">
+                    <label className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full cursor-pointer hover:bg-purple-700 transition-colors shadow-lg">
                       {uploadingPhoto ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                       ) : (
@@ -391,21 +412,21 @@ export default function ContractorProfile() {
                   )}
                 </div>
                 {isEditing ? (
-                  <div className="mt-4 space-y-2">
-                    <div className="flex space-x-2">
+                  <div className="mt-4 space-y-3 px-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <input
                         type="text"
                         placeholder="First Name"
                         value={profile.firstName}
                         onChange={(e) => setProfile({ ...profile, firstName: e.target.value })}
-                        className="flex-1 px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                       />
                       <input
                         type="text"
                         placeholder="Last Name"
                         value={profile.lastName}
                         onChange={(e) => setProfile({ ...profile, lastName: e.target.value })}
-                        className="flex-1 px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                       />
                     </div>
                     <input
@@ -413,7 +434,7 @@ export default function ContractorProfile() {
                       placeholder="Business Name"
                       value={profile.businessName}
                       onChange={(e) => setProfile({ ...profile, businessName: e.target.value })}
-                      className="w-full px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                     />
                   </div>
                 ) : (
@@ -474,14 +495,14 @@ export default function ContractorProfile() {
                   <span className="text-xs md:text-sm truncate">{profile.email}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
-                  <Phone className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
+                  <Phone className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3 flex-shrink-0" />
                   {isEditing ? (
                     <input
                       type="tel"
                       placeholder="Phone Number"
                       value={profile.phone}
                       onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                      className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs md:text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                     />
                   ) : (
                     <span className="text-xs md:text-sm">{profile.phone || 'Not provided'}</span>
@@ -545,14 +566,14 @@ export default function ContractorProfile() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">About</h3>
               {isEditing ? (
                 <textarea
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none"
                   rows={4}
                   value={profile.bio}
                   onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                   placeholder="Tell customers about your experience, specialties, and what makes your service unique..."
                 />
               ) : (
-                <p className="text-gray-600">{profile.bio}</p>
+                <p className="text-gray-600 leading-relaxed">{profile.bio || 'No bio provided yet.'}</p>
               )}
             </div>
 
@@ -602,7 +623,7 @@ export default function ContractorProfile() {
                         type="number"
                         value={profile.hourlyRate}
                         onChange={(e) => setProfile({ ...profile, hourlyRate: parseInt(e.target.value) || 0 })}
-                        className="w-20 px-2 py-1 border border-gray-300 rounded text-right focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-20 px-2 py-1 border border-gray-300 rounded-lg text-right focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                       />
                     </div>
                   ) : (
@@ -638,7 +659,7 @@ export default function ContractorProfile() {
                               [day]: { ...hours, available: e.target.checked }
                             }
                           })}
-                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                          className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
                         />
                         {hours.available && (
                           <>
@@ -652,9 +673,9 @@ export default function ContractorProfile() {
                                   [day]: { ...hours, start: e.target.value }
                                 }
                               })}
-                              className="px-2 py-1 border border-gray-300 rounded text-sm"
+                              className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                             />
-                            <span>-</span>
+                            <span className="mx-1">-</span>
                             <input
                               type="time"
                               value={hours.end}
@@ -665,7 +686,7 @@ export default function ContractorProfile() {
                                   [day]: { ...hours, end: e.target.value }
                                 }
                               })}
-                              className="px-2 py-1 border border-gray-300 rounded text-sm"
+                              className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                             />
                           </>
                         )}

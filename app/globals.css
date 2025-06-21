@@ -113,6 +113,29 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Remove all underlines globally */
+* {
+  text-decoration: none !important;
+}
+
+/* Fix input field alignment in contractor profile */
+.contractor-profile input[type="text"],
+.contractor-profile input[type="tel"],
+.contractor-profile input[type="number"],
+.contractor-profile input[type="time"],
+.contractor-profile textarea {
+  box-sizing: border-box;
+}
+
+/* Ensure proper image upload button positioning */
+input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
 /* Custom scrollbar - minimal like Uber */
 ::-webkit-scrollbar {
   width: 6px;
