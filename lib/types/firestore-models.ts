@@ -201,10 +201,12 @@ export interface Contractor extends BaseUser {
   services: {
     categories: ServiceCategory[];
     specializations: string[];
+    specialties?: string[]; // Added for compatibility
     serviceRadius: number; // in miles
     instantBooking: boolean;
     minimumJobAmount: number;
   };
+  vehicle?: string; // Added for compatibility
   availability: {
     workingHours: {
       [key in DayOfWeek]?: {

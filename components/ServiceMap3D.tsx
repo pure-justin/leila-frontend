@@ -5,10 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MapPin, Navigation, Zap, Star, Clock, DollarSign, 
   TrendingUp, Users, Sparkles, Flame, Shield, Award,
-  Home, TreePine, Droplets, Wrench, Paintbrush
+  Home, TreePine, Droplets, Wrench, Paintbrush, CheckCircle
 } from 'lucide-react';
 import { fadeIn, fadeInUp, scaleIn, pulseAnimation } from '@/lib/animations';
 import { useContractors } from '@/lib/hooks/useContractors';
+import ProjectProfile from './ProjectProfile';
+import UserProfile from './UserProfile';
+import { useCompletedProjects } from '@/lib/hooks/useCompletedProjects';
 
 interface ServiceMap3DProps {
   userAddress?: string;
@@ -33,9 +36,14 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   const [showARMode, setShowARMode] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [mapMode, setMapMode] = useState<'solar' | '3d' | 'standard'>('standard');
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedContractorProfile, setSelectedContractorProfile] = useState<any>(null);
   
   // Get real contractor data from Firestore
   const { contractors: firestoreContractors, loading: contractorsLoading } = useContractors(selectedService, 20);
+  
+  // Get completed projects near the user
+  const { projects: completedProjects } = useCompletedProjects(userAddress, 5000); // 5km radius
   
   useEffect(() => {
     const initializeMap = async () => {
@@ -264,6 +272,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     
     // Initialize features
     setupContractors(mapInstance);
+    setupCompletedProjects(mapInstance);
     generateServiceHeatmap(mapInstance);
     startRealTimeUpdates(mapInstance);
     
@@ -317,8 +326,8 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           },
           eta: 5 + Math.floor(Math.random() * 25),
           isMoving: index < 3,
-          specialties: contractor.specialties || getRandomSpecialties(),
-          vehicle: contractor.vehicle || getRandomVehicle()
+          specialties: (contractor as any).specialties || contractor.services || getRandomSpecialties(),
+          vehicle: (contractor as any).vehicle || getRandomVehicle()
         }))
       : generateMockContractors(center);
 
@@ -390,6 +399,258 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     };
   };
 
+  const setupCompletedProjects = (map: google.maps.Map) => {
+    const center = map.getCenter();
+    if (!center) return;
+
+    // Use real completed projects or generate mock ones
+    const projects = completedProjects?.length > 0 ? completedProjects : generateMockProjects(center);
+    
+    projects.forEach((project: any) => {
+      // Create home icon marker for completed project
+      const marker = new google.maps.Marker({
+        position: project.position || {
+          lat: center.lat() + (Math.random() - 0.5) * 0.03,
+          lng: center.lng() + (Math.random() - 0.5) * 0.03
+        },
+        map,
+        title: `${project.serviceType} - ${project.contractor.name}`,
+        icon: {
+          url: `data:image/svg+xml,${encodeURIComponent(`
+            <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(4, 4)">
+                <!-- House shape -->
+                <path d="M20 2 L35 15 L35 35 L5 35 L5 15 Z" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="2"/>
+                <!-- Roof -->
+                <path d="M20 2 L38 17 L2 17 Z" fill="#7C3AED" stroke="#6B21A8" stroke-width="2"/>
+                <!-- Door -->
+                <rect x="15" y="20" width="10" height="15" fill="#9333EA"/>
+                <!-- Windows -->
+                <rect x="8" y="20" width="5" height="5" fill="#DDD6FE"/>
+                <rect x="27" y="20" width="5" height="5" fill="#DDD6FE"/>
+                <!-- Checkmark badge -->
+                <circle cx="30" cy="10" r="8" fill="#10B981" stroke="white" stroke-width="2"/>
+                <path d="M26 10 L28.5 12.5 L34 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </svg>
+          `)}`,
+          scaledSize: new google.maps.Size(48, 48),
+          anchor: new google.maps.Point(24, 48)
+        },
+        zIndex: 500
+      });
+
+      // Create info window with project preview
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div class="p-3 min-w-[250px] max-w-[300px]">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-base">${project.serviceType}</h3>
+              <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">Completed</span>
+            </div>
+            <div class="text-sm text-gray-600 mb-2">
+              <p class="flex items-center mb-1">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                ${project.contractor.name}
+              </p>
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="bg-gray-100 px-2 py-1 rounded">User: ${project.userScore || 90}%</span>
+                  <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded">Leila: ${project.leilaScore || 92}%</span>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500">${project.completionDate || 'Recently completed'}</p>
+            </div>
+            ${project.photos && project.photos.length > 0 ? `
+              <div class="grid grid-cols-3 gap-1 mb-2">
+                ${project.photos.slice(0, 3).map((photo: any) => `
+                  <img src="${photo.url}" alt="Project photo" class="w-full h-16 object-cover rounded" />
+                `).join('')}
+              </div>
+            ` : ''}
+            <div class="flex gap-2">
+              <button class="flex-1 bg-purple-600 text-white text-xs py-2 rounded-lg hover:bg-purple-700 transition-colors view-project-btn" data-project-id="${project.id}">
+                View Project
+              </button>
+              <button class="flex-1 bg-indigo-600 text-white text-xs py-2 rounded-lg hover:bg-indigo-700 transition-colors view-contractor-btn" data-contractor-id="${project.contractor.id}">
+                View Pro
+              </button>
+            </div>
+          </div>
+        `
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(map, marker);
+        
+        // Add click handlers for buttons after info window opens
+        setTimeout(() => {
+          const projectBtn = document.querySelector('.view-project-btn');
+          const contractorBtn = document.querySelector('.view-contractor-btn');
+          
+          if (projectBtn) {
+            projectBtn.addEventListener('click', () => {
+              setSelectedProject(project);
+              infoWindow.close();
+            });
+          }
+          
+          if (contractorBtn) {
+            contractorBtn.addEventListener('click', () => {
+              setContractorProfileData(project.contractor);
+              infoWindow.close();
+            });
+          }
+        }, 100);
+      });
+
+      // Add subtle pulsing animation to recently completed projects
+      if (project.isRecent) {
+        const pulseCircle = new google.maps.Circle({
+          map,
+          center: marker.getPosition()!,
+          radius: 50,
+          fillColor: '#10B981',
+          fillOpacity: 0.2,
+          strokeColor: '#10B981',
+          strokeOpacity: 0.4,
+          strokeWeight: 2
+        });
+
+        // Animate the pulse
+        let radius = 50;
+        let expanding = true;
+        const animatePulse = setInterval(() => {
+          if (expanding) {
+            radius += 1;
+            if (radius >= 100) expanding = false;
+          } else {
+            radius -= 1;
+            if (radius <= 50) expanding = true;
+          }
+          pulseCircle.setRadius(radius);
+          pulseCircle.setOptions({
+            fillOpacity: 0.2 * (1 - (radius - 50) / 50),
+            strokeOpacity: 0.4 * (1 - (radius - 50) / 50)
+          });
+        }, 50);
+
+        // Store cleanup
+        (marker as any)._pulseCleanup = () => {
+          clearInterval(animatePulse);
+          pulseCircle.setMap(null);
+        };
+      }
+    });
+  };
+
+  // Helper function to set contractor profile with mock data
+  const setContractorProfileData = (contractor: any) => {
+    // Enhance contractor data with algorithm scores and mock job history
+    const enhancedContractor = {
+      ...contractor,
+      email: `${contractor.name.toLowerCase().replace(/[^a-z]/g, '')}@contractor.com`,
+      phone: '(555) 123-4567',
+      bio: `Professional home service contractor with ${contractor.yearsExperience || 5} years of experience. Committed to quality work and customer satisfaction.`,
+      yearsExperience: contractor.yearsExperience || 5,
+      certifications: contractor.certifications || ['Licensed & Insured', 'EPA Certified', 'Safety Trained'],
+      specialties: contractor.specialties || ['Plumbing', 'General Repairs', 'Emergency Services'],
+      responseTime: contractor.responseTime || '30 min',
+      verified: true,
+      joinDate: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year ago
+      algorithmScore: Math.floor(Math.random() * 20) + 80, // 80-100
+      customerApprovalRate: Math.floor(Math.random() * 15) + 85, // 85-100
+      onTimeRate: Math.floor(Math.random() * 10) + 90, // 90-100
+      qualityScore: Math.floor(Math.random() * 15) + 85, // 85-100
+      disputeRate: Math.floor(Math.random() * 5), // 0-5
+      blacklisted: false,
+      monthlyVolume: Math.floor(Math.random() * 50000) + 10000,
+      monthlyRevenue: Math.floor(Math.random() * 40000) + 8000,
+      commissionTier: ['Starter', 'Growing', 'Established', 'Professional', 'Enterprise'][Math.floor(Math.random() * 5)],
+      userScore: Math.floor(Math.random() * 25) + 75, // 75-100
+      leilaScore: Math.floor(Math.random() * 20) + 80 // 80-100
+    };
+
+    // Generate mock completed jobs for this contractor
+    const mockJobs = Array.from({ length: 8 }, (_, i) => ({
+      id: `job-${contractor.id}-${i}`,
+      address: `${Math.floor(Math.random() * 999) + 100} ${['Oak', 'Maple', 'Pine', 'Main'][Math.floor(Math.random() * 4)]} St, San Francisco, CA`,
+      serviceType: contractor.specialties?.[Math.floor(Math.random() * (contractor.specialties?.length || 1))] || 'Plumbing',
+      completionDate: new Date(Date.now() - Math.floor(Math.random() * 90) * 24 * 60 * 60 * 1000),
+      duration: `${Math.floor(Math.random() * 4) + 1} hours`,
+      cost: Math.floor(Math.random() * 1500) + 200,
+      rating: Math.floor(Math.random() * 2) + 4, // 4-5 stars (legacy)
+      userScore: Math.floor(Math.random() * 30) + 70, // 70-100
+      leilaScore: Math.floor(Math.random() * 25) + 75, // 75-100
+      review: i % 3 === 0 ? `Excellent work! ${contractor.name} was professional, on time, and did a great job. Highly recommend!` : undefined,
+      photos: [
+        { url: 'https://via.placeholder.com/400x300/9333ea/ffffff?text=Before', type: 'before' },
+        { url: 'https://via.placeholder.com/400x300/7c3aed/ffffff?text=After', type: 'after' }
+      ],
+      aiQualityScore: Math.floor(Math.random() * 15) + 85
+    }));
+
+    setSelectedContractorProfile({
+      contractor: enhancedContractor,
+      completedJobs: mockJobs
+    });
+  };
+
+  const generateMockProjects = (center: google.maps.LatLng) => {
+    const projectTypes = [
+      { type: 'Plumbing Repair', icon: '🔧' },
+      { type: 'Electrical Work', icon: '⚡' },
+      { type: 'HVAC Service', icon: '❄️' },
+      { type: 'Kitchen Remodel', icon: '🍳' },
+      { type: 'Bathroom Renovation', icon: '🚿' },
+      { type: 'Roof Repair', icon: '🏠' },
+      { type: 'Painting', icon: '🎨' },
+      { type: 'Landscaping', icon: '🌿' }
+    ];
+
+    return Array.from({ length: 20 }, (_, i) => {
+      const projectType = projectTypes[i % projectTypes.length];
+      const daysAgo = Math.floor(Math.random() * 90);
+      
+      return {
+        id: `project-${i}`,
+        serviceType: projectType.type,
+        position: {
+          lat: center.lat() + (Math.random() - 0.5) * 0.04,
+          lng: center.lng() + (Math.random() - 0.5) * 0.04
+        },
+        contractor: {
+          id: `contractor-${i}`,
+          name: ['John Smith', 'Mike Johnson', 'Sarah Williams', 'Tom Brown'][i % 4],
+          rating: (4.5 + Math.random() * 0.5).toFixed(1),
+          userScore: Math.floor(Math.random() * 25) + 75, // 75-100
+          leilaScore: Math.floor(Math.random() * 20) + 80, // 80-100
+          completedJobs: 50 + Math.floor(Math.random() * 200)
+        },
+        customer: {
+          name: ['Alice', 'Bob', 'Charlie', 'Diana'][i % 4] + ' ' + ['Johnson', 'Smith', 'Davis', 'Wilson'][i % 4]
+        },
+        completionDate: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000),
+        duration: Math.floor(Math.random() * 5) + 1 + ' days',
+        cost: 500 + Math.floor(Math.random() * 4500),
+        status: 'completed',
+        rating: 4 + Math.random(),
+        userScore: Math.floor(Math.random() * 30) + 70, // 70-100
+        leilaScore: Math.floor(Math.random() * 25) + 75, // 75-100
+        isRecent: daysAgo < 7,
+        description: `Professional ${projectType.type.toLowerCase()} service completed with attention to detail.`,
+        photos: [
+          { id: '1', url: '/api/placeholder/300/200', type: 'before', aiApproved: true },
+          { id: '2', url: '/api/placeholder/300/200', type: 'after', aiApproved: true }
+        ],
+        aiQualityScore: 85 + Math.floor(Math.random() * 15),
+        paymentStatus: 'released'
+      };
+    });
+  };
+
   const generateMockContractors = (center: google.maps.LatLng) => {
     const services = ['Plumbing', 'Electrical', 'HVAC', 'Cleaning', 'Lawn Care'];
     const names = ['Mike', 'Sarah', 'John', 'Emily', 'David', 'Lisa', 'Tom', 'Jessica'];
@@ -403,6 +664,8 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
         lng: center.lng() + (Math.random() - 0.5) * 0.02
       },
       rating: (4 + Math.random()).toFixed(1),
+      userScore: Math.floor(Math.random() * 25) + 75, // 75-100
+      leilaScore: Math.floor(Math.random() * 20) + 80, // 80-100
       reviews: Math.floor(50 + Math.random() * 200),
       hourlyRate: Math.floor(50 + Math.random() * 100),
       eta: 5 + Math.floor(Math.random() * 25),
@@ -858,6 +1121,28 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           </motion.div>
         )}
       </div>
+
+      {/* Project Profile Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectProfile
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Contractor Profile Modal */}
+      <AnimatePresence>
+        {selectedContractorProfile && (
+          <UserProfile
+            contractor={selectedContractorProfile.contractor}
+            completedJobs={selectedContractorProfile.completedJobs}
+            onClose={() => setSelectedContractorProfile(null)}
+            isModal={true}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

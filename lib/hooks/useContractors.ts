@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, limit, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, limit as firestoreLimit, orderBy } from 'firebase/firestore';
 
 export interface Contractor {
   id: string;
@@ -57,7 +57,7 @@ export function useContractors(service?: string, limit?: number) {
         }
 
         if (limit) {
-          q = query(q, limit(limit));
+          q = query(q, firestoreLimit(limit));
         }
 
         const snapshot = await getDocs(q);

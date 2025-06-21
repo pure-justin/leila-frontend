@@ -166,7 +166,7 @@ export default function ServiceBrowser({
             </h2>
             <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
               {previouslyUsed.slice(0, 6).map((serviceId, idx) => {
-                const service = SERVICE_CATALOG.flatMap(c => c.subcategories).find(s => s.id === serviceId);
+                const service = COMPREHENSIVE_SERVICE_CATALOG.flatMap(c => c.subcategories).find(s => s.id === serviceId);
                 if (!service) return null;
                 
                 return (
@@ -267,7 +267,7 @@ export default function ServiceBrowser({
             Trending Now
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {SERVICE_CATALOG.slice(0, 3).flatMap(cat => 
+            {COMPREHENSIVE_SERVICE_CATALOG.slice(0, 3).flatMap(cat => 
               cat.subcategories.slice(0, 1).map((service, idx) => (
                 <motion.div
                   key={service.id}
@@ -296,11 +296,11 @@ export default function ServiceBrowser({
       <AnimatePresence>
         {selectedCategory && (
           <CategoryModal
-            category={SERVICE_CATALOG.find(c => c.id === selectedCategory)!}
+            category={COMPREHENSIVE_SERVICE_CATALOG.find(c => c.id === selectedCategory)!}
             favorites={favoriteServices}
             onToggleFavorite={toggleFavorite}
             onSelectService={(serviceId) => {
-              const service = SERVICE_CATALOG
+              const service = COMPREHENSIVE_SERVICE_CATALOG
                 .find(c => c.id === selectedCategory)
                 ?.subcategories.find(s => s.id === serviceId);
               if (service) {

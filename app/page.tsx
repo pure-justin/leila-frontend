@@ -875,9 +875,9 @@ export default function Home() {
       {showServiceX && selectedService && customerCoords && (
         <ServiceXBooking
           serviceId={selectedService}
-          serviceName={services.find(s => s.id === selectedService)?.name || ''}
+          serviceName={allServices.find(s => s.id === selectedService)?.name || ''}
           customerLocation={customerCoords}
-          basePrice={services.find(s => s.id === selectedService)?.basePrice || 0}
+          basePrice={allServices.find(s => s.id === selectedService)?.basePrice || 0}
           onComplete={handleServiceXComplete}
           onCancel={() => {
             setShowServiceX(false);

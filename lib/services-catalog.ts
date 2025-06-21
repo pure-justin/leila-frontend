@@ -873,7 +873,7 @@ const ORIGINAL_CATALOG: ServiceCategory[] = [
 
 // Helper functions for service management
 export function getAllServices(): ServiceSubcategory[] {
-  return SERVICE_CATALOG.flatMap(category => 
+  return ORIGINAL_CATALOG.flatMap(category => 
     category.subcategories.map(sub => ({
       ...sub,
       categoryId: category.id,
@@ -884,7 +884,7 @@ export function getAllServices(): ServiceSubcategory[] {
 }
 
 export function getServicesByCategory(categoryId: string): ServiceSubcategory[] {
-  const category = SERVICE_CATALOG.find(c => c.id === categoryId);
+  const category = ORIGINAL_CATALOG.find(c => c.id === categoryId);
   return category?.subcategories || [];
 }
 
@@ -893,7 +893,7 @@ export function getServiceById(serviceId: string): (ServiceSubcategory & {
   categoryName: string;
   categoryIcon: string;
 }) | null {
-  for (const category of SERVICE_CATALOG) {
+  for (const category of ORIGINAL_CATALOG) {
     const service = category.subcategories.find(s => s.id === serviceId);
     if (service) {
       return {
@@ -908,7 +908,7 @@ export function getServiceById(serviceId: string): (ServiceSubcategory & {
 }
 
 export function getServicesForType(type: 'residential' | 'commercial'): ServiceCategory[] {
-  return SERVICE_CATALOG.filter(category => 
+  return ORIGINAL_CATALOG.filter(category => 
     category.availableFor.includes(type) || category.availableFor.includes('both')
   );
 }
@@ -927,5 +927,5 @@ export function getLicensedServices(): ServiceSubcategory[] {
 }
 
 export function getFeaturedCategories(): ServiceCategory[] {
-  return SERVICE_CATALOG.filter(category => category.featured === true);
+  return ORIGINAL_CATALOG.filter(category => category.featured === true);
 }

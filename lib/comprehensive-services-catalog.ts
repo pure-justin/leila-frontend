@@ -1759,7 +1759,11 @@ export const COMPREHENSIVE_SERVICE_CATALOG: ServiceCategory[] = [
 ];
 
 // Helper functions
-export function getAllServices(): ServiceSubcategory[] {
+export function getAllServices(): (ServiceSubcategory & {
+  categoryId: string;
+  categoryName: string;
+  categoryIcon: string;
+})[] {
   return COMPREHENSIVE_SERVICE_CATALOG.flatMap(category => 
     category.subcategories.map(sub => ({
       ...sub,
