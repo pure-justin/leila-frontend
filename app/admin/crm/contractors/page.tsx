@@ -184,13 +184,15 @@ export default function ContractorsPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Contractors</h1>
-        <p className="text-gray-600 mt-2">Manage contractor profiles, verifications, and performance</p>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">Contractors</h1>
+          <p className="text-gray-600 mt-2 text-lg">Manage contractor profiles, verifications, and performance</p>
+        </div>
       </div>
 
       {/* Actions Bar */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="p-4 border-b">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+        <div className="p-6 border-b border-gray-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             {/* Search */}
             <div className="flex-1 max-w-md">
@@ -255,64 +257,64 @@ export default function ContractorsPage() {
         </div>
 
         {/* Stats */}
-        <div className="px-4 py-3 bg-gray-50 grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600">Total Contractors:</span>
-            <span className="ml-2 font-semibold">{contractors.length}</span>
+        <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-indigo-50 grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Total Contractors</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{contractors.length}</p>
           </div>
-          <div>
-            <span className="text-gray-600">Active:</span>
-            <span className="ml-2 font-semibold text-green-600">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Active</p>
+            <p className="text-2xl font-bold text-green-600 mt-1">
               {contractors.filter(c => c.status === UserStatus.ACTIVE).length}
-            </span>
+            </p>
           </div>
-          <div>
-            <span className="text-gray-600">Verified:</span>
-            <span className="ml-2 font-semibold text-blue-600">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Verified</p>
+            <p className="text-2xl font-bold text-purple-600 mt-1">
               {contractors.filter(c => 
                 c.verification.identity === VerificationStatus.VERIFIED &&
                 c.verification.license === VerificationStatus.VERIFIED &&
                 c.verification.insurance === VerificationStatus.VERIFIED
               ).length}
-            </span>
+            </p>
           </div>
-          <div>
-            <span className="text-gray-600">Avg. Rating:</span>
-            <span className="ml-2 font-semibold">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Avg. Rating</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">
               {(contractors.reduce((sum, c) => sum + c.ratings.overall, 0) / contractors.length || 0).toFixed(1)}
-            </span>
+            </p>
           </div>
-          <div>
-            <span className="text-gray-600">Total Jobs:</span>
-            <span className="ml-2 font-semibold">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Total Jobs</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">
               {contractors.reduce((sum, c) => sum + c.analytics.totalBookings, 0)}
-            </span>
+            </p>
           </div>
         </div>
       </div>
 
       {/* Contractors Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Contractor
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Contact
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Services
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Verification
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Performance
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Status
                 </th>
                 <th className="relative px-6 py-3">
@@ -322,15 +324,15 @@ export default function ContractorsPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredContractors.map((contractor) => (
-                <tr key={contractor.id} className="hover:bg-gray-50">
+                <tr key={contractor.id} className="hover:bg-purple-50 transition-colors duration-150">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link href={`/admin/crm/contractors/${contractor.id}`} className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
                         {contractor.photoURL ? (
                           <img className="h-10 w-10 rounded-full" src={contractor.photoURL} alt="" />
                         ) : (
-                          <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                            <span className="text-purple-600 font-medium">
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center shadow-sm">
+                            <span className="text-white font-medium">
                               {contractor.firstName.charAt(0)}{contractor.lastName.charAt(0)}
                             </span>
                           </div>
@@ -443,9 +445,10 @@ export default function ContractorsPage() {
         </div>
 
         {filteredContractors.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-16">
             <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No contractors found</p>
+            <p className="text-gray-500 text-lg">No contractors found</p>
+            <p className="text-gray-400 text-sm mt-2">Try adjusting your search or filters</p>
           </div>
         )}
       </div>

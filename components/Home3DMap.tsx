@@ -86,7 +86,7 @@ export default function Home3DMap({ address, className = '' }: Home3DMapProps) {
     // Add animation to slowly rotate the map
     let heading = 0;
     const rotateMap = () => {
-      heading = (heading + 0.2) % 360;
+      heading = (heading + 0.05) % 360; // Slowed down from 0.2 to 0.05
       mapInstance.setHeading(heading);
     };
     const rotationInterval = setInterval(rotateMap, 100);
@@ -226,42 +226,42 @@ export default function Home3DMap({ address, className = '' }: Home3DMapProps) {
   };
 
   return (
-    <div className={`relative ${className}`}>
-      <div ref={mapRef} className="w-full h-full rounded-2xl overflow-hidden" />
+    <div className={`relative ${className} rounded-2xl overflow-hidden`}>
+      <div ref={mapRef} className="absolute inset-0" />
       
-      {/* Overlay showing nearby contractors */}
+      {/* Overlay showing nearby contractors - properly positioned */}
       <motion.div
-        className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-4 max-w-sm"
+        className="absolute top-6 left-6 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl p-5 max-w-sm border border-purple-100"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <h3 className="font-semibold text-lg mb-3 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+        <h3 className="font-semibold text-base mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
           Pros Near You
         </h3>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {nearbyContractors.slice(0, 3).map((contractor) => (
             <motion.div
               key={contractor.id}
-              className="flex items-center justify-between p-2 rounded-lg bg-gray-50 hover:bg-purple-50 cursor-pointer transition-colors"
+              className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-purple-50 cursor-pointer transition-colors"
               whileHover={{ scale: 1.02 }}
               onClick={() => setSelectedContractor(contractor)}
             >
               <div>
-                <p className="font-medium text-sm">{contractor.name}</p>
-                <p className="text-xs text-gray-600">{contractor.service}</p>
+                <p className="font-medium text-sm text-gray-900">{contractor.name}</p>
+                <p className="text-sm text-gray-600 mt-0.5">{contractor.service}</p>
               </div>
               <div className="text-right">
-                <div className="flex items-center text-xs">
-                  <Star className="w-3 h-3 text-yellow-500 mr-1" />
-                  <span>{contractor.rating}</span>
+                <div className="flex items-center text-sm">
+                  <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                  <span className="font-medium text-gray-900">{contractor.rating}</span>
                 </div>
-                <p className="text-xs text-gray-500">{contractor.distance}</p>
+                <p className="text-sm text-gray-500 mt-0.5">{contractor.distance}</p>
               </div>
             </motion.div>
           ))}
         </div>
-        <div className="mt-3 pt-3 border-t">
+        <div className="mt-4 pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Available now</span>
             <span className="font-semibold text-purple-600">{nearbyContractors.length} pros</span>
@@ -269,56 +269,56 @@ export default function Home3DMap({ address, className = '' }: Home3DMapProps) {
         </div>
       </motion.div>
 
-      {/* Selected contractor details */}
+      {/* Selected contractor details - better positioned */}
       {selectedContractor && (
         <motion.div
-          className="absolute bottom-4 left-4 right-4 bg-white rounded-xl shadow-lg p-4"
+          className="absolute bottom-8 left-6 right-6 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl p-5 border border-purple-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
         >
-          <div className="flex justify-between items-start mb-3">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <h4 className="font-semibold text-lg">{selectedContractor.name}</h4>
-              <p className="text-sm text-gray-600">{selectedContractor.service}</p>
+              <h4 className="font-semibold text-base text-gray-900">{selectedContractor.name}</h4>
+              <p className="text-sm text-gray-600 mt-1">{selectedContractor.service}</p>
             </div>
             <button
               onClick={() => setSelectedContractor(null)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
             >
               ×
             </button>
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                <span>{selectedContractor.rating}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center text-sm">
+                <Star className="w-4 h-4 text-yellow-500 mr-1.5" />
+                <span className="font-medium text-gray-700">{selectedContractor.rating}</span>
               </div>
-              <div className="flex items-center">
-                <MapPin className="w-4 h-4 text-gray-400 mr-1" />
-                <span>{selectedContractor.distance}</span>
+              <div className="flex items-center text-sm">
+                <MapPin className="w-4 h-4 text-gray-400 mr-1.5" />
+                <span className="text-gray-700">{selectedContractor.distance}</span>
               </div>
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 text-gray-400 mr-1" />
-                <span>{selectedContractor.responseTime}</span>
+              <div className="flex items-center text-sm">
+                <Clock className="w-4 h-4 text-gray-400 mr-1.5" />
+                <span className="text-gray-700">{selectedContractor.responseTime}</span>
               </div>
             </div>
-            <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg text-sm font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors">
+            <button className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors shadow-lg">
               Book Now
             </button>
           </div>
         </motion.div>
       )}
 
-      {/* 3D View indicator */}
+      {/* 3D View indicator - properly positioned */}
       <motion.div
-        className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg"
+        className="absolute top-6 right-6 bg-white/95 backdrop-blur-xl rounded-xl px-4 py-2 shadow-lg border border-purple-100"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        <p className="text-xs font-medium text-gray-700">3D View</p>
+        <p className="text-sm font-medium text-gray-700">3D View</p>
       </motion.div>
     </div>
   );

@@ -3,6 +3,11 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+
 const db = admin.firestore();
 const genAI = new GoogleGenerativeAI(functions.config().gemini.api_key);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
@@ -694,4 +699,8 @@ async function notifyContractorsOfOpportunity(userId: string, intent: any) {
         )
       });
   }
+}
+
+function updateUserSolarProfile(userId: any, solarProfile: { userId: any; address: any; analysis: { maxPanels: any; maxAreaMeters: any; sunshineHours: any; roofSegments: any; imageryQuality: any; analyzedAt: any; }; quote: { systemSizeKw: any; panelCount: any; estimatedCost: any; annualSavings: any; lifetimeSavings: any; paybackYears: any; environmentalImpact: any; }; userInterest: { viewedDuration: any; tabsViewed: any; calculatorUsed: any; quotesRequested: any; financingInterest: any; interestLevel: string; }; metadata: { source: string; version: string; createdAt: any; }; }) {
+  throw new Error('Function not implemented.');
 }

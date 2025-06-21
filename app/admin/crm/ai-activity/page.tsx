@@ -187,13 +187,15 @@ export default function AIActivityPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">AI Activity</h1>
-        <p className="text-gray-600 mt-2">Monitor AI assistant actions and performance</p>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">AI Activity</h1>
+          <p className="text-gray-600 mt-2 text-lg">Monitor AI assistant actions and performance</p>
+        </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8 max-w-7xl mx-auto">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-2">
             <Bot className="w-8 h-8 text-purple-600" />
             <span className="text-xs text-green-600 font-medium">+12%</span>
@@ -202,7 +204,7 @@ export default function AIActivityPage() {
           <p className="text-sm text-gray-500">Total Actions</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-2">
             <Calendar className="w-8 h-8 text-blue-600" />
             <span className="text-xs text-green-600 font-medium">+8%</span>
@@ -211,7 +213,7 @@ export default function AIActivityPage() {
           <p className="text-sm text-gray-500">Bookings Created</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-2">
             <Users className="w-8 h-8 text-green-600" />
             <span className="text-xs text-green-600 font-medium">+15%</span>
@@ -220,7 +222,7 @@ export default function AIActivityPage() {
           <p className="text-sm text-gray-500">Customers Helped</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-2">
             <Briefcase className="w-8 h-8 text-orange-600" />
             <span className="text-xs text-green-600 font-medium">+5%</span>
@@ -229,7 +231,7 @@ export default function AIActivityPage() {
           <p className="text-sm text-gray-500">Contractors Matched</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-2">
             <Clock className="w-8 h-8 text-indigo-600" />
           </div>
@@ -237,7 +239,7 @@ export default function AIActivityPage() {
           <p className="text-sm text-gray-500">Avg Response Time</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-2">
             <CheckCircle className="w-8 h-8 text-emerald-600" />
           </div>
@@ -247,8 +249,8 @@ export default function AIActivityPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="p-4 border-b">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8 max-w-7xl mx-auto">
+        <div className="p-6 border-b border-gray-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             {/* Search */}
             <div className="flex-1 max-w-md">
@@ -294,8 +296,8 @@ export default function AIActivityPage() {
       </div>
 
       {/* Activity Timeline */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 max-w-7xl mx-auto">
+        <div className="p-6 border-b border-gray-100">
           <h2 className="text-lg font-semibold">Activity Timeline</h2>
           <p className="text-sm text-gray-500 mt-1">{filteredActivities.length} activities found</p>
         </div>
@@ -303,7 +305,11 @@ export default function AIActivityPage() {
         <div className="p-6">
           <div className="space-y-4 max-h-[800px] overflow-y-auto">
             {filteredActivities.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">No activities found</p>
+              <div className="text-center py-16">
+                <Bot className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">No activities found</p>
+                <p className="text-gray-400 text-sm mt-2">Try adjusting your search or filters</p>
+              </div>
             ) : (
               filteredActivities.map((activity) => {
                 const category = getActionCategory(activity.action);
@@ -372,20 +378,20 @@ export default function AIActivityPage() {
       </div>
 
       {/* AI Insights */}
-      <div className="mt-8 bg-white rounded-lg shadow p-6">
+      <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-7xl mx-auto">
         <h3 className="text-lg font-semibold mb-4">AI Performance Insights</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-4 bg-green-50 rounded-lg">
+          <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
             <TrendingUp className="w-8 h-8 text-green-600 mx-auto mb-2" />
             <p className="text-sm font-medium text-gray-900">Peak Activity Time</p>
             <p className="text-xs text-gray-600 mt-1">2:00 PM - 4:00 PM</p>
           </div>
-          <div className="text-center p-4 bg-blue-50 rounded-lg">
+          <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-sky-50 rounded-xl border border-blue-100">
             <MessageSquare className="w-8 h-8 text-blue-600 mx-auto mb-2" />
             <p className="text-sm font-medium text-gray-900">Most Common Query</p>
             <p className="text-xs text-gray-600 mt-1">Service availability</p>
           </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
+          <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
             <CheckCircle className="w-8 h-8 text-purple-600 mx-auto mb-2" />
             <p className="text-sm font-medium text-gray-900">Resolution Rate</p>
             <p className="text-xs text-gray-600 mt-1">87% first contact</p>

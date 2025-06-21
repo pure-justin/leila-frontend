@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { db, storage } from '@/lib/firebase';
 import { doc, getDoc, collection, query, where, orderBy, onSnapshot, updateDoc } from 'firebase/firestore';
-import { ref, listAll, getDownloadURL } from 'firebase/storage';
+import { ref, listAll, getDownloadURL, getMetadata, uploadBytes } from 'firebase/storage';
 import { 
   ArrowLeft,
   Mail, 
@@ -136,7 +136,7 @@ export default function CustomerDetailPage() {
           const filesData = await Promise.all(
             filesList.items.map(async (item) => {
               const url = await getDownloadURL(item);
-              const metadata = await item.getMetadata();
+              const metadata = await getMetadata(item);
               return {
                 name: item.name,
                 url,
@@ -193,7 +193,7 @@ export default function CustomerDetailPage() {
 
     try {
       const storageRef = ref(storage, `customers/${params.id}/${file.name}`);
-      await storageRef.put(file);
+      await uploadBytes(storageRef, file);
       
       // Reload files
       const customerFilesRef = ref(storage, `customers/${params.id}`);
@@ -201,7 +201,7 @@ export default function CustomerDetailPage() {
       const filesData = await Promise.all(
         filesList.items.map(async (item) => {
           const url = await getDownloadURL(item);
-          const metadata = await item.getMetadata();
+          const metadata = await getMetadata(item);
           return {
             name: item.name,
             url,
@@ -240,17 +240,17 @@ export default function CustomerDetailPage() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-6">
-        <Link href="/admin/crm/customers" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4">
+      <div className="mb-8">
+        <Link href="/admin/crm/customers" className="inline-flex items-center text-purple-600 hover:text-purple-700 mb-6 font-medium">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Customers
         </Link>
         
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-4">
-              <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
-                <span className="text-2xl font-medium text-purple-600">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center shadow-md">
+                <span className="text-2xl font-medium text-white">
                   {customer.name.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -263,7 +263,7 @@ export default function CustomerDetailPage() {
                     className="text-2xl font-bold border-b-2 border-purple-600 focus:outline-none"
                   />
                 ) : (
-                  <h1 className="text-2xl font-bold text-gray-900">{customer.name}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900">{customer.name}</h1>
                 )}
                 <p className="text-gray-500">Customer ID: {customer.id}</p>
                 <div className="flex items-center gap-2 mt-2">
@@ -360,34 +360,34 @@ export default function CustomerDetailPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 pt-8 border-t border-gray-100">
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{bookings.length}</p>
-              <p className="text-sm text-gray-500">Total Bookings</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">{bookings.length}</p>
+              <p className="text-sm text-gray-600 mt-1">Total Bookings</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">${totalSpent.toFixed(2)}</p>
-              <p className="text-sm text-gray-500">Total Spent</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">${totalSpent.toFixed(2)}</p>
+              <p className="text-sm text-gray-600 mt-1">Total Spent</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{averageRating.toFixed(1)}</p>
-              <p className="text-sm text-gray-500">Avg. Rating</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">{averageRating.toFixed(1)}</p>
+              <p className="text-sm text-gray-600 mt-1">Avg. Rating</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{activities.length}</p>
-              <p className="text-sm text-gray-500">Activities</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">{activities.length}</p>
+              <p className="text-sm text-gray-600 mt-1">Activities</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="border-b">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="border-b border-gray-100">
           <nav className="-mb-px flex">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`px-6 py-3 text-sm font-medium ${
+              className={`px-6 py-4 text-sm font-medium transition-colors duration-200 ${
                 activeTab === 'overview'
                   ? 'border-b-2 border-purple-600 text-purple-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -397,7 +397,7 @@ export default function CustomerDetailPage() {
             </button>
             <button
               onClick={() => setActiveTab('bookings')}
-              className={`px-6 py-3 text-sm font-medium ${
+              className={`px-6 py-4 text-sm font-medium transition-colors duration-200 ${
                 activeTab === 'bookings'
                   ? 'border-b-2 border-purple-600 text-purple-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -407,7 +407,7 @@ export default function CustomerDetailPage() {
             </button>
             <button
               onClick={() => setActiveTab('files')}
-              className={`px-6 py-3 text-sm font-medium ${
+              className={`px-6 py-4 text-sm font-medium transition-colors duration-200 ${
                 activeTab === 'files'
                   ? 'border-b-2 border-purple-600 text-purple-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -417,7 +417,7 @@ export default function CustomerDetailPage() {
             </button>
             <button
               onClick={() => setActiveTab('activity')}
-              className={`px-6 py-3 text-sm font-medium ${
+              className={`px-6 py-4 text-sm font-medium transition-colors duration-200 ${
                 activeTab === 'activity'
                   ? 'border-b-2 border-purple-600 text-purple-600'
                   : 'text-gray-500 hover:text-gray-700'

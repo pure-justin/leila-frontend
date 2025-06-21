@@ -54,14 +54,14 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 transform transition-transform lg:translate-x-0 ${
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-gray-900 to-gray-800 transform transition-transform lg:translate-x-0 shadow-2xl ${
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="px-6 py-5 border-b border-gray-800">
-            <h2 className="text-2xl font-bold text-white">CRM</h2>
-            <p className="text-sm text-gray-400 mt-1">AI-Powered Management</p>
+          <div className="px-6 py-6 border-b border-gray-700/50">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">Leila CRM</h2>
+            <p className="text-sm text-gray-300 mt-2">AI-Powered Management</p>
           </div>
 
           {/* Navigation */}
@@ -72,10 +72,10 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                     active
-                      ? 'bg-purple-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg transform scale-105'
+                      : 'text-gray-300 hover:bg-gray-800/50 hover:text-white hover:translate-x-1'
                   }`}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
@@ -86,14 +86,14 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* User info */}
-          <div className="px-6 py-4 border-t border-gray-800">
+          <div className="px-6 py-4 border-t border-gray-700/50">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center shadow-md">
                 <span className="text-sm font-medium text-white">A</span>
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-white">Admin</p>
-                <p className="text-xs text-gray-400">admin@heyleila.com</p>
+                <p className="text-xs text-gray-300">admin@heyleila.com</p>
               </div>
             </div>
           </div>
@@ -102,8 +102,10 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main content */}
       <div className="lg:pl-64">
-        <main className="py-6 px-4 sm:px-6 lg:px-8">
-          {children}
+        <main className="py-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
 

@@ -3,20 +3,26 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { services } from '@/lib/services';
+import { COMPREHENSIVE_SERVICE_CATALOG, getFeaturedCategories, getAllServices } from '@/lib/comprehensive-services-catalog';
 import BookingForm from '@/components/BookingForm';
 import ChatBot from '@/components/ChatBot';
-import { Menu, X, Clock, Calendar, MapPin, User, ChevronRight, Star, Shield, Sparkles, Zap, TrendingUp, Wrench } from 'lucide-react';
+import { Menu, X, Clock, Calendar, MapPin, User, ChevronRight, Star, Shield, Sparkles, Zap, TrendingUp, Wrench, Phone, Mail, MessageCircle, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils/currency';
 import GoogleMapsLoader from '@/components/GoogleMapsLoader';
-import ServiceMap3D from '@/components/ServiceMap3D';
+import ServiceMap3D from '@/components/ServiceMap3D.lazy';
 import AddressPrompt from '@/components/AddressPrompt';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeIn, fadeInUp, stagger, scaleIn, pulseAnimation } from '@/lib/animations';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import GradientBackground from '@/components/GradientBackground';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import LiveChat from '@/components/LiveChat';
+import ServiceSelector from '@/components/ServiceSelector';
+import ServiceXBooking from '@/components/ServiceXBooking';
+import ContractorTracker from '@/components/ContractorTracker';
+import ReferralBanner from '@/components/ReferralBanner';
+import ServiceBrowser from '@/components/ServiceBrowser';
 
 export default function Home() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -27,6 +33,11 @@ export default function Home() {
   const [userAddress, setUserAddress] = useState<string | null>(null);
   const [showAddressPrompt, setShowAddressPrompt] = useState(false);
   const [mapsLoaded, setMapsLoaded] = useState(false);
+  const [showServiceSelector, setShowServiceSelector] = useState(false);
+  const [showServiceX, setShowServiceX] = useState(false);
+  const [activeContractor, setActiveContractor] = useState<any>(null);
+  const [customerCoords, setCustomerCoords] = useState<{lat: number, lng: number} | null>(null);
+  const [showServiceBrowser, setShowServiceBrowser] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -43,11 +54,33 @@ export default function Home() {
 
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId);
+    setShowServiceSelector(true);
+  };
+
+  const handleStandardBooking = () => {
+    setShowServiceSelector(false);
     setShowBookingForm(true);
+  };
+
+  const handleServiceXBooking = () => {
+    setShowServiceSelector(false);
+    setShowServiceX(true);
+    // Get user coordinates (in real app, would use geolocation or address)
+    if (userAddress) {
+      // Mock coordinates - in real app would geocode the address
+      setCustomerCoords({ lat: 37.7749, lng: -122.4194 });
+    }
+  };
+
+  const handleServiceXComplete = (result: any) => {
+    setShowServiceX(false);
+    setActiveContractor(result.contractor);
+    // Additional logic for payment processing would go here
   };
 
   const handleBookingComplete = () => {
     setShowBookingForm(false);
+    setShowServiceX(false);
     setSelectedService(null);
   };
 
@@ -57,13 +90,32 @@ export default function Home() {
     setShowAddressPrompt(false);
   };
 
-  const popularServices = services.slice(0, 4);
-  const homeServices = services.filter(s => ['plumbing', 'electrical', 'hvac', 'cleaning'].includes(s.id));
-  const maintenanceServices = services.filter(s => ['handyman', 'painting', 'gardening', 'pest-control'].includes(s.id));
+  const featuredCategories = getFeaturedCategories();
+  const allServices = getAllServices();
+  const popularServices = allServices.filter(s => 
+    ['lawn-mowing', 'house-cleaning', 'mobile-car-wash', 'dog-walking', 'furniture-assembly', 'mobile-haircut'].includes(s.id)
+  ).slice(0, 6);
+
+  // Check for referral code in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+      localStorage.setItem('referralCode', refCode);
+    }
+  }, []);
+
+  const savedReferralCode = typeof window !== 'undefined' ? localStorage.getItem('referralCode') : null;
 
   return (
     <GradientBackground variant="animated" className="min-h-screen">
       <GoogleMapsLoader onLoad={() => setMapsLoaded(true)} />
+      
+      {/* Referral Banner */}
+      {!showBookingForm && !showServiceX && (
+        <ReferralBanner referralCode={savedReferralCode || undefined} />
+      )}
+      
       {/* Animated Header */}
       <motion.header 
         className="bg-white/80 backdrop-blur-lg border-b border-purple-100 sticky top-0 z-50"
@@ -217,16 +269,15 @@ export default function Home() {
                         </motion.button>
                       ))}
                     </motion.div>
-                    <Link href="#services" className="block mt-4">
-                      <motion.button 
-                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Zap className="w-4 h-4 inline mr-2" />
-                        View all services
-                      </motion.button>
-                    </Link>
+                    <motion.button 
+                      onClick={() => setShowServiceBrowser(true)}
+                      className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl font-medium hover:shadow-lg transition-all duration-300 mt-4"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Zap className="w-4 h-4 inline mr-2" />
+                      Browse all services
+                    </motion.button>
                   </motion.div>
                 </motion.div>
                 
@@ -471,6 +522,28 @@ export default function Home() {
                   </motion.button>
                 ))}
               </motion.div>
+              
+              {/* View All Services Button */}
+              <motion.div 
+                className="text-center mt-8"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                <Link href="/services">
+                  <motion.button
+                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    View All {totalServices} Services
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </motion.button>
+                </Link>
+                <p className="text-sm text-gray-600 mt-3">
+                  From professional contractors to summer jobs for teens
+                </p>
+              </motion.div>
             </motion.section>
 
             {/* Trust Section - Epic Stats with Animations */}
@@ -661,6 +734,105 @@ export default function Home() {
                 </div>
               </motion.div>
             </motion.section>
+
+            {/* Contact Section */}
+            <motion.section 
+              className="px-4 lg:px-8 py-16 max-w-7xl mx-auto border-t border-purple-100"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
+                {/* Contact Info */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    Get in Touch
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-center md:justify-start">
+                      <Phone className="w-5 h-5 mr-3 text-purple-600" />
+                      <a href="tel:1-800-HEYLEILA" className="text-gray-700 hover:text-purple-600 transition-colors">
+                        1-800-HEYLEILA
+                      </a>
+                    </div>
+                    <div className="flex items-center justify-center md:justify-start">
+                      <Mail className="w-5 h-5 mr-3 text-purple-600" />
+                      <a href="mailto:support@heyleila.com" className="text-gray-700 hover:text-purple-600 transition-colors">
+                        support@heyleila.com
+                      </a>
+                    </div>
+                    <div className="flex items-center justify-center md:justify-start">
+                      <MessageCircle className="w-5 h-5 mr-3 text-purple-600" />
+                      <span className="text-gray-700">24/7 Live Chat Support</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Business Hours */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    Business Hours
+                  </h3>
+                  <div className="space-y-2 text-gray-700">
+                    <p>Monday - Friday: 24/7</p>
+                    <p>Saturday - Sunday: 24/7</p>
+                    <p className="text-sm text-purple-600 font-medium mt-3">
+                      Emergency services available anytime
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Trust Badges */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    Why Choose HeyLeila
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-center md:justify-start">
+                      <Shield className="w-5 h-5 mr-3 text-green-600" />
+                      <span className="text-gray-700">Licensed & Insured Professionals</span>
+                    </div>
+                    <div className="flex items-center justify-center md:justify-start">
+                      <Star className="w-5 h-5 mr-3 text-yellow-500" />
+                      <span className="text-gray-700">100% Satisfaction Guarantee</span>
+                    </div>
+                    <div className="flex items-center justify-center md:justify-start">
+                      <DollarSign className="w-5 h-5 mr-3 text-purple-600" />
+                      <span className="text-gray-700">Transparent Pricing</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Footer Bottom */}
+              <motion.div 
+                className="mt-12 pt-8 border-t border-purple-100 text-center text-sm text-gray-600"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+              >
+                <p>&copy; 2024 HeyLeila. All rights reserved. | 
+                  <a href="/terms" className="ml-1 hover:text-purple-600 transition-colors">Terms</a> | 
+                  <a href="/privacy" className="ml-1 hover:text-purple-600 transition-colors">Privacy</a>
+                </p>
+              </motion.div>
+            </motion.section>
           </>
         ) : (
           <div className="max-w-4xl mx-auto px-4 py-8">
@@ -674,6 +846,72 @@ export default function Home() {
       </main>
 
       <ChatBot />
+      <LiveChat />
+      
+      {/* Service Selector Modal */}
+      {showServiceSelector && selectedService && (
+        <ServiceSelector
+          serviceId={selectedService}
+          onSelectStandard={handleStandardBooking}
+          onSelectServiceX={handleServiceXBooking}
+          onCancel={() => {
+            setShowServiceSelector(false);
+            setSelectedService(null);
+          }}
+        />
+      )}
+
+      {/* Service X Booking */}
+      {showServiceX && selectedService && customerCoords && (
+        <ServiceXBooking
+          serviceId={selectedService}
+          serviceName={services.find(s => s.id === selectedService)?.name || ''}
+          customerLocation={customerCoords}
+          basePrice={services.find(s => s.id === selectedService)?.basePrice || 0}
+          onComplete={handleServiceXComplete}
+          onCancel={() => {
+            setShowServiceX(false);
+            setSelectedService(null);
+          }}
+        />
+      )}
+
+      {/* Contractor Tracker */}
+      {activeContractor && (
+        <ContractorTracker
+          contractor={activeContractor}
+          customerLocation={customerCoords || { lat: 37.7749, lng: -122.4194 }}
+          eta={activeContractor.eta || 30}
+          onCall={() => window.open(`tel:${activeContractor.phone || '1-800-HEYLEILA'}`)}
+          onMessageSent={(msg) => console.log('Message sent:', msg)}
+        />
+      )}
+      
+      {/* Service Browser Modal */}
+      {showServiceBrowser && (
+        <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+          <div className="sticky top-0 z-10 bg-white shadow-sm p-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold">Browse Services</h2>
+            <button
+              onClick={() => setShowServiceBrowser(false)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <ServiceBrowser
+            userLocation={userAddress || 'Your area'}
+            onServiceSelect={(serviceId) => {
+              setSelectedService(serviceId);
+              setShowServiceBrowser(false);
+              setShowServiceSelector(true);
+            }}
+            previouslyUsed={[]}
+            recentlyViewed={[]}
+            favorites={[]}
+          />
+        </div>
+      )}
       
       {/* Address Prompt Modal */}
       {showAddressPrompt && (

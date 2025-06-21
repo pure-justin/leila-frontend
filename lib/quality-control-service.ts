@@ -5,10 +5,7 @@ import {
   query, where, getDocs, Timestamp, increment, arrayUnion 
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-vision' });
+// Removed direct AI client - will use API route instead for security
 
 export interface ServicePhotoRequirement {
   id: string;
@@ -398,14 +395,14 @@ class QualityControlService {
     return photo;
   }
 
-  // AI photo verification
+  // AI photo verification using secure API route
   private async verifyPhotoWithAI(photo: WorkPhoto): Promise<void> {
     try {
       // Get the requirement for this photo
       const requirement = this.getRequirementById(photo.requirementId);
       if (!requirement) return;
       
-      // Analyze with Gemini Vision
+      // Fetch image data
       const imageData = await this.fetchImageAsBase64(photo.url);
       
       const prompt = `
@@ -424,17 +421,24 @@ class QualityControlService {
         - Recommendations
       `;
       
-      const result = await model.generateContent([
-        { text: prompt },
-        { 
-          inlineData: { 
-            mimeType: 'image/jpeg', 
-            data: imageData 
-          } 
-        }
-      ]);
+      // Call secure API route instead of using client-side AI
+      const response = await fetch('/api/quality/verify-photo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageData,
+          prompt
+        })
+      });
       
-      const analysis = this.parseAIResponse(result.response.text());
+      if (!response.ok) {
+        throw new Error('Photo verification failed');
+      }
+      
+      const result = await response.json();
+      const analysis = result.analysis;
       
       // Update photo verification
       await updateDoc(doc(db, 'workPhotos', photo.id), {

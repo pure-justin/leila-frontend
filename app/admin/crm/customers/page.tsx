@@ -126,13 +126,15 @@ export default function CustomersPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Customers</h1>
-        <p className="text-gray-600 mt-2">Manage customer profiles and track their service history</p>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">Customers</h1>
+          <p className="text-gray-600 mt-2 text-lg">Manage customer profiles and track their service history</p>
+        </div>
       </div>
 
       {/* Actions Bar */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="p-4 border-b">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+        <div className="p-6 border-b border-gray-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             {/* Search */}
             <div className="flex-1 max-w-md">
@@ -173,57 +175,57 @@ export default function CustomersPage() {
         </div>
 
         {/* Stats */}
-        <div className="px-4 py-3 bg-gray-50 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600">Total Customers:</span>
-            <span className="ml-2 font-semibold">{customers.length}</span>
+        <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-indigo-50 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Total Customers</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{customers.length}</p>
           </div>
-          <div>
-            <span className="text-gray-600">Active:</span>
-            <span className="ml-2 font-semibold text-green-600">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Active</p>
+            <p className="text-2xl font-bold text-green-600 mt-1">
               {customers.filter(c => c.status === 'active').length}
-            </span>
+            </p>
           </div>
-          <div>
-            <span className="text-gray-600">New This Month:</span>
-            <span className="ml-2 font-semibold text-blue-600">
+          <div className="text-center">
+            <p className="text-sm text-gray-600">New This Month</p>
+            <p className="text-2xl font-bold text-purple-600 mt-1">
               {customers.filter(c => {
                 const createdAt = c.createdAt?.toDate?.() || new Date(0);
                 const now = new Date();
                 return createdAt.getMonth() === now.getMonth() && 
                        createdAt.getFullYear() === now.getFullYear();
               }).length}
-            </span>
+            </p>
           </div>
-          <div>
-            <span className="text-gray-600">Avg. Lifetime Value:</span>
-            <span className="ml-2 font-semibold">$0</span>
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Avg. Lifetime Value</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">$0</p>
           </div>
         </div>
       </div>
 
       {/* Customers Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Contact
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Location
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Stats
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Joined
                 </th>
                 <th className="relative px-6 py-3">
@@ -233,12 +235,12 @@ export default function CustomersPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredCustomers.map((customer) => (
-                <tr key={customer.id} className="hover:bg-gray-50">
+                <tr key={customer.id} className="hover:bg-purple-50 transition-colors duration-150">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link href={`/admin/crm/customers/${customer.id}`} className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                          <span className="text-purple-600 font-medium">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center shadow-sm">
+                          <span className="text-white font-medium">
                             {customer.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -316,8 +318,10 @@ export default function CustomersPage() {
         </div>
 
         {filteredCustomers.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No customers found</p>
+          <div className="text-center py-16">
+            <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">No customers found</p>
+            <p className="text-gray-400 text-sm mt-2">Try adjusting your search or filters</p>
           </div>
         )}
       </div>

@@ -2,9 +2,9 @@
 const nextConfig = {
   // Removed 'output: export' to enable dynamic routes
   images: {
-    domains: ['heyleila.com', 'api.heyleila.com', 'storage.googleapis.com', 'firebasestorage.googleapis.com'],
-    // Keep unoptimized for now but can be removed later
-    unoptimized: true,
+    domains: ['heyleila.com', 'api.heyleila.com', 'storage.googleapis.com', 'firebasestorage.googleapis.com', 'lh3.googleusercontent.com'],
+    formats: ['image/avif', 'image/webp'],
+    // Removed unoptimized to enable Next.js image optimization
   },
   eslint: {
     ignoreDuringBuilds: true,

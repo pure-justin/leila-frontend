@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { db, storage } from '@/lib/firebase';
-import { doc, getDoc, collection, query, where, orderBy, onSnapshot, updateDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, orderBy, onSnapshot, updateDoc, Timestamp, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, listAll, getMetadata } from 'firebase/storage';
 import { 
   ArrowLeft,
@@ -390,8 +390,8 @@ export default function ContractorDetailPage() {
               <div>
                 <p className="text-sm text-gray-500">Member Since</p>
                 <p className="font-medium">
-                  {contractor.metadata?.createdAt?.toDate ? 
-                    format(contractor.metadata.createdAt.toDate(), 'MMM d, yyyy') : 
+                  {contractor.metadata?.createdAt ? 
+                    format(contractor.metadata.createdAt, 'MMM d, yyyy') : 
                     'N/A'
                   }
                 </p>
@@ -698,8 +698,8 @@ export default function ContractorDetailPage() {
                       <AlertCircle className="w-5 h-5 text-yellow-600 mr-2" />
                       <p className="text-sm text-yellow-800">
                         Vacation mode is active until {
-                          contractor.availability.vacationEndDate?.toDate ? 
-                            format(contractor.availability.vacationEndDate.toDate(), 'MMM d, yyyy') : 
+                          contractor.availability.vacationEndDate ? 
+                            format(contractor.availability.vacationEndDate, 'MMM d, yyyy') : 
                             'further notice'
                         }
                       </p>
@@ -758,11 +758,11 @@ export default function ContractorDetailPage() {
                         <div>
                           <p className="font-medium">{doc.type}</p>
                           <p className="text-sm text-gray-500">
-                            Uploaded {format(doc.uploadedAt.toDate ? doc.uploadedAt.toDate() : new Date(), 'MMM d, yyyy')}
+                            Uploaded {format(doc.uploadedAt instanceof Date ? doc.uploadedAt : new Date(doc.uploadedAt), 'MMM d, yyyy')}
                           </p>
                           {doc.verifiedAt && (
                             <p className="text-sm text-green-600">
-                              Verified {format(doc.verifiedAt.toDate ? doc.verifiedAt.toDate() : new Date(), 'MMM d, yyyy')}
+                              Verified {format(doc.verifiedAt instanceof Date ? doc.verifiedAt : new Date(doc.verifiedAt), 'MMM d, yyyy')}
                             </p>
                           )}
                         </div>

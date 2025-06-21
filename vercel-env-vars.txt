@@ -1,14 +1,25 @@
-EASY COPY-PASTE FOR VERCEL ENVIRONMENT VARIABLES:
+VERCEL ENVIRONMENT VARIABLES - SECURITY GUIDE:
 
-Client-side variables (these are OK to be public):
+==== PUBLIC VARIABLES (Safe for client-side) ====
+These use NEXT_PUBLIC_ prefix and are exposed to browsers:
+
 NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCForPQtgKrRBb21vu5MrAMLKvgYOVOKgI
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=leila-platform.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=leila-platform
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=leila-platform.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=242136952710
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyD88ucXoxhnfJzKQqLW2PWAwhMsxhQrm4s
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyDVIg-mcJMYLK0l7ddEtmDRjaU4grcQg6Q
 
-Server-side only (remove NEXT_PUBLIC_ prefix):
+Note: Firebase keys are designed to be public (secured by Firebase Security Rules)
+Note: Google Maps key must be public for browser usage (secured by HTTP referrer restrictions)
+
+==== PRIVATE VARIABLES (Server-side only) ====
+⚠️ NEVER add NEXT_PUBLIC_ prefix to these:
+
 GEMINI_API_KEY=AIzaSyD88ucXoxhnfJzKQqLW2PWAwhMsxhQrm4s
 
-Note: The Gemini API key should NOT have NEXT_PUBLIC_ prefix to keep it secure on the server side only.
+IMPORTANT SECURITY NOTES:
+1. Gemini API key is now used ONLY in API routes (server-side)
+2. All AI calls go through /api/ai/* endpoints
+3. Never expose GEMINI_API_KEY to client code
+4. Set HTTP referrer restrictions for Google Maps API in Google Cloud Console

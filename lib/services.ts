@@ -1,5 +1,5 @@
 export interface Service {
-  basePrice(basePrice: any): import("react").ReactNode;
+  basePrice: number;
   id: string;
   name: string;
   description: string;
@@ -18,9 +18,7 @@ export const services: Service[] = [
     category: 'Plumbing',
     estimatedDuration: '1-3 hours',
     priceRange: '$150-$500',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 150
   },
   {
     id: 'electrical-service',
@@ -30,9 +28,7 @@ export const services: Service[] = [
     category: 'Electrical',
     estimatedDuration: '2-4 hours',
     priceRange: '$200-$800',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 200
   },
   {
     id: 'hvac-maintenance',
@@ -42,9 +38,7 @@ export const services: Service[] = [
     category: 'HVAC',
     estimatedDuration: '2-6 hours',
     priceRange: '$200-$1500',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 200
   },
   {
     id: 'house-cleaning',
@@ -54,9 +48,7 @@ export const services: Service[] = [
     category: 'Cleaning',
     estimatedDuration: '2-4 hours',
     priceRange: '$100-$300',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 100
   },
   {
     id: 'lawn-care',
@@ -66,9 +58,7 @@ export const services: Service[] = [
     category: 'Landscaping',
     estimatedDuration: '1-3 hours',
     priceRange: '$50-$200',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 50
   },
   {
     id: 'pest-control',
@@ -78,9 +68,7 @@ export const services: Service[] = [
     category: 'Pest Control',
     estimatedDuration: '1-2 hours',
     priceRange: '$150-$400',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 150
   },
   {
     id: 'appliance-repair',
@@ -90,9 +78,7 @@ export const services: Service[] = [
     category: 'Appliances',
     estimatedDuration: '1-3 hours',
     priceRange: '$100-$500',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 100
   },
   {
     id: 'painting',
@@ -102,8 +88,6 @@ export const services: Service[] = [
     category: 'Painting',
     estimatedDuration: '4-8 hours',
     priceRange: '$300-$2000',
-    basePrice: function (basePrice: any): import("react").ReactNode {
-      throw new Error("Function not implemented.");
-    }
+    basePrice: 300
   }
 ];

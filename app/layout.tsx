@@ -23,20 +23,21 @@ export const metadata: Metadata = {
     shortcut: '/favicon-new.ico',
     apple: '/favicon-new.ico',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover'
-  },
   manifest: '/manifest.json',
-  themeColor: '#7C3AED',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Leila'
   }
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#7C3AED',
 };
 
 export default function RootLayout({

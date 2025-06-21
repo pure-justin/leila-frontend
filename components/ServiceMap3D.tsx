@@ -32,6 +32,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   const [serviceHotspots, setServiceHotspots] = useState<ServiceHotspot[]>([]);
   const [showARMode, setShowARMode] = useState(false);
   const [mapError, setMapError] = useState(false);
+  const [mapMode, setMapMode] = useState<'solar' | '3d' | 'standard'>('standard');
   
   // Get real contractor data from Firestore
   const { contractors: firestoreContractors, loading: contractorsLoading } = useContractors(selectedService, 20);
@@ -118,11 +119,28 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     } else if (window.google.maps.ElevationService) {
       // Fallback to 3D with elevation
       console.log('🏔️ Using 3D view with elevation');
+      
+      // Test if 3D features are available
+      const test3DSupport = () => {
+        try {
+          const testMap = new google.maps.Map(document.createElement('div'), {
+            center: { lat: 0, lng: 0 },
+            zoom: 1,
+            tilt: 45
+          });
+          return testMap.getTilt && typeof testMap.getTilt === 'function';
+        } catch {
+          return false;
+        }
+      };
+      
+      const supports3D = test3DSupport();
+      
       mapConfig = {
         ...mapConfig,
         mapId: 'epic_service_map',
-        mapTypeId: 'satellite',
-        tilt: 60,
+        mapTypeId: supports3D ? 'satellite' : 'roadmap',
+        tilt: supports3D ? 60 : 0,
         heading: 0,
         // 3D optimized styles
         styles: [
@@ -184,6 +202,18 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     const mapInstance = new google.maps.Map(mapRef.current, mapConfig);
 
     setMap(mapInstance);
+    
+    // Log which view mode we're using and update state
+    if (hasSolar) {
+      console.log('✅ Using Solar-enhanced 3D view');
+      setMapMode('solar');
+    } else if (mapConfig.tilt && mapConfig.tilt > 0) {
+      console.log('✅ Using 3D satellite view');
+      setMapMode('3d');
+    } else {
+      console.log('✅ Using standard map view (3D not available)');
+      setMapMode('standard');
+    }
 
     // Initialize Street View with epic settings
     const streetViewInstance = new google.maps.StreetViewPanorama(
@@ -217,7 +247,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     });
 
     // Add sick animations
-    animateMap(mapInstance);
+    const cleanupAnimation = animateMap(mapInstance);
     
     // Generate dynamic data
     generateLiveContractors(mapInstance);
@@ -266,6 +296,17 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     }
 
       return () => {
+        if (cleanupAnimation) {
+          cleanupAnimation();
+        }
+        // Cleanup real-time updates
+        if ((mapInstance as any)?._realTimeUpdatesCleanup) {
+          (mapInstance as any)._realTimeUpdatesCleanup();
+        }
+        // Cleanup street view animations
+        if (streetViewInstance && (streetViewInstance as any)?._animationCleanup) {
+          (streetViewInstance as any)._animationCleanup();
+        }
         if (mapInstance && mapInstance.unbindAll) {
           mapInstance.unbindAll();
         }
@@ -294,21 +335,37 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   const animateMap = (map: google.maps.Map) => {
     let heading = 0;
     let tilt = 60;
+    let animationId: number;
     
     const animate = () => {
-      heading = (heading + 0.5) % 360;
-      tilt = 60 + Math.sin(Date.now() * 0.001) * 10;
-      
-      map.moveCamera({
-        heading,
-        tilt,
-        zoom: map.getZoom()
-      });
-      
-      requestAnimationFrame(animate);
+      try {
+        heading = (heading + 0.1) % 360; // Slowed down rotation from 0.5 to 0.1
+        tilt = 60 + Math.sin(Date.now() * 0.001) * 5; // Reduced tilt variation from 10 to 5
+        
+        // Check if 3D features are supported before animating
+        if (map.getTilt && typeof map.getTilt === 'function') {
+          map.moveCamera({
+            heading,
+            tilt,
+            zoom: map.getZoom()
+          });
+          
+          animationId = requestAnimationFrame(animate);
+        }
+      } catch (error) {
+        console.log('3D animation not supported, using standard view');
+        // Don't continue animation if 3D features aren't supported
+      }
     };
     
     animate();
+    
+    // Return cleanup function
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
   };
 
   const generateLiveContractors = (map: google.maps.Map) => {
@@ -418,6 +475,9 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   const animateContractorMovement = (marker: any, contractor: any) => {
     const destinations = generateRandomPath(contractor.position, 5);
     let currentIndex = 0;
+    let timeoutId: NodeJS.Timeout;
+    let animationId: number;
+    const activeTimeouts: NodeJS.Timeout[] = [];
 
     const move = () => {
       if (currentIndex >= destinations.length) {
@@ -437,10 +497,11 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
         marker.position = { lat, lng };
 
         if (progress < 1) {
-          requestAnimationFrame(animate);
+          animationId = requestAnimationFrame(animate);
         } else {
           currentIndex++;
-          setTimeout(move, 1000); // Pause at each point
+          timeoutId = setTimeout(move, 1000); // Pause at each point
+          activeTimeouts.push(timeoutId);
         }
       };
 
@@ -448,6 +509,14 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
     };
 
     move();
+
+    // Store cleanup function on marker for later cleanup
+    marker._cleanupAnimation = () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      activeTimeouts.forEach(id => clearTimeout(id));
+    };
   };
 
   const generateServiceHeatmap = (map: google.maps.Map) => {
@@ -497,7 +566,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
 
   const startRealTimeUpdates = (map: google.maps.Map) => {
     // Simulate real-time contractor updates
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       // Update contractor positions
       activeContractors.forEach(contractor => {
         if (contractor.isMoving) {
@@ -510,6 +579,11 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
         addNewServiceRequest(map);
       }
     }, 5000);
+
+    // Store cleanup function on map instance
+    (map as any)._realTimeUpdatesCleanup = () => {
+      clearInterval(intervalId);
+    };
   };
 
   const addNewServiceRequest = (map: google.maps.Map) => {
@@ -632,54 +706,74 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
   }
   
   return (
-    <div className="relative w-full h-full">
-      {/* Main 3D Map */}
-      <div ref={mapRef} className="w-full h-full rounded-2xl overflow-hidden" />
+    <div className="relative w-full h-full rounded-2xl overflow-hidden">
+      {/* Main 3D Map - properly clipped */}
+      <div ref={mapRef} className="absolute inset-0" />
 
-      {/* Epic UI Overlay */}
+      {/* Epic UI Overlay - properly layered */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Top Stats Bar */}
+        {/* Top Stats Bar - adjusted spacing to avoid map controls */}
         <motion.div 
-          className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-auto"
+          className="absolute top-6 left-6 right-24 flex justify-between items-start gap-4 pointer-events-auto"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           {/* Live Activity Feed */}
           <motion.div 
-            className="bg-white/90 backdrop-blur-xl rounded-2xl p-4 text-gray-900 max-w-sm shadow-lg border border-purple-100"
+            className="bg-white/95 backdrop-blur-xl rounded-2xl p-5 text-gray-900 max-w-sm shadow-xl border border-purple-100"
             whileHover={{ scale: 1.02 }}
           >
-            <h3 className="text-sm font-bold mb-2 flex items-center">
-              <Zap className="w-4 h-4 mr-2 text-yellow-500 dark:text-yellow-400" />
+            <h3 className="text-base font-bold mb-3 flex items-center">
+              <Zap className="w-5 h-5 mr-2 text-yellow-500 dark:text-yellow-400" />
               LIVE ACTIVITY
             </h3>
-            <div className="space-y-2 text-xs">
+            <div className="space-y-3">
               <motion.div 
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-3 text-sm"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
               >
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span>John booked Plumbing - 2 min ago</span>
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0" />
+                <span className="text-gray-700">John booked Plumbing - 2 min ago</span>
               </motion.div>
               <motion.div 
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-3 text-sm"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                <span>Mike completed HVAC repair - 5 min ago</span>
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse flex-shrink-0" />
+                <span className="text-gray-700">Mike completed HVAC repair - 5 min ago</span>
               </motion.div>
               <motion.div 
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-3 text-sm"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
-                <span>Sarah requested Emergency Electric - Just now</span>
+                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse flex-shrink-0" />
+                <span className="text-gray-700">Sarah requested Emergency Electric - Just now</span>
               </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Map Mode Indicator */}
+          <motion.div 
+            className="bg-white/90 backdrop-blur-xl rounded-2xl px-4 py-2 shadow-lg border border-purple-100 mr-2"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <div className="flex items-center space-x-2">
+              <div className={`w-3 h-3 rounded-full ${
+                mapMode === 'solar' ? 'bg-yellow-400' : 
+                mapMode === '3d' ? 'bg-blue-400' : 
+                'bg-gray-400'
+              }`} />
+              <span className="text-sm font-medium text-gray-700">
+                {mapMode === 'solar' ? '🌞 Solar 3D' : 
+                 mapMode === '3d' ? '🏔️ 3D View' : 
+                 '🗺️ Standard Map'}
+              </span>
             </div>
           </motion.div>
 
@@ -733,7 +827,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                   }, 50);
                   
                   // Stop after 5 seconds and focus on contractor
-                  setTimeout(() => {
+                  const focusTimeout = setTimeout(() => {
                     clearInterval(animateDrive);
                     // Point camera at contractor location
                     if (contractor.position) {
@@ -747,6 +841,12 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                       });
                     }
                   }, 5000);
+
+                  // Store cleanup for street view animations
+                  (streetView as any)._animationCleanup = () => {
+                    clearInterval(animateDrive);
+                    clearTimeout(focusTimeout);
+                  };
                 } else if (map && !streetView) {
                   // Initialize street view if not already created
                   const sv = map.getStreetView();
@@ -777,49 +877,49 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           </motion.div>
         </motion.div>
 
-        {/* Bottom Service Cards */}
+        {/* Bottom Service Cards - properly positioned above map controls */}
         <motion.div 
-          className="absolute bottom-4 left-4 right-4 pointer-events-auto"
+          className="absolute bottom-8 left-6 right-6 pointer-events-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex space-x-4 overflow-x-auto pb-2">
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
             {activeContractors.slice(0, 5).map((contractor, index) => (
               <motion.div
                 key={contractor.id}
-                className="bg-white/90 backdrop-blur-xl rounded-2xl p-4 min-w-[280px] shadow-2xl border border-purple-200"
+                className="bg-white/95 backdrop-blur-xl rounded-2xl p-5 min-w-[300px] shadow-xl border border-purple-100"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, y: -5 }}
+                whileHover={{ scale: 1.03, y: -5 }}
               >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h4 className="font-bold text-gray-900">{contractor.name}</h4>
-                    <p className="text-sm text-purple-600">{contractor.service}</p>
+                    <h4 className="font-bold text-gray-900 text-base">{contractor.name}</h4>
+                    <p className="text-sm text-purple-600 mt-1">{contractor.service}</p>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center text-sm">
                       <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                      <span className="font-semibold">{Number(contractor.rating || 0).toFixed(1)}</span>
+                      <span className="font-semibold text-gray-900">{Number(contractor.rating || 0).toFixed(1)}</span>
                     </div>
-                    <p className="text-xs text-gray-500">{contractor.jobsCompleted || 0} jobs</p>
+                    <p className="text-sm text-gray-500 mt-1">{contractor.jobsCompleted || 0} jobs</p>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3 text-sm">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 text-gray-400 mr-1" />
-                      <span className="font-medium">{contractor.eta}min</span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 text-gray-400 mr-1.5" />
+                      <span className="font-medium text-gray-700">{contractor.eta}min</span>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center text-sm">
                       <DollarSign className="w-4 h-4 text-gray-400 mr-1" />
-                      <span className="font-medium">${contractor.price}/hr</span>
+                      <span className="font-medium text-gray-700">${contractor.price}/hr</span>
                     </div>
                   </div>
                   <motion.button
-                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-medium"
+                    className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-medium shadow-lg"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -828,9 +928,9 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                 </div>
 
                 {contractor.isMoving && (
-                  <div className="mt-2 flex items-center text-xs text-green-600">
-                    <Navigation className="w-3 h-3 mr-1 animate-pulse" />
-                    <span>En route • {contractor.speed} mph</span>
+                  <div className="mt-3 flex items-center text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">
+                    <Navigation className="w-4 h-4 mr-2 animate-pulse" />
+                    <span className="font-medium">En route • {contractor.speed} mph</span>
                   </div>
                 )}
               </motion.div>
@@ -838,9 +938,9 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           </div>
         </motion.div>
 
-        {/* AR Mode Toggle */}
+        {/* AR Mode Toggle - repositioned to avoid map controls */}
         <motion.button
-          className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-purple-600 text-white p-4 rounded-full shadow-2xl pointer-events-auto"
+          className="absolute top-1/2 right-6 transform -translate-y-1/2 bg-purple-600 text-white p-4 rounded-full shadow-xl pointer-events-auto z-10"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setShowARMode(!showARMode)}
@@ -848,15 +948,15 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
           <Sparkles className="w-6 h-6" />
         </motion.button>
 
-        {/* Service Demand Indicators */}
+        {/* Service Demand Indicators - better positioned */}
         {viewMode === 'heat' && (
-          <div className="absolute top-20 right-4 bg-black/80 backdrop-blur-xl rounded-2xl p-4 text-white pointer-events-auto">
-            <h3 className="text-sm font-bold mb-3">Service Demand</h3>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs">Plumbing</span>
-                <div className="flex items-center">
-                  <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
+          <div className="absolute top-24 right-6 bg-white/95 backdrop-blur-xl rounded-2xl p-5 shadow-xl pointer-events-auto border border-purple-100">
+            <h3 className="text-base font-bold mb-4 text-gray-900">Service Demand</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-medium text-gray-700">Plumbing</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-24 h-2.5 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div 
                       className="h-full bg-gradient-to-r from-purple-500 to-red-500"
                       initial={{ width: 0 }}
@@ -864,13 +964,13 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                       transition={{ duration: 1 }}
                     />
                   </div>
-                  <Flame className="w-4 h-4 ml-2 text-red-500" />
+                  <Flame className="w-4 h-4 text-red-500" />
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs">Electrical</span>
-                <div className="flex items-center">
-                  <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-medium text-gray-700">Electrical</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-24 h-2.5 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div 
                       className="h-full bg-gradient-to-r from-purple-500 to-yellow-500"
                       initial={{ width: 0 }}
@@ -878,13 +978,13 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                       transition={{ duration: 1, delay: 0.2 }}
                     />
                   </div>
-                  <TrendingUp className="w-4 h-4 ml-2 text-yellow-500" />
+                  <TrendingUp className="w-4 h-4 text-yellow-500" />
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs">HVAC</span>
-                <div className="flex items-center">
-                  <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-medium text-gray-700">HVAC</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-24 h-2.5 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div 
                       className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
                       initial={{ width: 0 }}
@@ -892,7 +992,7 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
                       transition={{ duration: 1, delay: 0.4 }}
                     />
                   </div>
-                  <span className="text-xs ml-2">Normal</span>
+                  <span className="text-sm text-gray-600">Normal</span>
                 </div>
               </div>
             </div>
@@ -902,6 +1002,17 @@ export default function ServiceMap3D({ userAddress, selectedService, onContracto
 
       {/* Custom CSS */}
       <style jsx>{`
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+        
         .contractor-marker-3d {
           cursor: pointer;
           transition: all 0.3s ease;

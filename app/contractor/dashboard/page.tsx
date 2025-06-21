@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Star, Briefcase, Calendar, Menu, X, Bell, CheckCircle, Clock, TrendingUp, DollarSign, Zap } from 'lucide-react';
+import { Star, Briefcase, Calendar, Menu, X, Bell, CheckCircle, Clock, TrendingUp, DollarSign, Zap, Gift } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils/currency';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -36,7 +36,7 @@ export default function ContractorDashboard() {
     token: 'mock-jwt-token',
     name: user?.displayName?.split(' ')[0] || 'Contractor',
     fullName: user?.displayName || 'Contractor',
-    profession: user?.profession || 'Professional'
+    profession: (user as any)?.profession || 'Professional'
   };
 
   // Mock data
@@ -462,6 +462,46 @@ export default function ContractorDashboard() {
                   </motion.div>
                   <p className="text-sm text-gray-500">This week</p>
                 </motion.div>
+              </motion.div>
+
+              {/* Referral Program Widget */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-6 text-white"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold mb-2 flex items-center">
+                      <Gift className="w-6 h-6 mr-2" />
+                      Earn More with Referrals
+                    </h3>
+                    <p className="text-purple-100 mb-4">
+                      Get $500 for each contractor you refer, $10 for each customer
+                    </p>
+                    <div className="flex items-center space-x-4">
+                      <div className="bg-white/20 px-4 py-2 rounded-lg">
+                        <p className="text-xs text-purple-100">Your code</p>
+                        <p className="font-mono font-bold text-lg">C7X9K2</p>
+                      </div>
+                      <Link href="/contractor/referrals">
+                        <motion.button
+                          className="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          View Program
+                        </motion.button>
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-purple-100">Total earned</p>
+                    <p className="text-3xl font-bold">$1,280</p>
+                    <p className="text-sm text-purple-100 mt-1">12 referrals</p>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           )}

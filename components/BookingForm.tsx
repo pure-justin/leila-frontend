@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { services } from '@/lib/services';
+import { getServiceById } from '@/lib/comprehensive-services-catalog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, MapPin, User, Mail, Phone, FileText, ArrowLeft, Sparkles, CheckCircle } from 'lucide-react';
 import { fadeIn, fadeInUp, scaleIn, stagger } from '@/lib/animations';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import GradientBackground from '@/components/GradientBackground';
+import InstantQuote from '@/components/InstantQuote';
+import PaymentForm from '@/components/PaymentForm';
 
 const bookingSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -32,7 +34,11 @@ interface BookingFormProps {
 
 export default function BookingForm({ serviceId, onComplete, onCancel }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const service = services.find(s => s.id === serviceId);
+  const [showQuote, setShowQuote] = useState(true);
+  const [showPayment, setShowPayment] = useState(false);
+  const [bookingData, setBookingData] = useState<BookingFormData | null>(null);
+  const [quoteDetails, setQuoteDetails] = useState<any>(null);
+  const service = getServiceById(serviceId);
 
   const {
     register,
@@ -43,6 +49,13 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
   });
 
   const onSubmit = async (data: BookingFormData) => {
+    setBookingData(data);
+    setShowPayment(true);
+  };
+
+  const handlePaymentSuccess = async () => {
+    if (!bookingData) return;
+    
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/booking', {
@@ -51,14 +64,19 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...data,
+          ...bookingData,
           serviceId,
           serviceName: service?.name,
+          serviceCategory: service?.categoryName,
+          serviceCategoryIcon: service?.categoryIcon,
+          quoteDetails: quoteDetails,
+          estimatedTotal: quoteDetails?.estimatedTotal,
+          paymentStatus: 'paid',
         }),
       });
 
       if (response.ok) {
-        alert('Booking submitted successfully! We will contact you shortly.');
+        alert('Booking and payment completed successfully! We will contact you shortly.');
         onComplete();
       } else {
         throw new Error('Failed to submit booking');
@@ -71,10 +89,15 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
     }
   };
 
+  const handlePaymentCancel = () => {
+    setShowPayment(false);
+    setBookingData(null);
+  };
+
   if (!service) return null;
 
   return (
-    <GradientBackground variant="subtle">
+    <GradientBackground variant="default">
       <motion.div 
         className="max-w-2xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
@@ -126,7 +149,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  {service.icon}
+                  {service.categoryIcon}
                 </motion.span>
                 <div>
                   <h2 className="text-3xl font-bold">Book {service.name}</h2>
@@ -138,7 +161,38 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
           
           {/* Form content */}
           <div className="p-8">
-
+            {showPayment ? (
+              <PaymentForm
+                amount={quoteDetails?.estimatedTotal || 0}
+                onSuccess={handlePaymentSuccess}
+                onCancel={handlePaymentCancel}
+              />
+            ) : showQuote ? (
+              <>
+                <InstantQuote 
+                  serviceId={serviceId} 
+                  onQuoteGenerated={(quote) => {
+                    setQuoteDetails(quote);
+                  }}
+                />
+                {quoteDetails && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-6 text-center"
+                  >
+                    <motion.button
+                      onClick={() => setShowQuote(false)}
+                      className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-shadow"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Book Now at {quoteDetails.estimatedTotal ? `$${quoteDetails.estimatedTotal.toFixed(2)}` : 'this price'}
+                    </motion.button>
+                  </motion.div>
+                )}
+              </>
+            ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <motion.div 
                 className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -405,6 +459,7 @@ export default function BookingForm({ serviceId, onComplete, onCancel }: Booking
                 </motion.button>
               </motion.div>
             </form>
+            )}
           </div>
         </motion.div>
       </motion.div>

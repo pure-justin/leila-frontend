@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, orderBy, onSnapshot, where, updateDoc, doc, Timestamp } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, where, updateDoc, doc, Timestamp, getDoc } from 'firebase/firestore';
 import { 
   Calendar,
   Clock,
@@ -95,7 +95,7 @@ export default function BookingsPage() {
       const userDetails: { [key: string]: any } = {};
       for (const userId of userIds) {
         try {
-          const userDoc = await doc(db, 'users', userId).get();
+          const userDoc = await getDoc(doc(db, 'users', userId));
           if (userDoc.exists()) {
             userDetails[userId] = userDoc.data();
           }
@@ -226,13 +226,15 @@ export default function BookingsPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Bookings</h1>
-        <p className="text-gray-600 mt-2">Manage all service bookings and job assignments</p>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">Bookings</h1>
+          <p className="text-gray-600 mt-2 text-lg">Manage all service bookings and job assignments</p>
+        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Bookings</p>
@@ -241,7 +243,7 @@ export default function BookingsPage() {
             <Calendar className="w-8 h-8 text-purple-600" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Pending</p>
@@ -250,7 +252,7 @@ export default function BookingsPage() {
             <AlertCircle className="w-8 h-8 text-yellow-600" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">In Progress</p>
@@ -259,7 +261,7 @@ export default function BookingsPage() {
             <Clock className="w-8 h-8 text-blue-600" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Completed</p>
@@ -268,7 +270,7 @@ export default function BookingsPage() {
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Revenue</p>
@@ -280,8 +282,8 @@ export default function BookingsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="p-4 border-b">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+        <div className="p-6 border-b border-gray-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             {/* Search */}
             <div className="flex-1 max-w-md">
@@ -341,30 +343,30 @@ export default function BookingsPage() {
       </div>
 
       {/* Bookings Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Booking ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Service
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Contractor
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Schedule
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Amount
                 </th>
                 <th className="relative px-6 py-3">
@@ -374,7 +376,7 @@ export default function BookingsPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredBookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50">
+                <tr key={booking.id} className="hover:bg-purple-50 transition-colors duration-150">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <p className="text-sm font-medium text-gray-900">#{booking.id.slice(-6)}</p>
@@ -427,8 +429,8 @@ export default function BookingsPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <p className="text-sm text-gray-900">
-                        {booking.schedule.requestedDate?.toDate ? 
-                          format(booking.schedule.requestedDate.toDate(), 'MMM d, yyyy') : 
+                        {booking.schedule.requestedDate ? 
+                          format(booking.schedule.requestedDate, 'MMM d, yyyy') : 
                           'TBD'
                         }
                       </p>
@@ -475,20 +477,21 @@ export default function BookingsPage() {
         </div>
 
         {filteredBookings.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-16">
             <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No bookings found</p>
+            <p className="text-gray-500 text-lg">No bookings found</p>
+            <p className="text-gray-400 text-sm mt-2">Try adjusting your search or filters</p>
           </div>
         )}
       </div>
 
       {/* Booking Detail Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-100">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Booking Details</h3>
+                <h3 className="text-2xl font-bold text-gray-900">Booking Details</h3>
                 <button
                   onClick={() => setSelectedBooking(null)}
                   className="text-gray-400 hover:text-gray-600"
@@ -589,8 +592,8 @@ export default function BookingsPage() {
                     <div>
                       <p className="text-gray-500">Requested Date</p>
                       <p className="font-medium">
-                        {selectedBooking.schedule.requestedDate?.toDate ? 
-                          format(selectedBooking.schedule.requestedDate.toDate(), 'MMMM d, yyyy') : 
+                        {selectedBooking.schedule.requestedDate ? 
+                          format(selectedBooking.schedule.requestedDate, 'MMMM d, yyyy') : 
                           'TBD'
                         }
                       </p>
@@ -603,7 +606,7 @@ export default function BookingsPage() {
                       <div>
                         <p className="text-gray-500">Completed At</p>
                         <p className="font-medium">
-                          {format(selectedBooking.schedule.completedAt.toDate(), 'MMM d, yyyy h:mm a')}
+                          {format(selectedBooking.schedule.completedAt, 'MMM d, yyyy h:mm a')}
                         </p>
                       </div>
                     )}

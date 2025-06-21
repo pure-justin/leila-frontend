@@ -140,62 +140,72 @@ export default function CRMDashboard() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">CRM Dashboard</h1>
-        <p className="text-gray-600 mt-2">AI-powered customer and contractor management</p>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">CRM Dashboard</h1>
+          <p className="text-gray-600 mt-2 text-lg">AI-powered customer and contractor management</p>
+        </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Link href="/admin/crm/customers" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 max-w-7xl mx-auto">
+        <Link href="/admin/crm/customers" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-purple-200 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Customers</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalCustomers}</p>
               <p className="text-xs text-green-600 mt-1">+12% from last month</p>
             </div>
-            <Users className="w-10 h-10 text-blue-600" />
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <Users className="w-6 h-6 text-white" />
+            </div>
           </div>
         </Link>
 
-        <Link href="/admin/crm/contractors" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+        <Link href="/admin/crm/contractors" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-purple-200 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Active Contractors</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalContractors}</p>
               <p className="text-xs text-green-600 mt-1">98% availability</p>
             </div>
-            <UserCheck className="w-10 h-10 text-purple-600" />
+            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
+              <UserCheck className="w-6 h-6 text-white" />
+            </div>
           </div>
         </Link>
 
-        <Link href="/admin/crm/bookings" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+        <Link href="/admin/crm/bookings" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-purple-200 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Active Bookings</p>
               <p className="text-2xl font-bold text-gray-900">{stats.activeBookings}</p>
               <p className="text-xs text-gray-600 mt-1">{stats.completedToday} completed today</p>
             </div>
-            <Calendar className="w-10 h-10 text-green-600" />
+            <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
           </div>
         </Link>
 
-        <Link href="/admin/crm/ai-activity" className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+        <Link href="/admin/crm/ai-activity" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-purple-200 transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">AI Actions Today</p>
               <p className="text-2xl font-bold text-gray-900">{stats.aiActionsToday}</p>
               <p className="text-xs text-gray-600 mt-1">{stats.responseTime} avg response</p>
             </div>
-            <Bot className="w-10 h-10 text-orange-600" />
+            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+              <Bot className="w-6 h-6 text-white" />
+            </div>
           </div>
         </Link>
       </div>
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
         {/* Recent AI Activity */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Recent AI Activity</h2>
               <Link href="/admin/crm/ai-activity" className="text-sm text-purple-600 hover:text-purple-700">
@@ -226,8 +236,8 @@ export default function CRMDashboard() {
         </div>
 
         {/* Upcoming Bookings */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Upcoming Bookings</h2>
               <Link href="/admin/crm/bookings" className="text-sm text-purple-600 hover:text-purple-700">
@@ -267,23 +277,31 @@ export default function CRMDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 bg-white rounded-lg shadow p-6">
+      <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-7xl mx-auto">
         <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/admin/crm/customers/new" className="text-center p-4 border rounded-lg hover:bg-gray-50">
-            <Users className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+          <Link href="/admin/crm/customers/new" className="text-center p-6 border border-gray-200 rounded-xl hover:bg-purple-50 hover:border-purple-300 transition-all duration-200">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Users className="w-6 h-6 text-white" />
+            </div>
             <p className="text-sm">Add Customer</p>
           </Link>
-          <Link href="/admin/crm/contractors/new" className="text-center p-4 border rounded-lg hover:bg-gray-50">
-            <UserCheck className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+          <Link href="/admin/crm/contractors/new" className="text-center p-6 border border-gray-200 rounded-xl hover:bg-purple-50 hover:border-purple-300 transition-all duration-200">
+            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <UserCheck className="w-6 h-6 text-white" />
+            </div>
             <p className="text-sm">Add Contractor</p>
           </Link>
-          <Link href="/admin/crm/bookings/new" className="text-center p-4 border rounded-lg hover:bg-gray-50">
-            <Calendar className="w-8 h-8 mx-auto mb-2 text-green-600" />
+          <Link href="/admin/crm/bookings/new" className="text-center p-6 border border-gray-200 rounded-xl hover:bg-purple-50 hover:border-purple-300 transition-all duration-200">
+            <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
             <p className="text-sm">New Booking</p>
           </Link>
-          <Link href="/admin/crm/messages" className="text-center p-4 border rounded-lg hover:bg-gray-50">
-            <Activity className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+          <Link href="/admin/crm/messages" className="text-center p-6 border border-gray-200 rounded-xl hover:bg-purple-50 hover:border-purple-300 transition-all duration-200">
+            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Activity className="w-6 h-6 text-white" />
+            </div>
             <p className="text-sm">Send Message</p>
           </Link>
         </div>
