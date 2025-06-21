@@ -33,6 +33,16 @@ body {
   body {
     @apply bg-white text-black;
   }
+  
+  /* Remove default underlines from all elements */
+  * {
+    text-decoration: none !important;
+  }
+  
+  /* Only underline links when explicitly needed */
+  a.underline {
+    text-decoration: underline !important;
+  }
 }
 
 /* Uber-style components */
