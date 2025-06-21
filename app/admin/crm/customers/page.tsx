@@ -13,7 +13,8 @@ import {
   Calendar,
   DollarSign,
   Star,
-  MoreVertical
+  MoreVertical,
+  Users
 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';

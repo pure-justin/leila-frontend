@@ -2,12 +2,18 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, Filter, Star, Clock, Shield, TrendingUp, 
-  ChevronRight, Heart, Info, X, MapPin, DollarSign
+import {
+  Search, Filter, Star, Clock, Shield, TrendingUp,
+  ChevronRight, Heart, Info, DollarSign
 } from 'lucide-react';
 import Link from 'next/link';
-import { COMPREHENSIVE_SERVICE_CATALOG, ServiceCategory, ServiceSubcategory, getEntryLevelServices, getProfessionalServices } from '@/lib/comprehensive-services-catalog';
+import {
+  COMPREHENSIVE_SERVICE_CATALOG,
+  ServiceCategory,
+  ServiceSubcategory,
+  getEntryLevelServices,
+  getProfessionalServices
+} from '@/lib/comprehensive-services-catalog';
 import { formatCurrency } from '@/lib/utils/currency';
 import BookingForm from '@/components/BookingForm';
 import ServiceSelector from '@/components/ServiceSelector';
@@ -26,27 +32,27 @@ export default function ServicesPage() {
   const filteredCategories = COMPREHENSIVE_SERVICE_CATALOG.filter(category => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      return category.name.toLowerCase().includes(query) ||
+      return (
+        category.name.toLowerCase().includes(query) ||
         category.description.toLowerCase().includes(query) ||
-        category.subcategories.some(sub => 
+        category.subcategories.some(sub =>
           sub.name.toLowerCase().includes(query) ||
           sub.description.toLowerCase().includes(query)
-        );
+        )
+      );
     }
     return true;
   });
 
-  const getFilteredServices = (category: ServiceCategory) => {
+  const getFilteredServices = (category: ServiceCategory): ServiceSubcategory[] => {
     let services = category.subcategories;
 
-    // Filter by skill level
     if (filterLevel === 'entry') {
       services = services.filter(s => s.skillLevel === 'entry');
     } else if (filterLevel === 'professional') {
       services = services.filter(s => s.skillLevel === 'professional' || s.skillLevel === 'expert');
     }
 
-    // Filter by price range
     if (priceRange === 'budget') {
       services = services.filter(s => s.priceUnit === 'quote' || s.basePrice <= 50);
     } else if (priceRange === 'mid') {
@@ -55,10 +61,9 @@ export default function ServicesPage() {
       services = services.filter(s => s.priceUnit === 'quote' || s.basePrice > 150);
     }
 
-    // Filter by search
     if (searchQuery && selectedCategory === category.id) {
       const query = searchQuery.toLowerCase();
-      services = services.filter(s => 
+      services = services.filter(s =>
         s.name.toLowerCase().includes(query) ||
         s.description.toLowerCase().includes(query)
       );
@@ -75,11 +80,7 @@ export default function ServicesPage() {
   const toggleFavorite = (serviceId: string) => {
     setFavorites(prev => {
       const newFavorites = new Set(prev);
-      if (newFavorites.has(serviceId)) {
-        newFavorites.delete(serviceId);
-      } else {
-        newFavorites.add(serviceId);
-      }
+      newFavorites.has(serviceId) ? newFavorites.delete(serviceId) : newFavorites.add(serviceId);
       return newFavorites;
     });
   };
