@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Shield, ArrowLeft, Home, Search } from 'lucide-react'
+import { Shield, ArrowLeft, Home } from 'lucide-react'
 
 export default function AdminNotFound() {
   return (

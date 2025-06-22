@@ -5,14 +5,12 @@ import { db } from '@/lib/firebase';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { 
   Search, 
-  Filter, 
   Plus, 
   Mail, 
   Phone, 
   MapPin,
   Calendar,
   DollarSign,
-  Star,
   MoreVertical,
   Users
 } from 'lucide-react';

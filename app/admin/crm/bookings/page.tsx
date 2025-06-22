@@ -6,22 +6,15 @@ import { collection, query, orderBy, onSnapshot, where, updateDoc, doc, Timestam
 import { 
   Calendar,
   Clock,
-  MapPin,
   DollarSign,
-  User,
-  Briefcase,
-  Filter,
   Search,
-  Edit,
   Eye,
-  MessageSquare,
   AlertCircle,
   CheckCircle,
   XCircle,
   Phone,
   Mail
 } from 'lucide-react';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { BookingStatus, ServiceCategory, type Booking } from '@/lib/types/firestore-models';
 

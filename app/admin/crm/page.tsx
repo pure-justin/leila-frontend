@@ -8,10 +8,6 @@ import {
   UserCheck, 
   Calendar, 
   Activity, 
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  AlertCircle,
   Bot
 } from 'lucide-react';
 import Link from 'next/link';

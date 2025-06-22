@@ -7,7 +7,6 @@ import {
   Users, 
   UserCheck, 
   Calendar, 
-  Activity, 
   FileText, 
   MessageSquare,
   Settings,

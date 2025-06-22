@@ -9,7 +9,6 @@ import {
   ArrowLeft,
   Mail, 
   Phone, 
-  MapPin,
   Calendar,
   DollarSign,
   Star,
@@ -20,14 +19,10 @@ import {
   FileText,
   Image as ImageIcon,
   Download,
-  Clock,
   Shield,
-  Award,
-  Briefcase,
   Users,
   CheckCircle,
-  AlertCircle,
-  Activity
+  AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -36,7 +31,6 @@ import {
   ServiceCategory, 
   ContractorTier, 
   VerificationStatus,
-  DayOfWeek,
   type Contractor 
 } from '@/lib/types/firestore-models';
 

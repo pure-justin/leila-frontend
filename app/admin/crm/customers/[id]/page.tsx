@@ -11,7 +11,6 @@ import {
   Phone, 
   MapPin,
   Calendar,
-  DollarSign,
   Star,
   Edit,
   Save,
@@ -19,10 +18,7 @@ import {
   Upload,
   FileText,
   Image,
-  Download,
-  Clock,
-  User,
-  MessageSquare
+  Download
 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';

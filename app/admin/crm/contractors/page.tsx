@@ -2,22 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, where, orderBy, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { 
   Search, 
-  Filter, 
   Plus, 
   Mail, 
   Phone, 
   MapPin,
-  Calendar,
   Star,
   Shield,
-  Award,
   Clock,
   CheckCircle,
   MoreVertical,
-  FileText,
   Users
 } from 'lucide-react';
 import Link from 'next/link';

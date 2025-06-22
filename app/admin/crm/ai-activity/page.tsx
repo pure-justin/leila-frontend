@@ -5,19 +5,15 @@ import { db } from '@/lib/firebase';
 import { collection, query, orderBy, limit, onSnapshot, where, Timestamp } from 'firebase/firestore';
 import { 
   Bot, 
-  User, 
   Calendar, 
   Clock, 
-  Filter, 
   Search,
   Activity,
   MessageSquare,
   CheckCircle,
-  AlertCircle,
   TrendingUp,
   Users,
-  Briefcase,
-  FileText
+  Briefcase
 } from 'lucide-react';
 import { format } from 'date-fns';
 

@@ -4,10 +4,10 @@ import { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
-  Sparkles, Calendar, Clock, MapPin, DollarSign, User, Home,
-  ChevronRight, Check, AlertCircle, Zap, Shield, Award, Heart,
-  MessageSquare, Camera, Star, TrendingUp, Gift, CreditCard,
-  Smartphone, Search, Filter, X, Info
+  Calendar, Clock, MapPin, DollarSign,
+  Zap, Shield,
+  Star, TrendingUp,
+  Search, Filter
 } from 'lucide-react';
 import GlassNav from '@/components/GlassNav';
 import MobileSearchBar from '@/components/MobileSearchBar';
@@ -19,24 +19,6 @@ import AuthPromptModal from '@/components/AuthPromptModal';
 import Image from 'next/image';
 import { getServiceImageByIndex } from '@/lib/service-images-expanded';
 
-// Animation variants
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 }
-};
-
-const scaleIn = {
-  initial: { scale: 0.9, opacity: 0 },
-  animate: { scale: 1, opacity: 1 },
-  exit: { scale: 0.9, opacity: 0 }
-};
-
-const slideIn = {
-  initial: { x: -20, opacity: 0 },
-  animate: { x: 0, opacity: 1 },
-  exit: { x: 20, opacity: 0 }
-};
 
 function BookingPageContent() {
   const router = useRouter();
@@ -79,16 +61,9 @@ function BookingPageContent() {
     }
   }, [searchParams]);
 
-  // Get all services with category info
-  const allServices = COMPREHENSIVE_SERVICE_CATALOG.flatMap(category => 
-    category.subcategories.map(service => ({
-      ...service,
-      category: category.id,
-      categoryName: category.name,
-      categoryIcon: category.icon,
-      rating: 4.5 + Math.random() * 0.5, // Mock rating between 4.5-5.0
-      includesSupplies: service.tags?.includes('supplies-included') || false
-    }))
+  // Get all services
+  const allServices = Object.values(COMPREHENSIVE_SERVICE_CATALOG).flatMap(category => 
+    category.subcategories
   );
 
   // Filter services
@@ -128,7 +103,7 @@ function BookingPageContent() {
     setShowBookingForm(true);
   };
 
-  const categories = COMPREHENSIVE_SERVICE_CATALOG.map(cat => ({ id: cat.id, name: cat.name }));
+  const categories = Object.keys(COMPREHENSIVE_SERVICE_CATALOG);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-indigo-50">
@@ -136,7 +111,7 @@ function BookingPageContent() {
       <GlassNav />
       <MobileSearchBar />
       
-      <main className="pt-32 md:pt-24 pb-20">
+      <main className="pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <motion.div
@@ -184,8 +159,8 @@ function BookingPageContent() {
                 >
                   <option value="all">All Categories</option>
                   {categories.map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
+                    <option key={category} value={category}>
+                      {category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </option>
                   ))}
                 </select>
@@ -381,16 +356,11 @@ function BookingPageContent() {
       <AnimatePresence>
         {showBookingForm && selectedService && (
           <StreamlinedBookingForm
-            serviceId={selectedService.id}
-            onComplete={() => {
-              setShowBookingForm(false);
-              setSelectedService(null);
-            }}
-            onCancel={() => {
-              setShowBookingForm(false);
-              setSelectedService(null);
-            }}
-          />
+            serviceId={selectedService} onComplete={function (): void {
+              throw new Error('Function not implemented.');
+            } } onCancel={function (): void {
+              throw new Error('Function not implemented.');
+            } }          />
         )}
       </AnimatePresence>
 
@@ -405,6 +375,7 @@ function BookingPageContent() {
         )}
       </AnimatePresence>
 
+      {/* Mobile Tab Bar */}
     </div>
   );
 }

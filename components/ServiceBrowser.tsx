@@ -9,6 +9,7 @@ import {
 import Image from 'next/image';
 import { COMPREHENSIVE_SERVICE_CATALOG, ServiceCategory, ServiceSubcategory } from '@/lib/comprehensive-services-catalog';
 import { formatCurrency } from '@/lib/utils/currency';
+import { getCategoryHeroImage, getServiceImage } from '@/lib/service-images-local';
 
 interface ServiceBrowserProps {
   userLocation?: string;
@@ -17,24 +18,6 @@ interface ServiceBrowserProps {
   recentlyViewed?: string[];
   favorites?: string[];
 }
-
-// Mock service images - in production, these would come from a CDN
-const SERVICE_IMAGES: Record<string, string> = {
-  'electrical': 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&h=600&fit=crop',
-  'plumbing': 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=800&h=600&fit=crop',
-  'cleaning': 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=600&fit=crop',
-  'personal-care': 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop',
-  'pet-care': 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&h=600&fit=crop',
-  'automotive': 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=800&h=600&fit=crop',
-  'landscaping': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
-  'hvac': 'https://images.unsplash.com/photo-1626662055740-7c3d1c043a46?w=800&h=600&fit=crop',
-  'handyman': 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&h=600&fit=crop',
-  'tech-support': 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&h=600&fit=crop',
-  'moving': 'https://images.unsplash.com/photo-1600518464441-9154a4dea21b?w=800&h=600&fit=crop',
-  'security': 'https://images.unsplash.com/photo-1558002038-1055907df827?w=800&h=600&fit=crop',
-  'pest-control': 'https://images.unsplash.com/photo-1569405780657-e13620a42aca?w=800&h=600&fit=crop',
-  'contractor-services': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop'
-};
 
 // Engaging descriptions for categories
 const CATEGORY_DESCRIPTIONS: Record<string, string> = {
@@ -215,8 +198,8 @@ export default function ServiceBrowser({
                 <div className="relative h-32 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
                   <Image
-                    src={SERVICE_IMAGES[category.id] || '/placeholder.jpg'}
-                    alt={category.name}
+                    src={getCategoryHeroImage(category.id).url}
+                    alt={getCategoryHeroImage(category.id).alt}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
