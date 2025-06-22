@@ -15,7 +15,7 @@ import {
   getProfessionalServices
 } from '@/lib/comprehensive-services-catalog';
 import { formatCurrency } from '@/lib/utils/currency';
-import BookingForm from '@/components/BookingForm';
+import StreamlinedBookingForm from '@/components/StreamlinedBookingForm';
 import ServiceSelector from '@/components/ServiceSelector';
 
 export default function ServicesPage() {
@@ -378,23 +378,19 @@ export default function ServicesPage() {
         />
       )}
 
-      {/* Booking Form Modal */}
+      {/* Streamlined Booking Form Modal */}
       {showBookingForm && selectedService && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <BookingForm
-              serviceId={selectedService}
-              onComplete={() => {
-                setShowBookingForm(false);
-                setSelectedService(null);
-              }}
-              onCancel={() => {
-                setShowBookingForm(false);
-                setSelectedService(null);
-              }}
-            />
-          </div>
-        </div>
+        <StreamlinedBookingForm
+          serviceId={selectedService}
+          onComplete={() => {
+            setShowBookingForm(false);
+            setSelectedService(null);
+          }}
+          onCancel={() => {
+            setShowBookingForm(false);
+            setSelectedService(null);
+          }}
+        />
       )}
     </div>
   );

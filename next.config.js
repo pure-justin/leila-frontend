@@ -2,7 +2,18 @@
 const nextConfig = {
   // Removed 'output: export' to enable dynamic routes
   images: {
-    domains: ['heyleila.com', 'api.heyleila.com', 'storage.googleapis.com', 'firebasestorage.googleapis.com', 'lh3.googleusercontent.com'],
+    domains: [
+      'heyleila.com', 
+      'api.heyleila.com', 
+      'storage.googleapis.com', 
+      'firebasestorage.googleapis.com', 
+      'lh3.googleusercontent.com',
+      'images.unsplash.com',
+      'images.pexels.com',
+      'cdn.pixabay.com',
+      'images.freepik.com',
+      'res.cloudinary.com'
+    ],
     formats: ['image/avif', 'image/webp'],
     // Removed unoptimized to enable Next.js image optimization
   },
