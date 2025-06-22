@@ -13,6 +13,9 @@ export interface ServiceSubcategory {
   popularityScore?: number;
   tags?: string[];
   ageRequirement?: number;
+  category?: string;
+  rating?: number;
+  includesSupplies?: boolean;
 }
 
 export interface ServiceCategory {
