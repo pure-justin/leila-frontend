@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gift, Sparkles, ChevronRight, X, CheckCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 interface ReferralBannerProps {
   referralCode?: string;
@@ -14,7 +13,6 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
   const [inputCode, setInputCode] = useState(referralCode || '');
   const [isApplied, setIsApplied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     // Check if mobile
@@ -59,10 +57,8 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
       // Store code in session/localStorage
       localStorage.setItem('referralCode', inputCode);
       setIsApplied(true);
-      // Show success state before redirecting
-      setTimeout(() => {
-        router.push(`/signup?ref=${inputCode}`);
-      }, 1500);
+      // Don't redirect - just apply the code
+      // The code will be used when they actually book a service
     }
   };
 
@@ -79,7 +75,7 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
           className={`bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white ${
-            isMobile ? 'fixed top-0 left-0 right-0 z-[60]' : ''
+            isMobile ? 'fixed top-[120px] left-0 right-0 z-[40] shadow-lg' : 'relative'
           }`}
         >
           <div className="max-w-7xl mx-auto px-4 py-3 md:py-4">
@@ -131,7 +127,7 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
                     className="flex items-center justify-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg"
                   >
                     <CheckCircle className="w-5 h-5" />
-                    <span className="font-medium">Code Applied! Redirecting...</span>
+                    <span className="font-medium">Code Applied! $20 off your first service</span>
                   </motion.div>
                 )}
               </div>

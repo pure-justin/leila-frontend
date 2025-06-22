@@ -10,11 +10,13 @@ import ReferralBanner from '@/components/ReferralBanner';
 import AddressPrompt from '@/components/AddressPrompt';
 import FeedbackFAB from '@/components/FeedbackFAB';
 import MobileSearchBar from '@/components/MobileSearchBar';
+import { useReferralBanner } from '@/hooks/useReferralBanner';
 
 export default function Home() {
   const [mapsLoaded, setMapsLoaded] = useState(false);
   const [userAddress, setUserAddress] = useState<string | null>(null);
   const [showAddressPrompt, setShowAddressPrompt] = useState(false);
+  const isBannerVisible = useReferralBanner();
 
   useEffect(() => {
     // Check if user has saved address
@@ -49,16 +51,18 @@ export default function Home() {
     <GradientBackground variant="animated" className="min-h-screen">
       <GoogleMapsLoader onLoad={() => setMapsLoaded(true)} />
       
-      {/* Referral Banner */}
-      <ReferralBanner referralCode={savedReferralCode || undefined} />
-      
       {/* Glass Navigation */}
       <GlassNav />
       
       {/* Mobile Search Bar */}
       <MobileSearchBar />
+      
+      {/* Referral Banner - Now positioned below header */}
+      <ReferralBanner referralCode={savedReferralCode || undefined} />
 
-      <main className="md:mt-0 mt-[120px]">
+      <main className={`md:mt-0 transition-all duration-300 ${
+        isBannerVisible ? 'mt-[180px] md:mt-0' : 'mt-[120px]'
+      }`}>
         {/* Personalized Home Page with DoorDash-style layout */}
         <PersonalizedHomePage />
       </main>

@@ -12,8 +12,7 @@ export interface ServiceImage {
 
 import { 
   CATEGORY_HERO_IMAGES as PEXELS_CATEGORY_IMAGES, 
-  SERVICE_IMAGES as PEXELS_SERVICE_IMAGES,
-  getCategoryForService 
+  SERVICE_IMAGES as PEXELS_SERVICE_IMAGES
 } from './professional-service-images';
 
 // Override with local images where available
@@ -55,6 +54,44 @@ export function getServiceImage(serviceId: string): ServiceImage {
 // Get category hero image with fallback
 export function getCategoryHeroImage(categoryId: string): ServiceImage {
   return CATEGORY_HERO_IMAGES[categoryId] || CATEGORY_HERO_IMAGES['contractor-services'];
+}
+
+// Helper to map service to category
+function getCategoryForService(serviceId: string): string {
+  const categoryMap: Record<string, string> = {
+    'electrical-repair': 'electrical',
+    'panel-upgrade': 'electrical',
+    'ev-charger-install': 'electrical',
+    'lighting-install': 'electrical',
+    'ceiling-fan-install': 'electrical',
+    
+    'leak-repair': 'plumbing',
+    'drain-cleaning': 'plumbing',
+    'toilet-repair': 'plumbing',
+    'water-heater-install': 'plumbing',
+    
+    'ac-repair': 'hvac',
+    'furnace-repair': 'hvac',
+    'hvac-maintenance': 'hvac',
+    
+    'house-cleaning': 'cleaning',
+    'deep-cleaning': 'cleaning',
+    'carpet-cleaning': 'cleaning',
+    
+    'lawn-mowing': 'landscaping',
+    'tree-trimming': 'landscaping',
+    'garden-design': 'landscaping',
+    
+    'furniture-assembly': 'handyman',
+    'tv-mounting': 'handyman',
+    'drywall-repair': 'handyman',
+    
+    'interior-painting': 'painting',
+    'exterior-painting': 'painting',
+    'cabinet-painting': 'painting'
+  };
+  
+  return categoryMap[serviceId] || 'contractor-services';
 }
 
 // Get multiple images for a service (for galleries)

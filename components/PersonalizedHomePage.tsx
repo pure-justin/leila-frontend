@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import ServiceCategoryRow from './ServiceCategoryRow';
 import { COMPREHENSIVE_SERVICE_CATALOG, ServiceSubcategory } from '@/lib/comprehensive-services-catalog';
-import { getCategoryHeroImage, IMAGE_BLUR_DATA_URL } from '@/lib/service-images';
+import { getCategoryHeroImage, IMAGE_BLUR_DATA_URL } from '@/lib/service-images-local';
 import { useAuth } from '@/contexts/AuthContext';
 import { userPreferencesService, ServiceRecommendation } from '@/lib/user-preferences-service';
 import StreamlinedBookingForm from './StreamlinedBookingForm';
@@ -192,8 +192,8 @@ export default function PersonalizedHomePage() {
         {/* Hero Section with Search */}
         <div className="relative h-96 overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&h=600&fit=crop&q=80"
-            alt="Home services hero"
+            src={getCategoryHeroImage('contractor-services').url}
+            alt={getCategoryHeroImage('contractor-services').alt}
             fill
             className="object-cover"
             priority

@@ -29,13 +29,14 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'Leila'
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
-  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
   themeColor: '#7C3AED',
 };
 

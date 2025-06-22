@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Heart, Clock, Star, TrendingUp } from 'lucide-react';
 import { ServiceSubcategory } from '@/lib/comprehensive-services-catalog';
-import { getServiceImageByIndex, IMAGE_BLUR_DATA_URL } from '@/lib/service-images-expanded';
+import { getServiceImage, IMAGE_BLUR_DATA_URL } from '@/lib/service-images-local';
 import { formatCurrency } from '@/lib/utils/currency';
 import { useAuth } from '@/contexts/AuthContext';
 import { userPreferencesService } from '@/lib/user-preferences-service';
@@ -164,7 +164,7 @@ export default function ServiceCategoryRow({
           style={{ scrollSnapType: 'x mandatory' }}
         >
           {services.map((service, index) => {
-            const serviceImage = getServiceImageByIndex(service.id, index);
+            const serviceImage = getServiceImage(service.id);
             const isLoading = imageLoading.has(service.id);
 
             return (
