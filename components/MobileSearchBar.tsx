@@ -36,7 +36,7 @@ export default function MobileSearchBar() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      router.push(`/services?search=${encodeURIComponent(searchQuery)}`);
+      router.push(`/book?search=${encodeURIComponent(searchQuery)}`);
       setIsExpanded(false);
     }
   };

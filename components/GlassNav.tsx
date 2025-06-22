@@ -63,7 +63,7 @@ export default function GlassNav() {
   };
 
   const customerLinks = [
-    { href: '/services', label: 'Services', icon: Search },
+    { href: '/book', label: 'Book Service', icon: Search },
     { href: '/bookings', label: 'Bookings', icon: Calendar },
     { href: '/how-it-works', label: 'How it works', icon: Sparkles },
   ];

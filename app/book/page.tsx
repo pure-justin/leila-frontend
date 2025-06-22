@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import GlassNav from '@/components/GlassNav';
 import MobileSearchBar from '@/components/MobileSearchBar';
-import { MobileTabBar } from '@/components/MobileNav';
 import { useAuth } from '@/contexts/AuthContext';
 import { getServiceById, COMPREHENSIVE_SERVICE_CATALOG } from '@/lib/comprehensive-services-catalog';
 import { formatCurrency } from '@/lib/utils/currency';
@@ -380,7 +379,6 @@ function BookingPageContent() {
       </AnimatePresence>
 
       {/* Mobile Tab Bar */}
-      <MobileTabBar />
     </div>
   );
 }

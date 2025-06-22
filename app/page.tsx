@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import PersonalizedHomePage from '@/components/PersonalizedHomePage';
 import GlassNav from '@/components/GlassNav';
-import { MobileTabBar } from '@/components/MobileNav';
 import GoogleMapsLoader from '@/components/GoogleMapsLoader';
 import GradientBackground from '@/components/GradientBackground';
 import AILiveChat from '@/components/AILiveChat';
@@ -78,8 +77,6 @@ export default function Home() {
         />
       )}
       
-      {/* Mobile Tab Bar */}
-      <MobileTabBar />
     </GradientBackground>
   );
 }

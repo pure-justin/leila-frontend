@@ -314,7 +314,7 @@ export default function PersonalizedHomePage() {
                 categoryIcon="🔥"
                 favorites={favorites}
                 onToggleFavorite={handleToggleFavorite}
-                viewAllLink="/services?filter=trending"
+                viewAllLink="/book?filter=trending"
               />
 
               {/* Category Sections */}
@@ -327,7 +327,7 @@ export default function PersonalizedHomePage() {
                   categoryIcon={section.icon}
                   favorites={favorites}
                   onToggleFavorite={handleToggleFavorite}
-                  viewAllLink={`/services?category=${section.id}`}
+                  viewAllLink={`/book?category=${section.id}`}
                 />
               ))}
             </>

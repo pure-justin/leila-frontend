@@ -12,7 +12,6 @@ import {
 import Image from 'next/image';
 import GlassNav from '@/components/GlassNav';
 import MobileSearchBar from '@/components/MobileSearchBar';
-import { MobileTabBar } from '@/components/MobileNav';
 
 // Animation variants
 const fadeInUp = {
@@ -534,9 +533,6 @@ export default function HowItWorksPage() {
           </div>
         </div>
       </footer>
-      
-      {/* Mobile Tab Bar */}
-      <MobileTabBar />
     </div>
   );
 }

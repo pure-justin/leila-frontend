@@ -47,7 +47,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
   const menuItems = [
     { icon: Home, label: 'Home', href: '/', badge: null },
-    { icon: Search, label: 'Services', href: '/services', badge: null },
+    { icon: Search, label: 'Book', href: '/book', badge: null },
     { icon: Calendar, label: 'My Bookings', href: '/bookings', badge: '2' },
     { icon: MessageCircle, label: 'Messages', href: '/messages', badge: '5' },
     { icon: Star, label: 'Favorites', href: '/favorites', badge: null },
