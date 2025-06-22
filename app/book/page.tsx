@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
@@ -39,7 +39,7 @@ const slideIn = {
   exit: { x: 20, opacity: 0 }
 };
 
-export default function BookingPage() {
+function BookingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -382,5 +382,20 @@ export default function BookingPage() {
       {/* Mobile Tab Bar */}
       <MobileTabBar />
     </div>
+  );
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading services...</p>
+        </div>
+      </div>
+    }>
+      <BookingPageContent />
+    </Suspense>
   );
 }
