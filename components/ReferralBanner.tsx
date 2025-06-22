@@ -10,7 +10,7 @@ interface ReferralBannerProps {
 }
 
 export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [inputCode, setInputCode] = useState(referralCode || '');
   const [isApplied, setIsApplied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -22,11 +22,21 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
+    // Check if banner was dismissed
+    const dismissed = localStorage.getItem('referralBannerDismissed');
+    if (dismissed) {
+      setIsVisible(false);
+      return;
+    }
+    
     // Check if code was already applied
     const savedCode = localStorage.getItem('referralCode');
     if (savedCode) {
       setInputCode(savedCode);
       setIsApplied(true);
+      setIsVisible(false);
+    } else {
+      setIsVisible(true);
     }
     
     return () => window.removeEventListener('resize', checkMobile);
@@ -56,6 +66,11 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
     }
   };
 
+  const handleDismiss = () => {
+    localStorage.setItem('referralBannerDismissed', 'true');
+    setIsVisible(false);
+  };
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -64,7 +79,7 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
           className={`bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white ${
-            isMobile ? 'fixed top-0 left-0 right-0 z-40' : ''
+            isMobile ? 'fixed top-0 left-0 right-0 z-[60]' : ''
           }`}
         >
           <div className="max-w-7xl mx-auto px-4 py-3 md:py-4">
@@ -85,7 +100,7 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
                     </div>
                   </div>
                   <button
-                    onClick={() => setIsVisible(false)}
+                    onClick={handleDismiss}
                     className="text-white/70 hover:text-white transition-colors p-1"
                   >
                     <X className="w-4 h-4" />
@@ -170,7 +185,7 @@ export default function ReferralBanner({ referralCode }: ReferralBannerProps) {
                   )}
                   
                   <button
-                    onClick={() => setIsVisible(false)}
+                    onClick={handleDismiss}
                     className="text-white/70 hover:text-white transition-colors"
                   >
                     <X className="w-5 h-5" />

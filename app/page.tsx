@@ -10,6 +10,7 @@ import AILiveChat from '@/components/AILiveChat';
 import ReferralBanner from '@/components/ReferralBanner';
 import AddressPrompt from '@/components/AddressPrompt';
 import FeedbackFAB from '@/components/FeedbackFAB';
+import MobileSearchBar from '@/components/MobileSearchBar';
 
 export default function Home() {
   const [mapsLoaded, setMapsLoaded] = useState(false);
@@ -54,8 +55,11 @@ export default function Home() {
       
       {/* Glass Navigation */}
       <GlassNav />
+      
+      {/* Mobile Search Bar */}
+      <MobileSearchBar />
 
-      <main>
+      <main className="md:mt-0 mt-[120px]">
         {/* Personalized Home Page with DoorDash-style layout */}
         <PersonalizedHomePage />
       </main>

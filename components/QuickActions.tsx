@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RefreshCw, Calendar, Clock, MapPin, Star, 
-  ChevronRight, Sparkles, Lightning, Heart
+  ChevronRight, Sparkles, Zap, Heart
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatCurrency } from '@/lib/utils/currency';
@@ -149,7 +149,7 @@ export default function QuickActions({ onServiceSelect }: QuickActionsProps) {
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Lightning className="w-5 h-5 text-yellow-500" />
+            <Zap className="w-5 h-5 text-yellow-500" />
             Quick Actions
           </h2>
           <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">
