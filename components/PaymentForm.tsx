@@ -14,6 +14,7 @@ interface PaymentFormProps {
   amount: number;
   onSuccess: () => void;
   onCancel: () => void;
+  metadata?: Record<string, any>;
 }
 
 function CheckoutForm({ amount, onSuccess, onCancel }: PaymentFormProps) {
@@ -120,7 +121,7 @@ function CheckoutForm({ amount, onSuccess, onCancel }: PaymentFormProps) {
   );
 }
 
-export default function PaymentForm({ amount, onSuccess, onCancel }: PaymentFormProps) {
+export default function PaymentForm({ amount, onSuccess, onCancel, metadata }: PaymentFormProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -133,7 +134,10 @@ export default function PaymentForm({ amount, onSuccess, onCancel }: PaymentForm
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: amount * 100 }), // Convert to cents
+        body: JSON.stringify({ 
+          amount: amount * 100, // Convert to cents
+          metadata 
+        }),
       });
 
       if (!response.ok) {
@@ -141,11 +145,19 @@ export default function PaymentForm({ amount, onSuccess, onCancel }: PaymentForm
       }
 
       const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
       setClientSecret(data.clientSecret);
     } catch (err: any) {
-      setError(err.message);
-      // For demo purposes, create a mock client secret
-      setClientSecret('pi_mock_' + Math.random().toString(36).substr(2, 9));
+      console.error('Payment setup error:', err);
+      setError(err.message || 'Failed to setup payment');
+      // For demo purposes, still allow proceeding with a mock
+      if (process.env.NODE_ENV === 'development') {
+        setClientSecret('pi_mock_' + Math.random().toString(36).substr(2, 9));
+      }
     } finally {
       setLoading(false);
     }
@@ -170,7 +182,12 @@ export default function PaymentForm({ amount, onSuccess, onCancel }: PaymentForm
       <div className="text-center py-8">
         <AlertCircle className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
         <h3 className="text-xl font-semibold mb-2">Payment Setup Issue</h3>
-        <p className="text-gray-600 mb-4">Unable to initialize payment system.</p>
+        <p className="text-gray-600 mb-2">{error}</p>
+        <p className="text-sm text-gray-500 mb-4">
+          {error.includes('not configured') 
+            ? 'The payment system is currently being set up. You can still explore the app!'
+            : 'Please try again or contact support if the issue persists.'}
+        </p>
         <div className="space-y-2">
           <button
             onClick={createPaymentIntent}

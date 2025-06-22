@@ -2,11 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-05-28.basil',
+  apiVersion: '2024-12-18.acacia',
 });
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Stripe secret key is configured
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('Stripe secret key is not configured');
+      return NextResponse.json(
+        { error: 'Payment system is not configured. Please contact support.' },
+        { status: 500 }
+      );
+    }
+
     const { amount, metadata = {} } = await request.json();
 
     if (!amount || amount < 50) { // Minimum $0.50

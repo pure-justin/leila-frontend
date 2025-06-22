@@ -5,9 +5,13 @@ let _stripePromise: Promise<Stripe | null>;
 
 export const getStripe = () => {
   if (!_stripePromise) {
-    _stripePromise = loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
-    );
+    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    if (!key) {
+      console.warn('Stripe publishable key is not set. Payment processing will not work.');
+      _stripePromise = Promise.resolve(null);
+    } else {
+      _stripePromise = loadStripe(key);
+    }
   }
   return _stripePromise;
 };
