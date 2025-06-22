@@ -6,7 +6,7 @@ import GlassNav from '@/components/GlassNav';
 import { MobileTabBar } from '@/components/MobileNav';
 import GoogleMapsLoader from '@/components/GoogleMapsLoader';
 import GradientBackground from '@/components/GradientBackground';
-import LiveChat from '@/components/LiveChat';
+import AILiveChat from '@/components/AILiveChat';
 import ReferralBanner from '@/components/ReferralBanner';
 import AddressPrompt from '@/components/AddressPrompt';
 import FeedbackFAB from '@/components/FeedbackFAB';
@@ -60,8 +60,8 @@ export default function Home() {
         <PersonalizedHomePage />
       </main>
 
-      {/* Live Chat Support */}
-      <LiveChat />
+      {/* AI-Powered Chat Support */}
+      <AILiveChat />
       
       {/* Feedback FAB */}
       <FeedbackFAB />

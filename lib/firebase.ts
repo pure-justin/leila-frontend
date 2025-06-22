@@ -6,11 +6,11 @@ import { getStorage } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDHXHgYwVT5SoQht-TNQ2-AzSA6mR7bqjw",
-  authDomain: "leila-platform.firebaseapp.com",
-  projectId: "leila-platform",
-  storageBucket: "leila-platform.firebasestorage.app",
-  messagingSenderId: "242136952710",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCForPQtgKrRBb21vu5MrAMLKvgYOVOKgI",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "leila-platform.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "leila-platform",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "leila-platform.appspot.com",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "242136952710",
   appId: "1:242136952710:web:b76f7c1c8aaaab9e724607",
   measurementId: "G-6X3ETQ9RGZ"
 };
