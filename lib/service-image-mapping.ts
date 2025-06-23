@@ -3,16 +3,16 @@
 
 export const SERVICE_IMAGE_MAPPING: Record<string, { category: string; subcategory: string }> = {
   // Electrical Services
-  'electrical-repair': { category: 'electrical', subcategory: 'outlet-installation' },
-  'panel-upgrade': { category: 'electrical', subcategory: 'panel-upgrade' },
-  'ev-charger-install': { category: 'electrical', subcategory: 'smart-home' },
+  'electrical-repair': { category: 'electrical', subcategory: 'outlet-repair-installation' },
+  'panel-upgrade': { category: 'electrical', subcategory: 'electrical-panel-upgrade' },
+  'ev-charger-install': { category: 'electrical', subcategory: 'smart-home-installation' },
   'lighting-install': { category: 'electrical', subcategory: 'lighting-installation' },
-  'ceiling-fan-install': { category: 'electrical', subcategory: 'lighting-installation' },
-  'smart-home-wiring': { category: 'electrical', subcategory: 'smart-home' },
-  'generator-install': { category: 'electrical', subcategory: 'panel-upgrade' },
-  'security-system-wiring': { category: 'electrical', subcategory: 'smart-home' },
-  'surge-protection': { category: 'electrical', subcategory: 'panel-upgrade' },
-  'outlet-installation': { category: 'electrical', subcategory: 'outlet-installation' },
+  'ceiling-fan-install': { category: 'electrical', subcategory: 'ceiling-fan-installation' },
+  'smart-home-wiring': { category: 'electrical', subcategory: 'smart-home-installation' },
+  'generator-install': { category: 'electrical', subcategory: 'electrical-panel-upgrade' },
+  'security-system-wiring': { category: 'electrical', subcategory: 'smart-home-installation' },
+  'surge-protection': { category: 'electrical', subcategory: 'electrical-panel-upgrade' },
+  'outlet-installation': { category: 'electrical', subcategory: 'outlet-repair-installation' },
   
   // Plumbing Services
   'pipe-repair': { category: 'plumbing', subcategory: 'pipe-installation' },

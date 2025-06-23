@@ -67,7 +67,8 @@ export const DEFAULT_SERVICE_IMAGE: ServiceImage = {
 // Get service image with fallback
 export function getServiceImage(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-card.jpg`;
+  // Use the base image name with -1.png suffix
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1.png`;
   
   return {
     url: imageUrl,
@@ -79,7 +80,8 @@ export function getServiceImage(serviceId: string): ServiceImage {
 // Get service thumbnail
 export function getServiceThumbnail(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-thumbnail.jpg`;
+  // Use the -thumb.png suffix
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1-thumb.png`;
   
   return {
     url: imageUrl,
@@ -91,7 +93,8 @@ export function getServiceThumbnail(serviceId: string): ServiceImage {
 // Get service hero image
 export function getServiceHeroImage(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-hero.jpg`;
+  // Use the -large.png suffix for hero images
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1-large.png`;
   
   return {
     url: imageUrl,
