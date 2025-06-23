@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/react';
+import "@/lib/firebase-app-check";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

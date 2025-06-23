@@ -46,3 +46,7 @@ firebase-debug.log
 
 # build outputs
 out-crm/
+
+# Cloud Functions
+backend/cloud-functions/node_modules/
+backend/cloud-functions/lib/

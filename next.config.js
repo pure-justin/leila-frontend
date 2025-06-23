@@ -14,6 +14,16 @@ const nextConfig = {
       'images.freepik.com',
       'res.cloudinary.com'
     ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.blob.vercel-storage.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+      },
+    ],
     formats: ['image/avif', 'image/webp'],
     // Removed unoptimized to enable Next.js image optimization
   },
