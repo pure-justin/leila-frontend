@@ -1,12 +1,12 @@
 {
-  "buildCommand": "npm run build:production",
-  "devCommand": "npm run dev",
+  "buildCommand": "./scripts/emergency-build.sh",
   "installCommand": "npm ci --prefer-offline --no-audit --omit=dev",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
     "NEXT_TELEMETRY_DISABLED": "1",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NODE_OPTIONS": "--max-old-space-size=3072"
   },
   "regions": ["iad1"]
 }

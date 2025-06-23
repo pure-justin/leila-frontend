@@ -1,0 +1,19 @@
+{
+  "name": "leila-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "./scripts/emergency-build.sh",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "15.3.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "firebase": "^11.9.1",
+    "@stripe/stripe-js": "^7.3.1",
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6"
+  }
+}
