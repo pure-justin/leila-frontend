@@ -182,8 +182,15 @@ class AIGraphicDesigner {
         }
       );
 
-      if (response.data.predictions?.[0]?.bytesBase64Encoded) {
-        const imageBuffer = Buffer.from(response.data.predictions[0].bytesBase64Encoded, 'base64');
+      // Type assertion to handle the response data structure
+      const responseData = response.data as {
+        predictions?: Array<{
+          bytesBase64Encoded?: string;
+        }>;
+      };
+
+      if (responseData.predictions?.[0]?.bytesBase64Encoded) {
+        const imageBuffer = Buffer.from(responseData.predictions[0].bytesBase64Encoded, 'base64');
         console.log('✅ Image generated successfully');
         return imageBuffer;
       }

@@ -60,11 +60,18 @@ async function testImageGeneration() {
       }
     );
 
-    if (response.data.predictions?.[0]?.bytesBase64Encoded) {
+    // Type assertion to handle the response data structure
+    const responseData = response.data as {
+      predictions?: Array<{
+        bytesBase64Encoded?: string;
+      }>;
+    };
+
+    if (responseData.predictions?.[0]?.bytesBase64Encoded) {
       console.log('✅ Image generated successfully!\n');
       
       // Save test image
-      const imageBuffer = Buffer.from(response.data.predictions[0].bytesBase64Encoded, 'base64');
+      const imageBuffer = Buffer.from(responseData.predictions[0].bytesBase64Encoded, 'base64');
       const outputPath = path.join(__dirname, 'test-image.png');
       await fs.writeFile(outputPath, imageBuffer);
       

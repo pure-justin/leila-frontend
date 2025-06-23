@@ -116,8 +116,15 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    if (response.data.predictions?.[0]?.bytesBase64Encoded) {
-      const imageBase64 = response.data.predictions[0].bytesBase64Encoded;
+    // Type assertion to handle the response data structure
+    const responseData = response.data as {
+      predictions?: Array<{
+        bytesBase64Encoded?: string;
+      }>;
+    };
+
+    if (responseData.predictions?.[0]?.bytesBase64Encoded) {
+      const imageBase64 = responseData.predictions[0].bytesBase64Encoded;
       const imageBuffer = Buffer.from(imageBase64, 'base64');
       
       // In production, you would upload this to your storage service

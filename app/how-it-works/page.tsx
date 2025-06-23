@@ -10,6 +10,7 @@ import {
   FileCheck, Camera
 } from 'lucide-react';
 import GlassNav from '@/components/GlassNav';
+import Footer from '@/components/Footer';
 
 // Animation variants
 const fadeInUp = {
@@ -514,22 +515,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-gray-600">
-              Have questions? Check out our{' '}
-              <Link href="/faq" className="text-purple-600 hover:text-purple-700 font-medium">
-                FAQ
-              </Link>
-              {' '}or{' '}
-              <Link href="/contact" className="text-purple-600 hover:text-purple-700 font-medium">
-                contact us
-              </Link>
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

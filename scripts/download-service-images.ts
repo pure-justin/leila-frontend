@@ -21,9 +21,8 @@ async function downloadImage(url: string, filepath: string): Promise<void> {
       url: url,
       responseType: 'stream'
     });
-
     const writer = fs.createWriteStream(filepath);
-    response.data.pipe(writer);
+    (response.data as NodeJS.ReadableStream).pipe(writer);
 
     return new Promise((resolve, reject) => {
       writer.on('finish', resolve);

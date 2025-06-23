@@ -513,6 +513,3 @@ export function getServiceImageByIndex(serviceId: string, index: number): Servic
 export function getAllServiceImages(serviceId: string): ServiceImage[] {
   return SERVICE_IMAGE_SETS[serviceId] || SERVICE_IMAGE_SETS['default'];
 }
-
-// Category hero images remain the same
-export { CATEGORY_HERO_IMAGES, getCategoryHeroImage, IMAGE_BLUR_DATA_URL } from './service-images';

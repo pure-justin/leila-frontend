@@ -1,0 +1,13 @@
+/* Hide reCAPTCHA v3 badge - only use if you show reCAPTCHA branding elsewhere */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
+/* Alternative: Move badge to bottom-left instead of hiding */
+/*
+.grecaptcha-badge {
+  bottom: 14px !important;
+  left: 14px !important;
+  right: auto !important;
+}
+*/

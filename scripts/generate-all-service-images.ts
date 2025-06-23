@@ -273,8 +273,8 @@ class ServiceImageGenerator {
         }
       );
 
-      if (response.data.predictions?.[0]?.bytesBase64Encoded) {
-        return Buffer.from(response.data.predictions[0].bytesBase64Encoded, 'base64');
+      if ((response.data as any).predictions?.[0]?.bytesBase64Encoded) {
+        return Buffer.from((response.data as any).predictions[0].bytesBase64Encoded, 'base64');
       }
 
       return null;

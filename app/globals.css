@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide reCAPTCHA badge - we'll show attribution in footer */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 0 0% 0%;

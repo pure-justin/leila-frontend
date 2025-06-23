@@ -74,7 +74,8 @@ async function generateWithReplicate(prompt: string): Promise<Buffer | null> {
 
     // Download the image
     const imageResponse = await fetch(output);
-    const buffer = await imageResponse.buffer();
+    const arrayBuffer = await imageResponse.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
     return buffer;
 
   } catch (error) {
@@ -112,7 +113,8 @@ async function generateWithDallE(prompt: string): Promise<Buffer | null> {
     const data = await response.json();
     if (data.data && data.data[0] && data.data[0].url) {
       const imageResponse = await fetch(data.data[0].url);
-      const buffer = await imageResponse.buffer();
+      const arrayBuffer = await imageResponse.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       return buffer;
     }
 

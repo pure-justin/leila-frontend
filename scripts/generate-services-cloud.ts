@@ -325,9 +325,7 @@ class CloudImageGenerator {
             'Authorization': `Bearer ${accessToken.token}`,
             'Content-Type': 'application/json'
           },
-          timeout: REQUEST_TIMEOUT,
-          maxContentLength: Infinity,
-          maxBodyLength: Infinity
+          timeout: REQUEST_TIMEOUT
         }
       );
 

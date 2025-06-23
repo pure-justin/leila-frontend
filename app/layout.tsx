@@ -5,6 +5,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/react';
 import "@/lib/firebase-app-check";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +66,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           {children}
+          <Footer />
           <Analytics />
         </AuthProvider>
       </body>

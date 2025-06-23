@@ -1,0 +1,132 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAppCheckValid() {
+      return request.app != null;
+    }
+    
+    function isAuthenticatedWithAppCheck() {
+      return isAuthenticated() && isAppCheckValid();
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isContractor() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'contractor';
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticatedWithAppCheck() && (isOwner(userId) || isAdmin());
+      allow create: if isAuthenticatedWithAppCheck() && isOwner(userId);
+      allow update: if isAuthenticatedWithAppCheck() && (isOwner(userId) || isAdmin());
+      allow delete: if isAuthenticatedWithAppCheck() && isAdmin();
+    }
+    
+    // Bookings collection
+    match /bookings/{bookingId} {
+      allow read: if isAuthenticatedWithAppCheck() && (
+        resource.data.customerId == request.auth.uid ||
+        resource.data.contractorId == request.auth.uid ||
+        isAdmin()
+      );
+      allow create: if isAuthenticatedWithAppCheck();
+      allow update: if isAuthenticatedWithAppCheck() && (
+        resource.data.customerId == request.auth.uid ||
+        resource.data.contractorId == request.auth.uid ||
+        isAdmin()
+      );
+      allow delete: if isAuthenticatedWithAppCheck() && isAdmin();
+    }
+    
+    // Services collection (read-only for users)
+    match /services/{serviceId} {
+      allow read: if isAppCheckValid();
+      allow write: if isAuthenticatedWithAppCheck() && isAdmin();
+    }
+    
+    // AI Memory contexts (protected)
+    match /memory_contexts/{contextId} {
+      allow read: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow write: if false; // Only backend can write
+    }
+    
+    // Vector memory collection
+    match /vector_memory/{docId} {
+      allow read: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow write: if false; // Only backend can write
+    }
+    
+    // API Keys (highly protected)
+    match /api_keys/{keyId} {
+      allow read: if false; // Never expose API keys to client
+      allow write: if false; // Only backend can manage
+    }
+    
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticatedWithAppCheck() && 
+        resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticatedWithAppCheck();
+      allow update: if isAuthenticatedWithAppCheck() && 
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticatedWithAppCheck() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+    }
+    
+    // Chat messages
+    match /chats/{chatId}/messages/{messageId} {
+      allow read: if isAuthenticatedWithAppCheck() && (
+        get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid])
+      );
+      allow create: if isAuthenticatedWithAppCheck() && (
+        get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid])
+      );
+      allow update: if false; // Messages are immutable
+      allow delete: if false; // Messages cannot be deleted
+    }
+    
+    // Contractor profiles (public read for customers)
+    match /contractors/{contractorId} {
+      allow read: if isAppCheckValid();
+      allow write: if isAuthenticatedWithAppCheck() && isOwner(contractorId);
+    }
+    
+    // Reviews
+    match /reviews/{reviewId} {
+      allow read: if isAppCheckValid();
+      allow create: if isAuthenticatedWithAppCheck() && 
+        request.auth.uid == resource.data.customerId;
+      allow update: if isAuthenticatedWithAppCheck() && 
+        request.auth.uid == resource.data.customerId &&
+        resource.data.createdAt == request.resource.data.createdAt; // Prevent backdating
+      allow delete: if isAuthenticatedWithAppCheck() && isAdmin();
+    }
+    
+    // Referrals
+    match /referrals/{referralId} {
+      allow read: if isAuthenticatedWithAppCheck() && (
+        resource.data.referrerId == request.auth.uid ||
+        resource.data.refereeId == request.auth.uid ||
+        isAdmin()
+      );
+      allow create: if isAuthenticatedWithAppCheck();
+      allow update: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow delete: if false;
+    }
+  }
+}

@@ -123,7 +123,8 @@ export async function generateWithHuggingFace(prompt: string): Promise<Buffer | 
       return null;
     }
 
-    const buffer = await response.buffer();
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
     console.log('✅ Image generated successfully with Hugging Face');
     return buffer;
 

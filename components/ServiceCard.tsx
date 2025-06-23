@@ -16,9 +16,7 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
       <div className="relative h-48">
         <ServiceImage 
           category={imageMapping.category}
-          subcategory={imageMapping.subcategory}
-          variant="card"
-          alt={`${service.name} service`}
+          serviceName={service.name}
           className="w-full h-full"
         />
         <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full p-2">
