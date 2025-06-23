@@ -10,6 +10,15 @@ if (!getApps().length) {
   try {
     // Check if we're in a server environment
     if (typeof window === 'undefined') {
+      // Debug: Log available environment variables (without exposing sensitive data)
+      console.log('Firebase Admin initialization - checking credentials:', {
+        hasServiceAccountPath: !!process.env.FIREBASE_SERVICE_ACCOUNT_PATH,
+        hasPrivateKey: !!process.env.FIREBASE_PRIVATE_KEY,
+        hasClientEmail: !!process.env.FIREBASE_CLIENT_EMAIL,
+        hasProjectId: !!process.env.FIREBASE_PROJECT_ID,
+        hasPublicProjectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      });
+      
       // Option 1: Use service account from file path (local development)
       const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
       
@@ -26,18 +35,30 @@ if (!getApps().length) {
       else if (
         process.env.FIREBASE_PRIVATE_KEY &&
         process.env.FIREBASE_CLIENT_EMAIL &&
-        process.env.FIREBASE_PROJECT_ID
+        (process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID)
       ) {
+        // Parse the private key properly - handle both escaped and unescaped newlines
+        let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+        
+        // If the key is wrapped in quotes, remove them
+        if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+          privateKey = privateKey.slice(1, -1);
+        }
+        
+        // Replace escaped newlines with actual newlines
+        privateKey = privateKey.replace(/\\n/g, '\n');
+        
         app = initializeApp({
           credential: cert({
-            projectId: process.env.FIREBASE_PROJECT_ID,
+            projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
             clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            // Replace escaped newlines in private key
-            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            privateKey: privateKey,
           }),
-          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID,
           storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
         });
+        
+        console.log('Firebase Admin initialized with service account credentials');
       }
       // Option 3: Use default credentials (Google Cloud environments)
       else {
