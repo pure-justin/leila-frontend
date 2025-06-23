@@ -6,10 +6,17 @@
   "outputDirectory": ".next",
   "functions": {
     "app/api/**/*.ts": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "memory": 1024
     }
   },
   "env": {
-    "NEXT_TELEMETRY_DISABLED": "1"
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "VERCEL_FORCE_NO_BUILD_CACHE": "false"
+  },
+  "crons": [],
+  "regions": ["iad1"],
+  "github": {
+    "silent": true
   }
 }

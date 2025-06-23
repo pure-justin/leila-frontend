@@ -2,6 +2,7 @@
   "name": "leila-frontend",
   "version": "0.1.0",
   "private": true,
+  "sideEffects": false,
   "scripts": {
     "dev": "next dev",
     "build": "npm run copy:images && next build",

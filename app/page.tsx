@@ -1,15 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import PersonalizedHomePage from '@/components/PersonalizedHomePage';
+import dynamic from 'next/dynamic';
 import GlassNav from '@/components/GlassNav';
-import GoogleMapsLoader from '@/components/GoogleMapsLoader';
-import GradientBackground from '@/components/GradientBackground';
-import AILiveChat from '@/components/AILiveChat';
-import ReferralBanner from '@/components/ReferralBanner';
-import AddressPrompt from '@/components/AddressPrompt';
-import FeedbackFAB from '@/components/FeedbackFAB';
 import { useReferralBanner } from '@/hooks/useReferralBanner';
+
+// Dynamic imports for heavy components
+const PersonalizedHomePage = dynamic(() => import('@/components/PersonalizedHomePage'), {
+  loading: () => <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100" />
+});
+
+const GoogleMapsLoader = dynamic(() => import('@/components/GoogleMapsLoader'), {
+  ssr: false
+});
+
+const GradientBackground = dynamic(() => import('@/components/GradientBackground'));
+const AILiveChat = dynamic(() => import('@/components/AILiveChat'), { ssr: false });
+const ReferralBanner = dynamic(() => import('@/components/ReferralBanner'));
+const AddressPrompt = dynamic(() => import('@/components/AddressPrompt'));
+const FeedbackFAB = dynamic(() => import('@/components/FeedbackFAB'), { ssr: false });
 
 export default function Home() {
   const [mapsLoaded, setMapsLoaded] = useState(false);

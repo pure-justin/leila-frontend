@@ -2,16 +2,22 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useAuth } from '@/contexts/AuthContext';
 import { getServiceById, COMPREHENSIVE_SERVICE_CATALOG } from '@/lib/services-catalog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, Star, Shield, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import GlassNav from '@/components/GlassNav';
-import StreamlinedBookingForm from '@/components/StreamlinedBookingForm';
-import AuthPromptModal from '@/components/AuthPromptModal';
 import { getServiceImage } from '@/lib/service-images-local';
 import { formatCurrency } from '@/lib/utils/currency';
+
+// Dynamic imports for heavy components
+const StreamlinedBookingForm = dynamic(() => import('@/components/StreamlinedBookingForm'), {
+  loading: () => <div className="animate-pulse bg-gray-200 rounded-lg h-96" />
+});
+
+const AuthPromptModal = dynamic(() => import('@/components/AuthPromptModal'));
 
 interface BookingPageContentProps {
   // Add any props if needed in the future
