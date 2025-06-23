@@ -13,32 +13,32 @@ import { getServiceImage as getImageMapping } from './service-image-mapping';
 // Category hero images - using our AI-generated images
 export const CATEGORY_HERO_IMAGES: Record<string, ServiceImage> = {
   'electrical': {
-    url: '/shared-assets/images/services/electrical/panel-upgrade-hero.jpg',
+    url: '/shared-assets/images/services/electrical/electrical-panel-upgrade-1.webp',
     alt: 'Professional electrician working on modern electrical panel',
     credit: 'AI Generated'
   },
   'plumbing': {
-    url: '/shared-assets/images/services/plumbing/faucet-repair-hero.jpg',
+    url: '/shared-assets/images/services/plumbing/faucet-repair-installation-1.webp',
     alt: 'Expert plumber installing modern faucet in luxury kitchen',
     credit: 'AI Generated'
   },
   'hvac': {
-    url: '/shared-assets/images/services/hvac/ac-installation-hero.jpg',
+    url: '/shared-assets/images/services/hvac/ac-installation-repair-1.webp',
     alt: 'HVAC technician installing energy-efficient air conditioning',
     credit: 'AI Generated'
   },
   'cleaning': {
-    url: '/shared-assets/images/services/cleaning/house-cleaning-hero.jpg',
+    url: '/shared-assets/images/services/cleaning/house-cleaning-1.webp',
     alt: 'Professional house cleaner using eco-friendly products',
     credit: 'AI Generated'
   },
   'landscaping': {
-    url: '/shared-assets/images/services/landscaping/lawn-care-hero.jpg',
+    url: '/shared-assets/images/services/landscaping/lawn-care-1.webp',
     alt: 'Professional landscaper maintaining perfect lawn',
     credit: 'AI Generated'
   },
   'handyman': {
-    url: '/shared-assets/images/services/handyman/general-repair-hero.jpg',
+    url: '/shared-assets/images/services/handyman/home-maintenance-1.webp',
     alt: 'Skilled handyman with professional tools',
     credit: 'AI Generated'
   },
@@ -48,8 +48,68 @@ export const CATEGORY_HERO_IMAGES: Record<string, ServiceImage> = {
     credit: 'AI Generated'
   },
   'pest-control': {
-    url: '/shared-assets/images/services/pest-control/inspection-hero.jpg',
+    url: '/shared-assets/images/services/pest-control/general-inspection-1.webp',
     alt: 'Licensed pest control specialist performing inspection',
+    credit: 'AI Generated'
+  },
+  'automotive': {
+    url: '/shared-assets/images/services/automotive/general-maintenance-1.webp',
+    alt: 'Professional auto mechanic performing maintenance',
+    credit: 'AI Generated'
+  },
+  'moving': {
+    url: '/shared-assets/images/services/moving/local-moving-1.webp',
+    alt: 'Professional moving team handling belongings with care',
+    credit: 'AI Generated'
+  },
+  'home-security': {
+    url: '/shared-assets/images/services/home-security/security-camera-1.webp',
+    alt: 'Modern home security system installation',
+    credit: 'AI Generated'
+  },
+  'event-services': {
+    url: '/shared-assets/images/services/event-services/event-planning-1.webp',
+    alt: 'Professional event planning and coordination',
+    credit: 'AI Generated'
+  },
+  'pet-care': {
+    url: '/shared-assets/images/services/pet-care/dog-walking-1.webp',
+    alt: 'Professional pet care services',
+    credit: 'AI Generated'
+  },
+  'tech-support': {
+    url: '/shared-assets/images/services/tech-support/computer-repair-1.webp',
+    alt: 'Expert computer and tech support services',
+    credit: 'AI Generated'
+  },
+  'personal-care': {
+    url: '/shared-assets/images/services/personal-care/massage-therapy-1.webp',
+    alt: 'Professional personal care services',
+    credit: 'AI Generated'
+  },
+  'tutoring': {
+    url: '/shared-assets/images/services/tutoring/academic-tutoring-1.webp',
+    alt: 'Professional tutoring and education services',
+    credit: 'AI Generated'
+  },
+  'senior-care': {
+    url: '/shared-assets/images/services/senior-care/companionship-1.webp',
+    alt: 'Compassionate senior care services',
+    credit: 'AI Generated'
+  },
+  'organization': {
+    url: '/shared-assets/images/services/organization/home-organizing-1.webp',
+    alt: 'Professional home organization services',
+    credit: 'AI Generated'
+  },
+  'seasonal': {
+    url: '/shared-assets/images/services/seasonal/holiday-decorating-1.webp',
+    alt: 'Seasonal and holiday services',
+    credit: 'AI Generated'
+  },
+  'miscellaneous': {
+    url: '/shared-assets/images/services/miscellaneous/errand-running-1.webp',
+    alt: 'Various home service solutions',
     credit: 'AI Generated'
   }
 };
@@ -59,7 +119,7 @@ export const SERVICE_IMAGES: Record<string, ServiceImage> = {};
 
 // Default fallback image
 export const DEFAULT_SERVICE_IMAGE: ServiceImage = {
-  url: '/shared-assets/images/services/placeholder.svg',
+  url: '/shared-assets/images/services/placeholder.jpg',
   alt: 'Leila Home Services',
   credit: 'AI Generated'
 };
@@ -71,6 +131,7 @@ export function getServiceImage(serviceId: string): ServiceImage {
   // Try multiple naming patterns
   const patterns = [
     `${mapping.subcategory}-1-thumb.webp`,
+    `${mapping.subcategory}-1-thumb.png`,
     `${mapping.subcategory}-thumbnail.jpg`,
     `${mapping.subcategory}-card.jpg`,
     `${mapping.subcategory}-1.webp`,
@@ -91,8 +152,9 @@ export function getServiceImage(serviceId: string): ServiceImage {
 export function getServiceThumbnail(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
   
-  // Try multiple thumbnail patterns
+  // Try multiple thumbnail patterns - prefer webp for better performance
   const patterns = [
+    `${mapping.subcategory}-1-thumb.webp`,
     `${mapping.subcategory}-1-thumb.png`,
     `${mapping.subcategory}-thumbnail.jpg`,
     `${mapping.subcategory}-card.jpg`,
@@ -112,10 +174,12 @@ export function getServiceThumbnail(serviceId: string): ServiceImage {
 export function getServiceHeroImage(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
   
-  // Try multiple hero patterns
+  // Try multiple hero patterns - prefer webp and large versions
   const patterns = [
+    `${mapping.subcategory}-1-large.webp`,
     `${mapping.subcategory}-1-large.png`,
     `${mapping.subcategory}-hero.jpg`,
+    `${mapping.subcategory}-1.webp`,
     `${mapping.subcategory}-1.png`,
     `${mapping.subcategory}-card.jpg`
   ];

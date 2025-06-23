@@ -29,15 +29,6 @@ export function ServiceImage({
 
   // Generate image URL
   const getImageUrl = () => {
-    // Check if we're using Vercel Blob Storage
-    if (process.env.NEXT_PUBLIC_USE_BLOB_STORAGE === 'true') {
-      // Vercel Blob URL format
-      return `https://${process.env.NEXT_PUBLIC_BLOB_STORE_ID}.public.blob.vercel-storage.com/services/${category}/${serviceName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')}.jpg`;
-    }
-    
     // Use service image utility to get the URL
     const serviceId = serviceName
       .toLowerCase()

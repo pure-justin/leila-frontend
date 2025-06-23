@@ -62,10 +62,6 @@ export function getPossibleImagePaths(serviceId: string): string[] {
 export function getServiceImageUrl(serviceId: string): string {
   const mapping = getImageMapping(serviceId);
   
-  // Special cases based on observed patterns
-  if (mapping.category === 'pest-control' && mapping.subcategory === 'inspection') {
-    return `/shared-assets/images/services/${mapping.category}/general-inspection-1-thumb.webp`;
-  }
   
   // Check for common patterns
   const commonPatterns = [
