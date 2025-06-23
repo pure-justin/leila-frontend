@@ -11,7 +11,8 @@ service cloud.firestore {
     }
     
     function isAuthenticatedWithAppCheck() {
-      return isAuthenticated() && isAppCheckValid();
+      // Temporarily allow authenticated users without App Check
+      return isAuthenticated(); // && isAppCheckValid();
     }
     
     function isOwner(userId) {
@@ -30,43 +31,43 @@ service cloud.firestore {
     
     // Users collection
     match /users/{userId} {
-      allow read: if isAuthenticatedWithAppCheck() && (isOwner(userId) || isAdmin());
-      allow create: if isAuthenticatedWithAppCheck() && isOwner(userId);
-      allow update: if isAuthenticatedWithAppCheck() && (isOwner(userId) || isAdmin());
-      allow delete: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow delete: if isAuthenticated() && isAdmin();
     }
     
     // Bookings collection
     match /bookings/{bookingId} {
-      allow read: if isAuthenticatedWithAppCheck() && (
+      allow read: if isAuthenticated() && (
         resource.data.customerId == request.auth.uid ||
         resource.data.contractorId == request.auth.uid ||
         isAdmin()
       );
-      allow create: if isAuthenticatedWithAppCheck();
-      allow update: if isAuthenticatedWithAppCheck() && (
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
         resource.data.customerId == request.auth.uid ||
         resource.data.contractorId == request.auth.uid ||
         isAdmin()
       );
-      allow delete: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow delete: if isAuthenticated() && isAdmin();
     }
     
     // Services collection (read-only for users)
     match /services/{serviceId} {
-      allow read: if isAppCheckValid();
-      allow write: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow read: if true; // Temporarily allow all reads
+      allow write: if isAuthenticated() && isAdmin();
     }
     
     // AI Memory contexts (protected)
     match /memory_contexts/{contextId} {
-      allow read: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow read: if isAuthenticated() && isAdmin();
       allow write: if false; // Only backend can write
     }
     
     // Vector memory collection
     match /vector_memory/{docId} {
-      allow read: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow read: if isAuthenticated() && isAdmin();
       allow write: if false; // Only backend can write
     }
     
@@ -78,22 +79,22 @@ service cloud.firestore {
     
     // Notifications
     match /notifications/{notificationId} {
-      allow read: if isAuthenticatedWithAppCheck() && 
+      allow read: if isAuthenticated() && 
         resource.data.userId == request.auth.uid;
-      allow create: if isAuthenticatedWithAppCheck();
-      allow update: if isAuthenticatedWithAppCheck() && 
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && 
         resource.data.userId == request.auth.uid;
-      allow delete: if isAuthenticatedWithAppCheck() && (
+      allow delete: if isAuthenticated() && (
         resource.data.userId == request.auth.uid || isAdmin()
       );
     }
     
     // Chat messages
     match /chats/{chatId}/messages/{messageId} {
-      allow read: if isAuthenticatedWithAppCheck() && (
+      allow read: if isAuthenticated() && (
         get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid])
       );
-      allow create: if isAuthenticatedWithAppCheck() && (
+      allow create: if isAuthenticated() && (
         get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid])
       );
       allow update: if false; // Messages are immutable
@@ -102,30 +103,30 @@ service cloud.firestore {
     
     // Contractor profiles (public read for customers)
     match /contractors/{contractorId} {
-      allow read: if isAppCheckValid();
-      allow write: if isAuthenticatedWithAppCheck() && isOwner(contractorId);
+      allow read: if true; // Temporarily allow all reads
+      allow write: if isAuthenticated() && isOwner(contractorId);
     }
     
     // Reviews
     match /reviews/{reviewId} {
-      allow read: if isAppCheckValid();
-      allow create: if isAuthenticatedWithAppCheck() && 
+      allow read: if true; // Temporarily allow all reads
+      allow create: if isAuthenticated() && 
         request.auth.uid == resource.data.customerId;
-      allow update: if isAuthenticatedWithAppCheck() && 
+      allow update: if isAuthenticated() && 
         request.auth.uid == resource.data.customerId &&
         resource.data.createdAt == request.resource.data.createdAt; // Prevent backdating
-      allow delete: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow delete: if isAuthenticated() && isAdmin();
     }
     
     // Referrals
     match /referrals/{referralId} {
-      allow read: if isAuthenticatedWithAppCheck() && (
+      allow read: if isAuthenticated() && (
         resource.data.referrerId == request.auth.uid ||
         resource.data.refereeId == request.auth.uid ||
         isAdmin()
       );
-      allow create: if isAuthenticatedWithAppCheck();
-      allow update: if isAuthenticatedWithAppCheck() && isAdmin();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && isAdmin();
       allow delete: if false;
     }
   }
