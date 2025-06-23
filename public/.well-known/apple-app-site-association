@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "8TFAUXGB3G.com.heyleila.homeservice",
+        "paths": ["*"]
+      }
+    ]
+  },
+  "appclips": {
+    "apps": ["8TFAUXGB3G.com.heyleila.homeservice.clip"]
+  },
+  "webcredentials": {
+    "apps": ["8TFAUXGB3G.com.heyleila.homeservice"]
+  }
+}

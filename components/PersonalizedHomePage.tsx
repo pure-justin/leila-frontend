@@ -28,6 +28,8 @@ export default function PersonalizedHomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [filteredServices, setFilteredServices] = useState<ServiceSubcategory[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [recommendations, setRecommendations] = useState<ServiceRecommendation[]>([]);
   const [categorySections, setCategorySections] = useState<CategorySection[]>([]);
@@ -139,6 +141,34 @@ export default function PersonalizedHomePage() {
     }
   };
 
+  const handleServiceSearch = () => {
+    if (searchQuery.trim()) {
+      // Filter services based on search query
+      const query = searchQuery.toLowerCase();
+      const filtered: ServiceSubcategory[] = [];
+      
+      COMPREHENSIVE_SERVICE_CATALOG.forEach(category => {
+        category.subcategories.forEach(service => {
+          if (
+            service.name.toLowerCase().includes(query) ||
+            service.description.toLowerCase().includes(query) ||
+            service.tags?.some(tag => tag.toLowerCase().includes(query))
+          ) {
+            filtered.push(service);
+          }
+        });
+      });
+      
+      setFilteredServices(filtered);
+      setShowSearchResults(true);
+      
+      // Track search if user is logged in
+      if (user) {
+        handleSearch();
+      }
+    }
+  };
+
   // Get recommended services based on user activity
   const getRecommendedServices = (): ServiceSubcategory[] => {
     if (!recommendations.length) return [];
@@ -215,25 +245,30 @@ export default function PersonalizedHomePage() {
                 From cleaning to repairs, we've got you covered
               </p>
               
-              {/* Search Bar */}
-              <div className="bg-white rounded-2xl shadow-2xl p-2 max-w-2xl">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 flex items-center gap-3 px-4">
-                    <Search className="w-5 h-5 text-gray-400" />
+              {/* Search Bar - Mobile Responsive */}
+              <div className="bg-white rounded-2xl shadow-2xl p-2 max-w-2xl mx-auto">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="flex-1 flex items-center gap-3 px-3 md:px-4">
+                    <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
                     <input
                       type="text"
-                      placeholder="Search for a service..."
+                      placeholder="What service do you need?"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      onBlur={handleSearch}
-                      className="flex-1 py-3 outline-none text-gray-900 placeholder-gray-500"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleServiceSearch();
+                        }
+                      }}
+                      className="flex-1 py-2 md:py-3 outline-none text-gray-900 placeholder-gray-500 text-sm md:text-base"
                     />
                   </div>
                   <button
-                    onClick={handleSearch}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+                    onClick={handleServiceSearch}
+                    className="px-3 md:px-6 py-2 md:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg transition-all text-sm md:text-base flex items-center justify-center min-w-[44px] md:min-w-auto"
                   >
-                    Search
+                    <span className="hidden sm:inline">Search</span>
+                    <Search className="w-5 h-5 sm:hidden" />
                   </button>
                 </div>
               </div>

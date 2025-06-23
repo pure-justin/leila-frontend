@@ -18,10 +18,11 @@ Leila is an AI-powered home service platform that connects customers with contra
 
 ### Customer App
 - Service booking with AI-powered matching
-- Real-time chat with AI assistant
+- Real-time chat with AI assistant (uses Firebase Functions + Gemini)
 - Voice control integration
 - PWA with offline support
 - Dark mode support
+- AI-generated service images using Google Imagen 2
 
 ### Contractor Dashboard (/contractor)
 - Live job feed with real-time updates
@@ -132,10 +133,14 @@ const fee = calculatePlatformFee(amount, contractorMonthlyVolume);
 - ✅ Fixed CRM formatting and spacing issues
 - ✅ Fixed map UI issues (rotation speed, clipping, overlays)
 - ✅ Resolved all build errors and deployment issues
+- ✅ AI-powered graphic designer tool using Google Imagen 2
+- ✅ Generated unique AI images for priority services
+- ✅ Removed duplicate chat systems - unified on AILiveChat
 - Removed API Gateway - now using Firebase directly
 - Removed CRM integration - simplified architecture
 - Removed MySQL - fully migrated to Firestore
 - Cleaned up Docker configurations
+- Removed old stock images - using only AI-generated assets
 
 ## Important Notes
 - Always use Firebase services

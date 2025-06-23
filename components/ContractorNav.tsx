@@ -8,13 +8,13 @@ import { Home, Calendar, User, DollarSign, MessageSquare, Settings, LogOut, File
 const navItems = [
   { href: '/contractor/dashboard', label: 'Dashboard', icon: Home },
   { href: '/contractor/schedule', label: 'Schedule', icon: Calendar },
-  { href: '/contractor/jobs', label: 'My Jobs', icon: Calendar },
+  // { href: '/contractor/jobs', label: 'My Jobs', icon: Calendar }, // TODO: Create jobs page
   { href: '/contractor/documents', label: 'Documents', icon: FileText },
-  { href: '/contractor/earnings', label: 'Earnings', icon: DollarSign },
-  { href: '/contractor/messages', label: 'Messages', icon: MessageSquare },
+  // { href: '/contractor/earnings', label: 'Earnings', icon: DollarSign }, // TODO: Create earnings page
+  // { href: '/contractor/messages', label: 'Messages', icon: MessageSquare }, // TODO: Create messages page
   { href: '/contractor/profile', label: 'Profile', icon: User },
-  { href: '/contractor/settings', label: 'Settings', icon: Settings },
-  { href: '/crm', label: 'CRM', icon: Database },
+  // { href: '/contractor/settings', label: 'Settings', icon: Settings }, // TODO: Create settings page
+  { href: '/admin/crm', label: 'CRM', icon: Database }, // Fixed path to admin/crm
 ];
 
 export default function ContractorNav() {

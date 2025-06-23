@@ -9,7 +9,6 @@ import AILiveChat from '@/components/AILiveChat';
 import ReferralBanner from '@/components/ReferralBanner';
 import AddressPrompt from '@/components/AddressPrompt';
 import FeedbackFAB from '@/components/FeedbackFAB';
-import MobileSearchBar from '@/components/MobileSearchBar';
 import { useReferralBanner } from '@/hooks/useReferralBanner';
 
 export default function Home() {
@@ -19,6 +18,16 @@ export default function Home() {
   const isBannerVisible = useReferralBanner();
 
   useEffect(() => {
+    // Check if user is on mobile and redirect to mobile-optimized page
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    
+    // Only redirect if on mobile and not in PWA mode
+    if (isMobile && !isStandalone && typeof window !== 'undefined') {
+      window.location.href = '/m';
+      return;
+    }
+
     // Check if user has saved address
     const savedAddress = localStorage.getItem('userAddress');
     if (!savedAddress) {
@@ -54,14 +63,11 @@ export default function Home() {
       {/* Glass Navigation */}
       <GlassNav />
       
-      {/* Mobile Search Bar */}
-      <MobileSearchBar />
-      
       {/* Referral Banner - Now positioned below header */}
       <ReferralBanner referralCode={savedReferralCode || undefined} />
 
-      <main className={`md:mt-0 transition-all duration-300 ${
-        isBannerVisible ? 'mt-[180px] md:mt-0' : 'mt-[120px]'
+      <main className={`transition-all duration-300 ${
+        isBannerVisible ? 'pt-[120px] md:pt-0' : 'pt-[60px] md:pt-0'
       }`}>
         {/* Personalized Home Page with DoorDash-style layout */}
         <PersonalizedHomePage />

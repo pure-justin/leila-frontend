@@ -47,17 +47,17 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
   const menuItems = [
     { icon: Home, label: 'Home', href: '/', badge: null },
-    { icon: Search, label: 'Book', href: '/book', badge: null },
-    { icon: Calendar, label: 'My Bookings', href: '/bookings', badge: '2' },
-    { icon: MessageCircle, label: 'Messages', href: '/messages', badge: '5' },
-    { icon: Star, label: 'Favorites', href: '/favorites', badge: null },
+    { icon: Search, label: 'Services', href: '/', badge: null },
+    // { icon: Calendar, label: 'My Bookings', href: '/bookings', badge: '2' }, // TODO: Create bookings page
+    // { icon: MessageCircle, label: 'Messages', href: '/messages', badge: '5' }, // TODO: Create messages page
+    // { icon: Star, label: 'Favorites', href: '/favorites', badge: null }, // TODO: Create favorites page
     { icon: Briefcase, label: 'Become a Pro', href: '/contractor/signup', badge: 'NEW' },
   ];
 
   const bottomItems = [
-    { icon: Settings, label: 'Settings', href: '/settings' },
-    { icon: HelpCircle, label: 'Help & Support', href: '/help' },
-    { icon: FileText, label: 'Terms & Privacy', href: '/terms' },
+    // { icon: Settings, label: 'Settings', href: '/settings' }, // TODO: Create settings page
+    // { icon: HelpCircle, label: 'Help & Support', href: '/help' }, // TODO: Create help page
+    // { icon: FileText, label: 'Terms & Privacy', href: '/terms' }, // TODO: Create terms page
   ];
 
   return (
@@ -104,7 +104,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 </div>
                 <div>
                   <p className="font-medium">Welcome back!</p>
-                  <Link href="/login" className="text-sm text-white/80 hover:text-white">
+                  <Link href="/contractor/login" className="text-sm text-white/80 hover:text-white">
                     Sign in / Sign up
                   </Link>
                 </div>
@@ -190,10 +190,10 @@ export function MobileTabBar() {
   
   const tabs = [
     { icon: Home, label: 'Home', href: '/' },
-    { icon: Search, label: 'Search', href: '/search' },
-    { icon: Calendar, label: 'Bookings', href: '/bookings' },
-    { icon: MessageCircle, label: 'Chat', href: '/chat' },
-    { icon: User, label: 'Profile', href: '/profile' },
+    { icon: Search, label: 'Book', href: '/book' },
+    // { icon: Calendar, label: 'Bookings', href: '/bookings' }, // TODO: Create bookings page
+    // { icon: MessageCircle, label: 'Chat', href: '/chat' }, // TODO: Create chat page
+    // { icon: User, label: 'Profile', href: '/profile' }, // TODO: Create profile page
   ];
 
   return (

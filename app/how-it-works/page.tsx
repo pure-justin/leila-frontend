@@ -4,14 +4,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { 
-  Sparkles, MessageSquare, Calendar, CheckCircle, Star, Shield, 
+  Sparkles, MessageSquare, CheckCircle, Star, Shield, 
   Clock, DollarSign, Smartphone, Home, Users, TrendingUp, Award,
-  ChevronRight, Play, Pause, ArrowRight, Zap, Heart, Globe,
-  FileCheck, Camera, ThumbsUp, CreditCard
+  Play, Pause, ArrowRight, Zap, Heart, Globe,
+  FileCheck, Camera
 } from 'lucide-react';
-import Image from 'next/image';
 import GlassNav from '@/components/GlassNav';
-import MobileSearchBar from '@/components/MobileSearchBar';
 
 // Animation variants
 const fadeInUp = {
@@ -128,7 +126,6 @@ export default function HowItWorksPage() {
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-indigo-50">
       {/* Navigation */}
       <GlassNav />
-      <MobileSearchBar />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-indigo-600 opacity-10" />

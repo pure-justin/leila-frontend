@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'Leila'
   },
+  other: {
+    'apple-itunes-app': 'app-id=6747648334, app-clip-bundle-id=com.heyleila.homeservice.clip',
+  },
 };
 
 export const viewport = {

@@ -1,5 +1,5 @@
 // Local service images configuration
-// These images are stored locally for better performance and reliability
+// These images are AI-generated and stored locally for optimal performance
 
 export interface ServiceImage {
   url: string;
@@ -7,53 +7,102 @@ export interface ServiceImage {
   credit?: string;
 }
 
-// For now, we'll use the existing Pexels URLs until all images are downloaded
-// To use local images, replace the URLs with paths like: '/assets/services/categories/electrical-hero.jpg'
+// Import the service image mapping
+import { getServiceImage as getImageMapping } from './service-image-mapping';
 
-import { 
-  CATEGORY_HERO_IMAGES as PEXELS_CATEGORY_IMAGES, 
-  SERVICE_IMAGES as PEXELS_SERVICE_IMAGES
-} from './professional-service-images';
-
-// Override with local images where available
+// Category hero images - using our AI-generated images
 export const CATEGORY_HERO_IMAGES: Record<string, ServiceImage> = {
-  ...PEXELS_CATEGORY_IMAGES,
-  // These are downloaded locally
   'electrical': {
-    url: '/assets/services/categories/electrical-hero.jpg',
-    alt: 'Professional electrician working on electrical panel',
-    credit: 'Photo by Pixabay on Pexels'
+    url: '/shared-assets/images/services/electrical/panel-upgrade-hero.jpg',
+    alt: 'Professional electrician working on modern electrical panel',
+    credit: 'AI Generated'
   },
   'plumbing': {
-    url: '/assets/services/categories/plumbing-hero.jpg',
-    alt: 'Modern bathroom with elegant plumbing fixtures',
-    credit: 'Photo by Max Vakhtbovych on Pexels'
+    url: '/shared-assets/images/services/plumbing/faucet-repair-hero.jpg',
+    alt: 'Expert plumber installing modern faucet in luxury kitchen',
+    credit: 'AI Generated'
   },
   'hvac': {
-    url: '/assets/services/categories/hvac-hero.jpg',
-    alt: 'HVAC technician servicing air conditioning unit',
-    credit: 'Photo by Gustavo Fring on Pexels'
+    url: '/shared-assets/images/services/hvac/ac-installation-hero.jpg',
+    alt: 'HVAC technician installing energy-efficient air conditioning',
+    credit: 'AI Generated'
+  },
+  'cleaning': {
+    url: '/shared-assets/images/services/cleaning/house-cleaning-hero.jpg',
+    alt: 'Professional house cleaner using eco-friendly products',
+    credit: 'AI Generated'
+  },
+  'landscaping': {
+    url: '/shared-assets/images/services/landscaping/lawn-care-hero.jpg',
+    alt: 'Professional landscaper maintaining perfect lawn',
+    credit: 'AI Generated'
+  },
+  'handyman': {
+    url: '/shared-assets/images/services/handyman/general-repair-hero.jpg',
+    alt: 'Skilled handyman with professional tools',
+    credit: 'AI Generated'
+  },
+  'appliance': {
+    url: '/shared-assets/images/services/appliance/refrigerator-repair-hero.jpg',
+    alt: 'Technician repairing modern smart refrigerator',
+    credit: 'AI Generated'
+  },
+  'pest-control': {
+    url: '/shared-assets/images/services/pest-control/inspection-hero.jpg',
+    alt: 'Licensed pest control specialist performing inspection',
+    credit: 'AI Generated'
   }
 };
 
-// For service images, we'll continue using Pexels URLs for now
-export const SERVICE_IMAGES = PEXELS_SERVICE_IMAGES;
+// Service-specific images
+export const SERVICE_IMAGES: Record<string, ServiceImage> = {};
 
 // Default fallback image
 export const DEFAULT_SERVICE_IMAGE: ServiceImage = {
-  url: 'https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  alt: 'Professional home service',
-  credit: 'Photo by Pixabay on Pexels'
+  url: '/shared-assets/images/services/placeholder.jpg',
+  alt: 'Leila Home Services',
+  credit: 'AI Generated'
 };
 
 // Get service image with fallback
 export function getServiceImage(serviceId: string): ServiceImage {
-  return SERVICE_IMAGES[serviceId] || DEFAULT_SERVICE_IMAGE;
+  const mapping = getImageMapping(serviceId);
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-card.jpg`;
+  
+  return {
+    url: imageUrl,
+    alt: `${serviceId} service`,
+    credit: 'AI Generated'
+  };
+}
+
+// Get service thumbnail
+export function getServiceThumbnail(serviceId: string): ServiceImage {
+  const mapping = getImageMapping(serviceId);
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-thumbnail.jpg`;
+  
+  return {
+    url: imageUrl,
+    alt: `${serviceId} service thumbnail`,
+    credit: 'AI Generated'
+  };
+}
+
+// Get service hero image
+export function getServiceHeroImage(serviceId: string): ServiceImage {
+  const mapping = getImageMapping(serviceId);
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-hero.jpg`;
+  
+  return {
+    url: imageUrl,
+    alt: `${serviceId} service hero`,
+    credit: 'AI Generated'
+  };
 }
 
 // Get category hero image with fallback
 export function getCategoryHeroImage(categoryId: string): ServiceImage {
-  return CATEGORY_HERO_IMAGES[categoryId] || CATEGORY_HERO_IMAGES['contractor-services'];
+  return CATEGORY_HERO_IMAGES[categoryId] || DEFAULT_SERVICE_IMAGE;
 }
 
 // Helper to map service to category

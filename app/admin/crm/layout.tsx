@@ -27,10 +27,10 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
     { name: 'Contractors', href: '/admin/crm/contractors', icon: UserCheck },
     { name: 'Bookings', href: '/admin/crm/bookings', icon: Calendar },
     { name: 'AI Activity', href: '/admin/crm/ai-activity', icon: Bot },
-    { name: 'Messages', href: '/admin/crm/messages', icon: MessageSquare },
-    { name: 'Onboarding', href: '/admin/crm/onboarding', icon: FileText },
-    { name: 'Schedule', href: '/admin/crm/schedule', icon: Clock },
-    { name: 'Settings', href: '/admin/crm/settings', icon: Settings },
+    // { name: 'Messages', href: '/admin/crm/messages', icon: MessageSquare }, // TODO: Create messages page
+    // { name: 'Onboarding', href: '/admin/crm/onboarding', icon: FileText }, // TODO: Create onboarding page
+    // { name: 'Schedule', href: '/admin/crm/schedule', icon: Clock }, // TODO: Create schedule page
+    // { name: 'Settings', href: '/admin/crm/settings', icon: Settings }, // TODO: Create settings page
   ];
 
   const isActive = (href: string) => {

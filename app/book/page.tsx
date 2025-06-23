@@ -1,27 +1,23 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { 
-  Calendar, Clock, MapPin, DollarSign,
-  Zap, Shield,
-  Star, TrendingUp,
-  Search, Filter
-} from 'lucide-react';
-import GlassNav from '@/components/GlassNav';
-import MobileSearchBar from '@/components/MobileSearchBar';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getServiceById, COMPREHENSIVE_SERVICE_CATALOG } from '@/lib/comprehensive-services-catalog';
-import { formatCurrency } from '@/lib/utils/currency';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Clock, Star, Shield, TrendingUp } from 'lucide-react';
+import Image from 'next/image';
+import GlassNav from '@/components/GlassNav';
 import StreamlinedBookingForm from '@/components/StreamlinedBookingForm';
 import AuthPromptModal from '@/components/AuthPromptModal';
-import Image from 'next/image';
-import { getServiceImageByIndex } from '@/lib/service-images-expanded';
+import { getServiceImage } from '@/lib/service-images-local';
+import { formatCurrency } from '@/lib/utils/currency';
 
+interface BookingPageContentProps {
+  // Add any props if needed in the future
+}
 
-function BookingPageContent() {
-  const router = useRouter();
+function BookingPageContent({}: BookingPageContentProps) {
   const searchParams = useSearchParams();
   const { user } = useAuth();
   
@@ -30,7 +26,6 @@ function BookingPageContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [sortBy, setSortBy] = useState<'popular' | 'price' | 'rating'>('popular');
 
   // Get service from URL params
@@ -61,13 +56,14 @@ function BookingPageContent() {
     }
   }, [searchParams]);
 
-  // Get all services
-  const allServices = Object.values(COMPREHENSIVE_SERVICE_CATALOG).flatMap(category => 
-    category.subcategories
-  );
-
-  // Filter services
-  const filteredServices = allServices.filter(service => {
+  // Filter services based on search and category
+  const filteredServices = COMPREHENSIVE_SERVICE_CATALOG.flatMap(category => 
+    category.subcategories.map(service => ({
+      ...service,
+      category: category.id,
+      categoryName: category.name
+    }))
+  ).filter((service) => {
     const matchesSearch = searchQuery === '' || 
       service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       service.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -75,10 +71,7 @@ function BookingPageContent() {
     const matchesCategory = selectedCategory === 'all' || 
       service.category === selectedCategory;
     
-    const matchesPrice = service.basePrice >= priceRange.min && 
-      service.basePrice <= priceRange.max;
-    
-    return matchesSearch && matchesCategory && matchesPrice;
+    return matchesSearch && matchesCategory;
   });
 
   // Sort services
@@ -103,13 +96,23 @@ function BookingPageContent() {
     setShowBookingForm(true);
   };
 
-  const categories = Object.keys(COMPREHENSIVE_SERVICE_CATALOG);
+  const handleBookingComplete = () => {
+    setShowBookingForm(false);
+    setSelectedService(null);
+    // Add any success handling here
+  };
+
+  const handleBookingCancel = () => {
+    setShowBookingForm(false);
+    setSelectedService(null);
+  };
+
+  const categories = COMPREHENSIVE_SERVICE_CATALOG.map(cat => cat.id);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-indigo-50">
       {/* Navigation */}
       <GlassNav />
-      <MobileSearchBar />
       
       <main className="pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -170,7 +173,7 @@ function BookingPageContent() {
               <div className="md:col-span-2">
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as 'popular' | 'price' | 'rating')}
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-purple-500"
                 >
                   <option value="popular">Most Popular</option>
@@ -179,49 +182,33 @@ function BookingPageContent() {
                 </select>
               </div>
 
-              {/* Quick Filters */}
+              {/* Search Action */}
               <div className="md:col-span-2">
-                <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
-                  <Filter className="w-4 h-4" />
-                  Filters
+                <button 
+                  onClick={() => {
+                    // Optional: Add a search action here
+                  }}
+                  className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Search className="w-4 h-4" />
+                  Search
                 </button>
               </div>
             </div>
 
-            {/* Quick Filter Tags */}
+            {/* Quick Service Categories */}
             <div className="flex flex-wrap gap-2 mt-4">
-              <motion.button
-                className="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium hover:bg-purple-200 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Zap className="w-4 h-4 inline mr-1" />
-                Same Day
-              </motion.button>
-              <motion.button
-                className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium hover:bg-green-200 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <DollarSign className="w-4 h-4 inline mr-1" />
-                Under $100
-              </motion.button>
-              <motion.button
-                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Star className="w-4 h-4 inline mr-1" />
-                Top Rated
-              </motion.button>
-              <motion.button
-                className="px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-medium hover:bg-orange-200 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <TrendingUp className="w-4 h-4 inline mr-1" />
-                Trending
-              </motion.button>
+              {['House Cleaning', 'Plumbing', 'Electrical', 'HVAC', 'Handyman'].map((category) => (
+                <motion.button
+                  key={category}
+                  onClick={() => setSearchQuery(category)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-purple-100 hover:text-purple-700 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {category}
+                </motion.button>
+              ))}
             </div>
           </motion.div>
 
@@ -229,7 +216,7 @@ function BookingPageContent() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <AnimatePresence mode="popLayout">
               {sortedServices.map((service, index) => {
-                const serviceImage = getServiceImageByIndex(service.id, index);
+                const serviceImage = getServiceImage(service.id);
                 
                 return (
                   <motion.div
@@ -356,11 +343,10 @@ function BookingPageContent() {
       <AnimatePresence>
         {showBookingForm && selectedService && (
           <StreamlinedBookingForm
-            serviceId={selectedService} onComplete={function (): void {
-              throw new Error('Function not implemented.');
-            } } onCancel={function (): void {
-              throw new Error('Function not implemented.');
-            } }          />
+            serviceId={selectedService}
+            onComplete={handleBookingComplete}
+            onCancel={handleBookingCancel}
+          />
         )}
       </AnimatePresence>
 
