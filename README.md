@@ -81,4 +81,4 @@ This frontend connects to **EspoCRM** which provides:
 - Customer portal for viewing booking history
 - SMS/email notifications
 - Payment integration
-- Advanced AI chatbot with OpenAI GPT-4
+- Advanced AI chatbot with OpenAI GPT-4// Deployment trigger Mon Jun 23 00:54:28 CDT 2025
