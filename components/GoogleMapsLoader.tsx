@@ -65,7 +65,7 @@ export default function GoogleMapsLoader({ onLoad }: GoogleMapsLoaderProps) {
 
   return (
     <Script
-      src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,drawing,geometry,visualization,solarLayer&v=beta`}
+      src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,drawing,geometry,visualization&v=beta`}
       strategy="afterInteractive"
       onLoad={() => {
         if (window.google && window.google.maps) {
