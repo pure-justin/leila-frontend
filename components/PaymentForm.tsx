@@ -140,15 +140,34 @@ export default function PaymentForm({ amount, onSuccess, onCancel, metadata }: P
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create payment intent');
-      }
-
       const data = await response.json();
       
+      if (!response.ok) {
+        console.error('Payment intent creation failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: data.error,
+          code: data.code,
+          details: data.details
+        });
+        throw new Error(data.error || `Failed to create payment intent (${response.status})`);
+      }
+      
       if (data.error) {
+        console.error('Payment intent error:', data);
         throw new Error(data.error);
       }
+      
+      if (!data.clientSecret) {
+        console.error('No client secret returned:', data);
+        throw new Error('Invalid payment response - no client secret');
+      }
+      
+      console.log('Payment intent created:', {
+        paymentIntentId: data.paymentIntentId,
+        amount: data.amount,
+        status: data.status
+      });
       
       setClientSecret(data.clientSecret);
     } catch (err: any) {

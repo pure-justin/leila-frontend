@@ -16,8 +16,8 @@ const LOCATION = 'us-central1';
 const MODEL_ID = 'imagegeneration@006';
 const ENDPOINT = `https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}:predict`;
 
-// Output directory
-const OUTPUT_DIR = path.join(__dirname, '../public/images/services');
+// Output directory - MUST use shared-assets folder
+const OUTPUT_DIR = path.join(__dirname, '../../../shared-assets/images/services');
 
 // Service categories and their services
 const SERVICE_CATEGORIES = {

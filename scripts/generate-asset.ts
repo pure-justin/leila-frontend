@@ -18,8 +18,8 @@ if (!subject) {
 }
 
 const command = assetType
-  ? `npx ts-node scripts/ai-graphic-designer.ts generate -s "${subject}" -t ${assetType} -o public/images/ai-generated`
-  : `npx ts-node scripts/ai-graphic-designer.ts interactive -o public/images/ai-generated`;
+  ? `npx ts-node scripts/ai-graphic-designer.ts generate -s "${subject}" -t ${assetType} -o ../../shared-assets/images/ai-generated`
+  : `npx ts-node scripts/ai-graphic-designer.ts interactive -o ../../shared-assets/images/ai-generated`;
 
 console.log(`🎨 Generating asset for "${subject}"${assetType ? ` (${assetType})` : ''}...`);
 

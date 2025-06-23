@@ -2,7 +2,8 @@ import sharp from 'sharp';
 import fs from 'fs/promises';
 import path from 'path';
 
-const IMAGES_DIR = path.join(process.cwd(), 'public/shared-assets/images/services');
+// IMPORTANT: Use the main shared-assets folder, not the public symlink
+const IMAGES_DIR = path.join(process.cwd(), '../../shared-assets/images/services');
 const QUALITY = 85; // WebP quality (85 is a good balance)
 
 async function convertToWebP() {

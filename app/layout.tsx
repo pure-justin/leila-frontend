@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/react';
 import "@/lib/firebase-app-check";
 import Footer from "@/components/Footer";
+import { RecaptchaProvider } from "@/components/RecaptchaProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,9 +66,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          {children}
-          <Footer />
-          <Analytics />
+          <RecaptchaProvider>
+            {children}
+            <Footer />
+            <Analytics />
+          </RecaptchaProvider>
         </AuthProvider>
       </body>
     </html>

@@ -140,6 +140,9 @@ const fee = calculatePlatformFee(amount, contractorMonthlyVolume);
 - ✅ Smart image loading with OptimizedServiceImage component
 - ✅ Fixed Firebase App Check authentication errors
 - ✅ Fixed date serialization in booking form
+- ✅ Added reCAPTCHA Enterprise integration
+- ✅ Consolidated image storage to shared-assets folder
+- ✅ Created symbolic link for web access
 - Removed API Gateway - now using Firebase directly
 - Removed CRM integration - simplified architecture
 - Removed MySQL - fully migrated to Firestore
@@ -151,9 +154,64 @@ const fee = calculatePlatformFee(amount, contractorMonthlyVolume);
 - Base prices configured in Firestore, not hardcoded
 - All contractor features under /contractor route
 - Deployment via Vercel (automatic on push to main)
-- Images stored in /public/shared-assets/ for native app compatibility
+- **IMPORTANT**: All images MUST be stored in `/shared-assets/images/services/` (NOT in frontend's public folder)
+- Frontend uses symbolic link: `public/shared-assets -> ../../shared-assets`
 - WebP format used for 70% smaller file sizes with PNG fallback
 - App Check temporarily disabled - re-enable when properly configured
+
+## Image Storage Guidelines
+
+### Correct Location
+All service images MUST be stored in the main shared-assets folder:
+```
+/Users/justingriffith/Documents/Home Service App/shared-assets/images/services/
+```
+
+### DO NOT Store Images In:
+- `/home-service-frontend/public/images/` ❌
+- `/home-service-frontend/public/shared-assets/` ❌ (this is a symlink)
+- Any other location ❌
+
+### File Structure
+```
+shared-assets/
+└── images/
+    └── services/
+        ├── electrical/
+        │   ├── outlet-repair-installation-1.png
+        │   ├── outlet-repair-installation-1.webp
+        │   ├── outlet-repair-installation-1-thumb.png
+        │   └── outlet-repair-installation-1-thumb.webp
+        ├── plumbing/
+        ├── hvac/
+        └── ... (other categories)
+```
+
+## reCAPTCHA Enterprise Configuration
+
+### Site Key (Public)
+```
+6LcSOWorAAAAAGOYmyOPHNPi1AbOzWsoJ3k3tYQO
+```
+
+### Secret Key (Private - Add to .env.local)
+```
+RECAPTCHA_SECRET_KEY=6LcSOWorAAAAAGF7K23OsZwVRdNmzHSddZ-4RAgu
+```
+
+### Usage
+```typescript
+import { useRecaptcha } from '@/components/RecaptchaProvider';
+
+const { executeRecaptcha } = useRecaptcha();
+const token = await executeRecaptcha('LOGIN');
+```
+
+### Actions
+- `LOGIN` - User login
+- `SIGNUP` - User registration
+- `BOOKING` - Service booking
+- `PAYMENT` - Payment processing
 
 ## Current Focus Areas
 1. Real-time job matching system
