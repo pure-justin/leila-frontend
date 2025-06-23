@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import AnimatedImagePlaceholder from './AnimatedImagePlaceholder';
 
 interface OptimizedServiceImageProps {
   src: string;
@@ -26,6 +27,7 @@ export default function OptimizedServiceImage({
 }: OptimizedServiceImageProps) {
   const [imgSrc, setImgSrc] = useState(src);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   
   // Preload image for instant display
   useEffect(() => {
@@ -46,8 +48,8 @@ export default function OptimizedServiceImage({
       // If thumbnail fails, try without thumb
       setImgSrc(imgSrc.replace('-thumb', ''));
     } else {
-      // Final fallback
-      setImgSrc('/shared-assets/images/services/placeholder.svg');
+      // Final fallback - show animated placeholder
+      setHasError(true);
     }
   };
 
@@ -55,10 +57,15 @@ export default function OptimizedServiceImage({
     ? { fill: true, sizes: sizes || "(max-width: 768px) 100vw, 50vw" }
     : { width: width || 400, height: height || 300 };
 
+  // If error occurred, show animated placeholder
+  if (hasError) {
+    return <AnimatedImagePlaceholder className={className} />;
+  }
+
   return (
     <>
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+        <AnimatedImagePlaceholder className="absolute inset-0" />
       )}
       <Image
         {...imageProps}

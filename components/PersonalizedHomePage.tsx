@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { 
   Search, MapPin, Clock, Star, TrendingUp, Sparkles,
   Heart, Home, Calendar, ChevronRight, Filter
@@ -15,6 +16,7 @@ import { userPreferencesService, ServiceRecommendation } from '@/lib/user-prefer
 import StreamlinedBookingForm from './StreamlinedBookingForm';
 import QuickActions from './QuickActions';
 import AnimatedHeroGraphic from './AnimatedHeroGraphic';
+import ModernSearchBar from './ModernSearchBar';
 
 interface CategorySection {
   id: string;
@@ -26,6 +28,7 @@ interface CategorySection {
 
 export default function PersonalizedHomePage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
@@ -144,29 +147,13 @@ export default function PersonalizedHomePage() {
 
   const handleServiceSearch = () => {
     if (searchQuery.trim()) {
-      // Filter services based on search query
-      const query = searchQuery.toLowerCase();
-      const filtered: ServiceSubcategory[] = [];
-      
-      COMPREHENSIVE_SERVICE_CATALOG.forEach(category => {
-        category.subcategories.forEach(service => {
-          if (
-            service.name.toLowerCase().includes(query) ||
-            service.description.toLowerCase().includes(query) ||
-            service.tags?.some(tag => tag.toLowerCase().includes(query))
-          ) {
-            filtered.push(service);
-          }
-        });
-      });
-      
-      setFilteredServices(filtered);
-      setShowSearchResults(true);
-      
       // Track search if user is logged in
       if (user) {
         handleSearch();
       }
+      
+      // Navigate to book page with search query
+      router.push(`/book?search=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -237,33 +224,12 @@ export default function PersonalizedHomePage() {
                 From cleaning to repairs, we've got you covered
               </p>
               
-              {/* Search Bar - Mobile Responsive */}
-              <div className="bg-white rounded-2xl shadow-2xl p-2 max-w-2xl mx-auto">
-                <div className="flex items-center gap-2 md:gap-3">
-                  <div className="flex-1 flex items-center gap-3 px-3 md:px-4">
-                    <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                    <input
-                      type="text"
-                      placeholder="What service do you need?"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleServiceSearch();
-                        }
-                      }}
-                      className="flex-1 py-2 md:py-3 outline-none text-gray-900 placeholder-gray-500 text-sm md:text-base"
-                    />
-                  </div>
-                  <button
-                    onClick={handleServiceSearch}
-                    className="px-3 md:px-6 py-2 md:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg transition-all text-sm md:text-base flex items-center justify-center min-w-[44px] md:min-w-auto"
-                  >
-                    <span className="hidden sm:inline">Search</span>
-                    <Search className="w-5 h-5 sm:hidden" />
-                  </button>
-                </div>
-              </div>
+              {/* Modern Animated Search Bar */}
+              <ModernSearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                onSearch={handleServiceSearch}
+              />
               
               {/* Quick Stats */}
               <div className="flex items-center gap-6 mt-6 text-sm">

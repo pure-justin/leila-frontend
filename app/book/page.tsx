@@ -346,7 +346,7 @@ function BookingPageContent({}: BookingPageContentProps) {
       <AnimatePresence>
         {showBookingForm && selectedService && (
           <StreamlinedBookingForm
-            serviceId={selectedService}
+            serviceId={selectedService.id}
             onComplete={handleBookingComplete}
             onCancel={handleBookingCancel}
           />

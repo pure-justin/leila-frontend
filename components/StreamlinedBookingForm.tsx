@@ -13,6 +13,7 @@ import { PropertyProfile } from '@/lib/types/property-profile';
 import { getServiceById } from '@/lib/comprehensive-services-catalog';
 import PaymentForm from './PaymentForm';
 import AuthPromptModal from './AuthPromptModal';
+import BookingProgressIndicator from './BookingProgressIndicator';
 
 interface StreamlinedBookingFormProps {
   serviceId: string;
@@ -72,15 +73,23 @@ export default function StreamlinedBookingForm({
 
   useEffect(() => {
     // Calculate estimated price based on service and property
-    if (service && selectedProperty) {
-      let basePrice = service.basePrice;
+    if (service) {
+      let basePrice = service.basePrice || 0;
       
-      // Adjust for property size if applicable
-      if (selectedProperty.details.squareFeet && service.priceUnit === 'sqft') {
+      // Handle different pricing models
+      if (service.priceUnit === 'quote') {
+        // For quote-based pricing, use a default estimate
+        basePrice = 150; // Default estimate for quote-based services
+      } else if (selectedProperty && selectedProperty.details.squareFeet && service.priceUnit === 'sqft') {
+        // Adjust for property size if applicable
         basePrice = (selectedProperty.details.squareFeet / 100) * service.basePrice;
       }
       
-      setEstimatedPrice(basePrice);
+      // Ensure we always have a valid price
+      setEstimatedPrice(Math.max(basePrice, service.basePrice || 0));
+    } else {
+      // If no service found, set a default
+      setEstimatedPrice(0);
     }
   }, [service, selectedProperty]);
 
@@ -232,27 +241,8 @@ export default function StreamlinedBookingForm({
           </div>
           
           {/* Progress Steps */}
-          <div className="flex items-center justify-between">
-            {['property', 'schedule', 'review', 'payment'].map((s, i) => (
-              <div key={s} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  step === s ? 'bg-white text-purple-600' : 
-                  ['property', 'schedule', 'review', 'payment'].indexOf(step) > i ? 'bg-purple-400 text-white' : 
-                  'bg-purple-700 text-purple-400'
-                }`}>
-                  {['property', 'schedule', 'review', 'payment'].indexOf(step) > i ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    i + 1
-                  )}
-                </div>
-                {i < 3 && (
-                  <div className={`w-full h-1 mx-2 ${
-                    ['property', 'schedule', 'review', 'payment'].indexOf(step) > i ? 'bg-purple-400' : 'bg-purple-700'
-                  }`} />
-                )}
-              </div>
-            ))}
+          <div className="pt-2 pb-2">
+            <BookingProgressIndicator currentStep={step} />
           </div>
         </div>
 
@@ -477,10 +467,20 @@ export default function StreamlinedBookingForm({
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Estimated Total</span>
                     <span className="text-2xl font-bold text-purple-700">
-                      ${estimatedPrice.toFixed(2)}
+                      {service?.priceUnit === 'quote' ? (
+                        'Get Quote'
+                      ) : estimatedPrice > 0 ? (
+                        `$${estimatedPrice.toFixed(2)}`
+                      ) : (
+                        `$${service?.basePrice || 0}`
+                      )}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">Final price may vary based on actual work required</p>
+                  <p className="text-sm text-gray-600">
+                    {service?.priceUnit === 'quote' 
+                      ? 'Contractor will provide detailed quote after assessment'
+                      : 'Final price may vary based on actual work required'}
+                  </p>
                 </div>
 
                 <div className="flex gap-3">
@@ -510,7 +510,7 @@ export default function StreamlinedBookingForm({
                 exit={{ opacity: 0, x: -20 }}
               >
                 <PaymentForm
-                  amount={estimatedPrice}
+                  amount={estimatedPrice > 0 ? estimatedPrice : (service?.basePrice || 100)}
                   onSuccess={handlePaymentSuccess}
                   onCancel={() => setStep('review')}
                   metadata={{
