@@ -29,16 +29,16 @@ export default function APIDebugPage() {
     const checkGoogle = () => {
       setGoogleStatus({
         windowExists: typeof window !== 'undefined',
-        googleExists: typeof window !== 'undefined' && !!window.google,
-        mapsExists: typeof window !== 'undefined' && !!window.google?.maps,
-        mapsVersion: typeof window !== 'undefined' && window.google?.maps?.version,
+        googleExists: typeof window !== 'undefined' && !!(window as any).google,
+        mapsExists: typeof window !== 'undefined' && !!(window as any).google?.maps,
+        mapsVersion: typeof window !== 'undefined' && (window as any).google?.maps?.version,
         availableLibraries: {
-          places: !!window.google?.maps?.places,
-          drawing: !!window.google?.maps?.drawing,
-          geometry: !!window.google?.maps?.geometry,
-          visualization: !!window.google?.maps?.visualization,
-          solarApi: !!(window.google?.maps as any)?.SolarApi,
-          solarLayer: !!(window.google?.maps as any)?.SolarLayer,
+          places: typeof window !== 'undefined' && !!(window as any).google?.maps?.places,
+          drawing: typeof window !== 'undefined' && !!(window as any).google?.maps?.drawing,
+          geometry: typeof window !== 'undefined' && !!(window as any).google?.maps?.geometry,
+          visualization: typeof window !== 'undefined' && !!(window as any).google?.maps?.visualization,
+          solarApi: typeof window !== 'undefined' && !!(window as any).google?.maps?.SolarApi,
+          solarLayer: typeof window !== 'undefined' && !!(window as any).google?.maps?.SolarLayer,
         }
       });
     };

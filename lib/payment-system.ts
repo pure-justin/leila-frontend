@@ -6,7 +6,7 @@ import { collection, doc, setDoc, getDoc, query, where, getDocs, addDoc, serverT
 // Full Stripe integration requires backend implementation
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia'
+  apiVersion: '2025-05-28.basil'
 });
 
 export interface PaymentIntent {

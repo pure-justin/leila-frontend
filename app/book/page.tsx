@@ -232,7 +232,7 @@ function BookingPageContent({}: BookingPageContentProps) {
                   >
                     {/* Service Image */}
                     <div className="relative h-48 overflow-hidden">
-                      <OptimizedServiceImage
+                      <Image
                         src={serviceImage.url}
                         alt={serviceImage.alt}
                         fill
@@ -346,7 +346,7 @@ function BookingPageContent({}: BookingPageContentProps) {
       <AnimatePresence>
         {showBookingForm && selectedService && (
           <StreamlinedBookingForm
-            serviceId={selectedService.id}
+            serviceId={selectedService}
             onComplete={handleBookingComplete}
             onCancel={handleBookingCancel}
           />

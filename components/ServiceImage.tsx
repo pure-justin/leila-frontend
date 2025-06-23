@@ -35,11 +35,11 @@ export function ServiceImage({
         .replace(/^-+|-+$/g, '')}.jpg`;
     }
     
-    // Fallback to local images
-    return `/images/services/${category}/${serviceName
+    // Use shared-assets folder
+    return `/shared-assets/images/services/${category}/${serviceName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')}.jpg`;
+      .replace(/^-+|-+$/g, '')}-1-thumb.webp`;
   };
 
   // Handle image load
@@ -58,7 +58,7 @@ export function ServiceImage({
       setImgSrc(imgSrc.replace(/\.[^.]+$/, `.${nextExt}`));
     } else {
       // Final fallback to placeholder
-      setImgSrc(`/images/services/placeholder.jpg`);
+      setImgSrc(`/shared-assets/images/services/placeholder.svg`);
     }
   };
 

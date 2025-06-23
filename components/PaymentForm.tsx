@@ -173,10 +173,6 @@ export default function PaymentForm({ amount, onSuccess, onCancel, metadata }: P
     } catch (err: any) {
       console.error('Payment setup error:', err);
       setError(err.message || 'Failed to setup payment');
-      // For demo purposes, still allow proceeding with a mock
-      if (process.env.NODE_ENV === 'development') {
-        setClientSecret('pi_mock_' + Math.random().toString(36).substr(2, 9));
-      }
     } finally {
       setLoading(false);
     }
