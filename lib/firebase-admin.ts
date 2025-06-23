@@ -3,7 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 
-let app: App;
+let app: App | null = null;
 
 // Initialize Firebase Admin SDK
 if (!getApps().length) {
@@ -76,16 +76,22 @@ if (!getApps().length) {
     }
   } catch (error) {
     console.error('Error initializing Firebase Admin:', error);
-    throw error;
+    // Don't throw error during build - just log it
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('Firebase Admin initialization failed - continuing without admin SDK');
+      app = null;
+    } else {
+      throw error;
+    }
   }
 } else {
   app = getApps()[0];
 }
 
-// Export admin services
-export const adminAuth = getAuth(app);
-export const adminDb = getFirestore(app);
-export const adminStorage = getStorage(app);
+// Export admin services (with null checks)
+export const adminAuth = app ? getAuth(app) : null;
+export const adminDb = app ? getFirestore(app) : null;
+export const adminStorage = app ? getStorage(app) : null;
 
 // Export the app instance if needed
 export { app as adminApp };
