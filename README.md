@@ -1,84 +1,57 @@
-# Home Service Pro - Customer Frontend
+# Leila Home Services
 
-A Next.js application for customers to book home services, integrated with EspoCRM for backend management.
-
-## Features
-
-- 🏠 Service catalog with 8 different home services
-- 📝 Easy booking form with validation
-- 🤖 AI-powered chatbot for customer support
-- 🔗 Direct integration with EspoCRM
-- 📱 Responsive design for all devices
-
-## CRM Integration
-
-This frontend connects to **EspoCRM** which provides:
-- Lead management
-- Appointment scheduling
-- Task assignment for technicians
-- Customer relationship tracking
-- RESTful API for all operations
+AI-powered home service booking platform.
 
 ## Setup
 
-1. **Install dependencies:**
+1. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. **Configure environment variables:**
-   Copy `.env.local.example` to `.env.local` and update:
-   ```
-   NEXT_PUBLIC_CRM_API_URL=http://localhost/espocrm/api/v1
-   CRM_API_USERNAME=your_username
-   CRM_API_PASSWORD=your_password
-   OPENAI_API_KEY=your_openai_key (optional)
-   ```
+2. **Environment variables**
+   Copy `.env.complete` to `.env.local`
 
-3. **Run development server:**
+3. **Run development server**
    ```bash
    npm run dev
    ```
 
-## How It Works
+## Deployment
 
-1. **Customer selects a service** from the catalog
-2. **Fills out booking form** with contact details and preferred time
-3. **System creates in EspoCRM:**
-   - Lead record with customer information
-   - Meeting/appointment for the service
-   - Task for assigning a technician
-4. **AI Chatbot** helps with questions and booking assistance
+Deploy to Vercel:
+```bash
+npm run deploy
+```
 
-## API Routes
+## Project Structure
 
-- `/api/booking` - Creates lead, appointment, and task in CRM
-- `/api/chat` - Handles chatbot conversations
+```
+/app              - Next.js pages and API routes
+/components       - React components
+/lib             - Utilities and configurations
+/public          - Static assets
+/shared-assets   - Service images
+```
 
-## Technologies
+## Key Features
 
-- Next.js 14 with App Router
-- TypeScript
-- Tailwind CSS
-- React Hook Form + Zod validation
-- Axios for API calls
-- Lucide React for icons
+- Service booking
+- Contractor dashboard (/contractor)
+- Stripe payments
+- Firebase auth & database
+- AI chat assistant
 
-## Production Deployment
+## Services
 
-1. Build the application:
-   ```bash
-   npm run build
-   ```
+All service images are in `/shared-assets/images/services/{category}/`
 
-2. Set production environment variables
+Categories: plumbing, electrical, hvac, cleaning, handyman, painting, landscaping, pest-control, moving
 
-3. Deploy to Vercel, Netlify, or your preferred platform
+## Environment Variables
 
-## Future Enhancements
-
-- Real-time appointment availability checking
-- Customer portal for viewing booking history
-- SMS/email notifications
-- Payment integration
-- Advanced AI chatbot with OpenAI GPT-4// Deployment trigger Mon Jun 23 00:54:28 CDT 2025
+See `.env.complete` for all required variables:
+- Firebase configuration
+- Stripe keys
+- Google AI/Maps keys
+- ReCAPTCHA keys
