@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run copy:images && next build",
+    "copy:images": "tsx scripts/copy-web-images.ts",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",

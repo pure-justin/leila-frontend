@@ -6,9 +6,9 @@ export const getServiceImagePath = (serviceName: string, category: string, image
     .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
     .replace(/\s+/g, '-');
   
-  return `/shared-assets/images/services/${category}/${cleanName}-${imageNumber}.webp`;
+  return `/images/services/${category}/${cleanName}-${imageNumber}.webp`;
 };
 
 export const getPlaceholderImage = (): string => {
-  return '/shared-assets/images/services/placeholder.jpg';
+  return '/images/services/placeholder.jpg';
 };
