@@ -1,22 +1,18 @@
 {
-  "buildCommand": "node --max-old-space-size=4096 node_modules/.bin/next build",
+  "buildCommand": "npm run build:production",
   "devCommand": "npm run dev",
-  "installCommand": "npm ci --prefer-offline --no-audit",
-  "framework": "nextjs",
+  "installCommand": "npm ci --prefer-offline --no-audit --omit=dev",
+  "framework": null,
   "outputDirectory": ".next",
   "functions": {
     "app/api/**/*.ts": {
-      "maxDuration": 60,
-      "memory": 1024
+      "maxDuration": 30,
+      "memory": 512
     }
   },
   "env": {
     "NEXT_TELEMETRY_DISABLED": "1",
-    "VERCEL_FORCE_NO_BUILD_CACHE": "false"
+    "NODE_ENV": "production"
   },
-  "crons": [],
-  "regions": ["iad1"],
-  "github": {
-    "silent": true
-  }
+  "regions": ["iad1"]
 }

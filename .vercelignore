@@ -53,3 +53,29 @@ storybook-static/
 .storybook/
 *.stories.tsx
 *.stories.ts
+
+# Ignore all non-essential files
+.git/
+.github/
+.vscode/
+.idea/
+node_modules/
+.next/cache/
+.env.local
+.env.development
+*.log
+*.orig
+.DS_Store
+
+# Ignore heavy assets during build
+public/images/services/*/*-2.*
+public/images/services/*/*-3.*
+public/images/services/*/*-4.*
+public/images/services/*/*-large.*
+public/images/services/*/*-mobile.*
+public/images/services/*/*-card.*
+public/images/services/*/*-thumbnail.*
+
+# Ignore Firebase Admin SDK if not needed at build time
+lib/firebase-admin.ts
+scripts/firebase-*.ts

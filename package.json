@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run copy:images && next build",
+    "build:production": "./scripts/prebuild.sh && next build -c next.config.production.js",
     "copy:images": "tsx scripts/copy-web-images.ts",
     "start": "next start",
     "lint": "next lint",
