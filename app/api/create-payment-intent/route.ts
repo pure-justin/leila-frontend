@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-05-28.basil',
-});
-
 export async function POST(request: NextRequest) {
   try {
     // Check if Stripe secret key is configured
@@ -15,6 +11,10 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-05-28.basil',
+    });
 
     const { amount, metadata = {} } = await request.json();
 
