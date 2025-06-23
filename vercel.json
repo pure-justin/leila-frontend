@@ -2,14 +2,8 @@
   "buildCommand": "npm run build:production",
   "devCommand": "npm run dev",
   "installCommand": "npm ci --prefer-offline --no-audit --omit=dev",
-  "framework": null,
+  "framework": "nextjs",
   "outputDirectory": ".next",
-  "functions": {
-    "app/api/**/*": {
-      "maxDuration": 30,
-      "memory": 512
-    }
-  },
   "env": {
     "NEXT_TELEMETRY_DISABLED": "1",
     "NODE_ENV": "production"
