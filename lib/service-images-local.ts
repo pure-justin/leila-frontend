@@ -7,8 +7,14 @@ export interface ServiceImage {
   credit?: string;
 }
 
-// Import the service image mapping
-import { getServiceImage as getImageMapping } from './service-image-mapping';
+// Simple fallback for service image mapping
+const getImageMapping = (serviceId: string) => {
+  // Return a fallback image based on service ID
+  return {
+    url: '/shared-assets/images/services/handyman/home-maintenance-1.webp',
+    alt: 'Professional service'
+  };
+};
 
 // Category hero images - using our AI-generated images
 export const CATEGORY_HERO_IMAGES: Record<string, ServiceImage> = {

@@ -10,7 +10,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import PropertyProfileManager from './PropertyProfileManager';
 import { PropertyProfile } from '@/lib/types/property-profile';
-import { getServiceById } from '@/lib/comprehensive-services-catalog';
+import { getServiceById } from '@/lib/services-catalog';
 import PaymentForm from './PaymentForm';
 import AuthPromptModal from './AuthPromptModal';
 import BookingProgressIndicator from './BookingProgressIndicator';

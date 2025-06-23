@@ -3,14 +3,13 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getServiceById, COMPREHENSIVE_SERVICE_CATALOG } from '@/lib/comprehensive-services-catalog';
+import { getServiceById, COMPREHENSIVE_SERVICE_CATALOG } from '@/lib/services-catalog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, Star, Shield, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import GlassNav from '@/components/GlassNav';
 import StreamlinedBookingForm from '@/components/StreamlinedBookingForm';
 import AuthPromptModal from '@/components/AuthPromptModal';
-import OptimizedServiceImage from '@/components/OptimizedServiceImage';
 import { getServiceImage } from '@/lib/service-images-local';
 import { formatCurrency } from '@/lib/utils/currency';
 

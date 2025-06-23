@@ -71,7 +71,7 @@ export default function ContractorSignup() {
                 <span className="text-sm font-medium hidden sm:inline">Back to Home</span>
               </Link>
               <Link href="/" className="flex items-center">
-                <Image src="/leila-logo.png" alt="Leila" width={64} height={64} className="h-12 md:h-16 w-auto" />
+                <Image src="/shared-assets/logos/leila-logo.png" alt="Leila" width={64} height={64} className="h-12 md:h-16 w-auto" />
               </Link>
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">

@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getAdminDb } from '@/lib/firebase-admin-lazy';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function GET() {
   try {
-    // Initialize admin DB only when the endpoint is called (runtime, not build time)
-    const adminDb = getAdminDb();
+    // Use admin DB from firebase-admin
     
     // Test Firestore connection by attempting to read a collection
     const timestamp = Date.now();

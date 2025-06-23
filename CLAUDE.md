@@ -1,221 +1,74 @@
-# Leila Home Service Platform - Project Context
+# Leila Home Services - Development Context
 
 ## Project Overview
-Leila is an AI-powered home service platform that connects customers with contractors for various home services. The platform features voice control ("Hey Leila"), real-time job matching, and an Uber-style UI/UX.
+AI-powered home service platform connecting customers with contractors via voice-activated booking ("Hey Leila").
 
-## Active Architecture
-
-### Domain
-- **Main App**: heyleila.com (customer and contractor portal)
-
-### Tech Stack
+## Tech Stack
 - **Frontend**: Next.js 14, TypeScript, Tailwind CSS
 - **Backend**: Firebase (Firestore, Auth, Functions, Storage)
+- **Mobile**: React Native (Expo)
 - **AI**: Google Gemini 1.5 Flash
+- **Payments**: Stripe Connect
 - **Hosting**: Vercel
 
-## Current Features
+## Project Structure
+```
+/Users/justingriffith/Documents/Home Service App/
+├── home-service-frontend/    # Main Next.js web app
+├── leila-native/            # React Native mobile app
+├── functions/               # Firebase Cloud Functions
+├── shared-assets/           # Images, logos, fonts
+│   ├── images/services/     # AI-generated service images
+│   ├── logos/              # App logos
+│   └── favicons/           # App favicons
+├── instruction-docs/        # All documentation
+│   ├── SETUP_GUIDE.md      # Development setup
+│   ├── ARCHITECTURE.md     # Technical architecture
+│   ├── MOBILE_DEVELOPMENT.md # Mobile app guide
+│   ├── TROUBLESHOOTING.md  # Common issues
+│   └── BUSINESS_PLAN.md    # Business strategy
+└── .env                    # Single environment config
+```
 
-### Customer App
-- Service booking with AI-powered matching
-- Real-time chat with AI assistant (uses Firebase Functions + Gemini)
-- Voice control integration
-- PWA with offline support
-- Dark mode support
-- AI-generated service images using Google Imagen 2
-
-### Contractor Dashboard (/contractor)
-- Live job feed with real-time updates
-- Analytics dashboard
-- Schedule management
-- Profile management
-- Authentication (login/signup)
-
-### Services Offered
-- Plumbing ($150-$500)
-- Electrical ($200-$800)
-- HVAC ($200-$1500)
-- House Cleaning ($100-$300)
-- Lawn Care ($50-$200)
-- Pest Control ($150-$400)
-- Appliance Repair ($100-$500)
-- Painting ($300-$2000)
-
-## Data Model (Firestore)
-
-### Core Collections
-- `users` - Customers and contractors
-- `bookings` - Service requests with pricing breakdown
-- `services` - Service catalog with base prices
-- `api_keys` - Third-party API access
-- `notifications` - Multi-channel notifications
-
-### Pricing System
-- Base prices stored in Firestore
-- Dynamic pricing via AI (urgency, timing, demand)
-- Support for fixed, hourly, and quote-based pricing
-- Detailed price breakdowns for transparency
-
-## Key Files and Locations
-
-### Frontend
-- Entry: `/app/page.tsx` - Main landing page
-- Contractor: `/app/contractor/` - Contractor portal
-- Components: `/components/` - Shared UI components
-- Lib: `/lib/` - Core functionality (AI, Firebase)
-
-### Configuration
-- Firebase: `/firebase.json`, `/firestore.rules`
-- Next.js: `/next.config.js`
-- TypeScript: `/tsconfig.json`
-- Environment: `.env.local`
+## Key Features
+- **Customer**: Service booking, real-time tracking, chat support
+- **Contractor**: Job management, earnings tracking, schedule control
+- **Admin**: CRM dashboard at `/admin/crm`
 
 ## Development Commands
-
 ```bash
-# Frontend development
-npm run dev
+# Frontend
+cd home-service-frontend
+npm run dev              # Start development
+npm run build            # Production build
+npm run deploy           # Deploy to Vercel
 
-# Build for production
-npm run build
+# Mobile
+cd leila-native
+npm start               # Start Expo
+npm run ios            # iOS simulator
+npm run android        # Android emulator
 
-# Start production server
-npm start
-
-# Type checking
-npm run type-check
-
-# Linting
-npm run lint
+# Firebase Functions
+cd functions
+npm run serve          # Local testing
+npm run deploy         # Deploy functions
 ```
 
-## Deployment Commands
+## Important URLs
+- **Production**: https://heyleila.com
+- **Contractor Portal**: https://heyleila.com/contractor
+- **Admin CRM**: https://heyleila.com/admin/crm
 
-```bash
-# Deploy to Vercel (production)
-npm run deploy
+## Current Status
+- ✅ Web app deployed and running
+- ✅ Firebase backend configured
+- ✅ Stripe payments integrated
+- ⏳ Mobile app in development
+- ⏳ Push notifications pending
 
-# Deploy preview to Vercel
-npm run deploy:preview
-
-# Alternative: Deploy to Firebase (legacy)
-npm run deploy:firebase
-```
-
-## Payment System
-
-### Stripe Integration
-- Complete payment workflow integrated into booking process
-- Secure payment processing with Stripe Elements
-- Support for cards, Apple Pay, and Google Pay
-- Real-time payment status updates
-
-### Tiered Commission Structure
-- **Starter (0-$1K)**: 30% commission
-- **Growing ($1K-$5K)**: 25% commission  
-- **Established ($5K-$15K)**: 20% commission
-- **Professional ($15K-$50K)**: 15% commission
-- **Enterprise ($50K+)**: 10% commission
-
-### Commission Calculation
-```typescript
-import { calculatePlatformFee } from '@/lib/stripe-config';
-
-const fee = calculatePlatformFee(amount, contractorMonthlyVolume);
-// Returns: { feeAmount, feePercentage, tierName, netAmount }
-```
-
-## Recent Updates
-- ✅ Complete Stripe payment integration with booking workflow
-- ✅ Tiered commission structure based on contractor volume
-- ✅ 200+ comprehensive service catalog (professional to entry-level)
-- ✅ Professional 404 pages for all sections
-- ✅ Fixed CRM formatting and spacing issues
-- ✅ Fixed map UI issues (rotation speed, clipping, overlays)
-- ✅ Resolved all build errors and deployment issues
-- ✅ AI-powered graphic designer tool using Google Imagen 2
-- ✅ Generated unique AI images for priority services
-- ✅ Removed duplicate chat systems - unified on AILiveChat
-- ✅ WebP image optimization - 70% file size reduction
-- ✅ Smart image loading with OptimizedServiceImage component
-- ✅ Fixed Firebase App Check authentication errors
-- ✅ Fixed date serialization in booking form
-- ✅ Added reCAPTCHA Enterprise integration
-- ✅ Consolidated image storage to shared-assets folder
-- ✅ Created symbolic link for web access
-- Removed API Gateway - now using Firebase directly
-- Removed CRM integration - simplified architecture
-- Removed MySQL - fully migrated to Firestore
-- Cleaned up Docker configurations
-- Removed old stock images - using only AI-generated assets
-
-## Important Notes
-- Always use Firebase services
-- Base prices configured in Firestore, not hardcoded
-- All contractor features under /contractor route
-- Deployment via Vercel (automatic on push to main)
-- **IMPORTANT**: All images MUST be stored in `/shared-assets/images/services/` (NOT in frontend's public folder)
-- Frontend uses symbolic link: `public/shared-assets -> ../../shared-assets`
-- WebP format used for 70% smaller file sizes with PNG fallback
-- App Check temporarily disabled - re-enable when properly configured
-
-## Image Storage Guidelines
-
-### Correct Location
-All service images MUST be stored in the main shared-assets folder:
-```
-/Users/justingriffith/Documents/Home Service App/shared-assets/images/services/
-```
-
-### DO NOT Store Images In:
-- `/home-service-frontend/public/images/` ❌
-- `/home-service-frontend/public/shared-assets/` ❌ (this is a symlink)
-- Any other location ❌
-
-### File Structure
-```
-shared-assets/
-└── images/
-    └── services/
-        ├── electrical/
-        │   ├── outlet-repair-installation-1.png
-        │   ├── outlet-repair-installation-1.webp
-        │   ├── outlet-repair-installation-1-thumb.png
-        │   └── outlet-repair-installation-1-thumb.webp
-        ├── plumbing/
-        ├── hvac/
-        └── ... (other categories)
-```
-
-## reCAPTCHA Enterprise Configuration
-
-### Site Key (Public)
-```
-6LcSOWorAAAAAGOYmyOPHNPi1AbOzWsoJ3k3tYQO
-```
-
-### Secret Key (Private - Add to .env.local)
-```
-RECAPTCHA_SECRET_KEY=6LcSOWorAAAAAGF7K23OsZwVRdNmzHSddZ-4RAgu
-```
-
-### Usage
-```typescript
-import { useRecaptcha } from '@/components/RecaptchaProvider';
-
-const { executeRecaptcha } = useRecaptcha();
-const token = await executeRecaptcha('LOGIN');
-```
-
-### Actions
-- `LOGIN` - User login
-- `SIGNUP` - User registration
-- `BOOKING` - Service booking
-- `PAYMENT` - Payment processing
-
-## Current Focus Areas
-1. Real-time job matching system
-2. Contractor onboarding flow
-3. Payment integration (Stripe)
-4. Enhanced AI chatbot capabilities
-5. Mobile app optimization
+## Quick Notes
+- All images must go in `/shared-assets/`
+- Single `.env` file at project root
+- No separate API - direct Firebase integration
+- Commission: 30% → 10% (tiered by volume)

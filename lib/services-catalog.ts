@@ -24,9 +24,9 @@ export interface ServiceCategory {
   featured?: boolean;
 }
 
-// Re-export from comprehensive catalog for backward compatibility
-export { COMPREHENSIVE_SERVICE_CATALOG as SERVICE_CATALOG } from './comprehensive-services-catalog';
-export * from './comprehensive-services-catalog';
+// Use the original catalog as the main catalog
+export const SERVICE_CATALOG = ORIGINAL_CATALOG;
+export const COMPREHENSIVE_SERVICE_CATALOG = ORIGINAL_CATALOG;
 
 // Original catalog kept for reference
 const ORIGINAL_CATALOG: ServiceCategory[] = [

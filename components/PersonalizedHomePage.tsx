@@ -9,7 +9,7 @@ import {
   Heart, Home, Calendar, ChevronRight, Filter
 } from 'lucide-react';
 import ServiceCategoryRow from './ServiceCategoryRow';
-import { COMPREHENSIVE_SERVICE_CATALOG, ServiceSubcategory } from '@/lib/comprehensive-services-catalog';
+import { COMPREHENSIVE_SERVICE_CATALOG, ServiceSubcategory } from '@/lib/services-catalog';
 import { getCategoryHeroImage, IMAGE_BLUR_DATA_URL } from '@/lib/service-images-local';
 import { useAuth } from '@/contexts/AuthContext';
 import { userPreferencesService, ServiceRecommendation } from '@/lib/user-preferences-service';

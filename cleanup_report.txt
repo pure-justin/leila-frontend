@@ -1,0 +1,31 @@
+=== FINAL CLEANUP RECOMMENDATIONS ===
+
+## 1. MISSING COMPONENTS (imported but file doesn't exist):
+- components/OptimizedServiceImage.tsx (imported by app/book/page.tsx)
+- components/PageTransition.tsx (imported by app/layout.tsx)
+
+## 2. COMPLETELY UNUSED COMPONENTS (safe to delete):
+- components/MapView.tsx
+- components/ProjectProfile.tsx
+- components/QuickBookingWidget.tsx
+- components/SimpleServiceImage.tsx
+
+## 3. POTENTIALLY UNUSED COMPONENTS (verify before deleting):
+- components/ScoreDisplay.tsx
+- components/UserProfile.tsx
+
+## 4. DUPLICATE/REDUNDANT SERVICE FILES in lib/:
+- lib/professional-service-images.ts (26927 bytes)
+- lib/service-images-local.ts (8927 bytes) - appears to be the active one
+- lib/services-catalog.ts (26919 bytes)
+- lib/services-simple.ts (4797 bytes)
+
+## 5. TEMPORARY FILES TO REMOVE:
+- firestore.rules.temp
+
+## 6. DELETED FILES (already removed from working directory):
+	-     .vercelignore
+	-     frontend.log
+	-     public/favicon-new.ico
+	-     public/logo-new.svg
+
