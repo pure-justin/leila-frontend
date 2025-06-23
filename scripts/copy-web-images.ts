@@ -61,6 +61,19 @@ async function copyWebImages() {
           const sourcePath = path.join(categorySource, file);
           const destPath = path.join(categoryDest, file);
           
+          // Check if file already exists and has same size
+          try {
+            const sourceStats = await fs.stat(sourcePath);
+            const destStats = await fs.stat(destPath);
+            
+            if (sourceStats.size === destStats.size) {
+              // Skip if file already exists with same size
+              continue;
+            }
+          } catch {
+            // File doesn't exist in destination, proceed with copy
+          }
+          
           await fs.copyFile(sourcePath, destPath);
           copiedCount++;
           console.log(`✓ Copied ${category}/${file}`);

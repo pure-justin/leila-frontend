@@ -1,12 +1,15 @@
 {
-  "buildCommand": "node --max-old-space-size=8192 node_modules/.bin/next build",
+  "buildCommand": "node --max-old-space-size=4096 node_modules/.bin/next build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "npm ci --prefer-offline --no-audit",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 60
     }
+  },
+  "env": {
+    "NEXT_TELEMETRY_DISABLED": "1"
   }
 }

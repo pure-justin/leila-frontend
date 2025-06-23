@@ -27,3 +27,29 @@ ai-*.ts
 generate-*.ts
 *-generator.ts
 *-generation.ts
+
+# Ignore extra image variations we don't need
+public/images/services/*/*-2.webp
+public/images/services/*/*-3.webp
+public/images/services/*/*-4.webp
+public/images/services/*/*-2.png
+public/images/services/*/*-3.png
+public/images/services/*/*-4.png
+public/images/services/*/*-large.webp
+public/images/services/*/*-large.png
+public/images/services/*/*-mobile.jpg
+public/images/services/*/*-card.jpg
+public/images/services/*/*-thumbnail.jpg
+
+# Ignore development and test files
+cypress/
+e2e/
+__tests__/
+__mocks__/
+coverage/
+.turbo
+*.map
+storybook-static/
+.storybook/
+*.stories.tsx
+*.stories.ts
