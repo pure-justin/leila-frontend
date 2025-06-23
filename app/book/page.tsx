@@ -10,6 +10,7 @@ import Image from 'next/image';
 import GlassNav from '@/components/GlassNav';
 import StreamlinedBookingForm from '@/components/StreamlinedBookingForm';
 import AuthPromptModal from '@/components/AuthPromptModal';
+import OptimizedServiceImage from '@/components/OptimizedServiceImage';
 import { getServiceImage } from '@/lib/service-images-local';
 import { formatCurrency } from '@/lib/utils/currency';
 
@@ -231,15 +232,13 @@ function BookingPageContent({}: BookingPageContentProps) {
                   >
                     {/* Service Image */}
                     <div className="relative h-48 overflow-hidden">
-                      <Image
+                      <OptimizedServiceImage
                         src={serviceImage.url}
                         alt={serviceImage.alt}
                         fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        loading="lazy"
-                        placeholder="blur"
-                        blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg=="
+                        priority={index < 8}
                       />
                       
                       {/* Overlay */}

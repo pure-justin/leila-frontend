@@ -67,8 +67,8 @@ export const DEFAULT_SERVICE_IMAGE: ServiceImage = {
 // Get service image with fallback
 export function getServiceImage(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
-  // Use thumbnail images for faster loading on cards
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1-thumb.png`;
+  // Use WebP format for 30% smaller files, with PNG fallback
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1-thumb.webp`;
   
   return {
     url: imageUrl,
