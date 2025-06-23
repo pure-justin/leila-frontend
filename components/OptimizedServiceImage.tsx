@@ -41,12 +41,33 @@ export default function OptimizedServiceImage({
   }, [imgSrc, priority]);
 
   const handleError = () => {
-    // If WebP fails, fallback to PNG
-    if (imgSrc.endsWith('.webp')) {
-      setImgSrc(imgSrc.replace('.webp', '.png'));
-    } else if (imgSrc.includes('-thumb')) {
-      // If thumbnail fails, try without thumb
-      setImgSrc(imgSrc.replace('-thumb', ''));
+    // Try different fallback patterns
+    const basePath = imgSrc.substring(0, imgSrc.lastIndexOf('/') + 1);
+    const filename = imgSrc.substring(imgSrc.lastIndexOf('/') + 1);
+    
+    // Extract the base name (e.g., 'pipe-installation' from 'pipe-installation-1-thumb.webp')
+    const match = filename.match(/^([a-z-]+)/);
+    const baseName = match ? match[1] : '';
+    
+    // Define fallback patterns
+    const fallbackPatterns = [
+      filename.replace('.webp', '.png'), // Try PNG version
+      `${baseName}-thumbnail.jpg`, // Try -thumbnail pattern
+      `${baseName}-card.jpg`, // Try -card pattern  
+      `${baseName}-1.webp`, // Try numbered pattern
+      `${baseName}-1.png`, // Try numbered PNG
+      `${baseName}.jpg`, // Try base name
+    ];
+    
+    // Find the current pattern index
+    const currentIndex = fallbackPatterns.findIndex(pattern => 
+      imgSrc.endsWith(pattern) || filename === pattern
+    );
+    
+    // Try next pattern
+    if (currentIndex < fallbackPatterns.length - 1) {
+      const nextPattern = fallbackPatterns[currentIndex + 1] || fallbackPatterns[0];
+      setImgSrc(basePath + nextPattern);
     } else {
       // Final fallback - show animated placeholder
       setHasError(true);

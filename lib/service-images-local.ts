@@ -67,8 +67,18 @@ export const DEFAULT_SERVICE_IMAGE: ServiceImage = {
 // Get service image with fallback
 export function getServiceImage(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
-  // Use WebP format for 30% smaller files, with PNG fallback
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1-thumb.webp`;
+  
+  // Try multiple naming patterns
+  const patterns = [
+    `${mapping.subcategory}-1-thumb.webp`,
+    `${mapping.subcategory}-thumbnail.jpg`,
+    `${mapping.subcategory}-card.jpg`,
+    `${mapping.subcategory}-1.webp`,
+    `${mapping.subcategory}-1.png`
+  ];
+  
+  // Use the first pattern as default (will be handled by image component fallback)
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${patterns[0]}`;
   
   return {
     url: imageUrl,
@@ -80,8 +90,16 @@ export function getServiceImage(serviceId: string): ServiceImage {
 // Get service thumbnail
 export function getServiceThumbnail(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
-  // Use the -thumb.png suffix
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1-thumb.png`;
+  
+  // Try multiple thumbnail patterns
+  const patterns = [
+    `${mapping.subcategory}-1-thumb.png`,
+    `${mapping.subcategory}-thumbnail.jpg`,
+    `${mapping.subcategory}-card.jpg`,
+    `${mapping.subcategory}-1.png`
+  ];
+  
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${patterns[0]}`;
   
   return {
     url: imageUrl,
@@ -93,8 +111,16 @@ export function getServiceThumbnail(serviceId: string): ServiceImage {
 // Get service hero image
 export function getServiceHeroImage(serviceId: string): ServiceImage {
   const mapping = getImageMapping(serviceId);
-  // Use the -large.png suffix for hero images
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${mapping.subcategory}-1-large.png`;
+  
+  // Try multiple hero patterns
+  const patterns = [
+    `${mapping.subcategory}-1-large.png`,
+    `${mapping.subcategory}-hero.jpg`,
+    `${mapping.subcategory}-1.png`,
+    `${mapping.subcategory}-card.jpg`
+  ];
+  
+  const imageUrl = `/shared-assets/images/services/${mapping.category}/${patterns[0]}`;
   
   return {
     url: imageUrl,

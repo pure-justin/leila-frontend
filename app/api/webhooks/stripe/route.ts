@@ -4,7 +4,7 @@ import { headers } from 'next/headers';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-05-28.basil',
 });
 
 // Disable body parsing for webhooks
@@ -12,7 +12,7 @@ export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
-  const signature = headers().get('stripe-signature');
+  const signature = (await headers()).get('stripe-signature');
 
   if (!signature) {
     console.error('[Stripe Webhook] No signature found in headers');
@@ -115,23 +115,11 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'account.application.authorized':
-        const authorizedAccount = event.data.object as Stripe.Account;
+        const authorizedApplication = event.data.object as Stripe.Application;
         console.log('[Stripe Webhook] Connect account authorized:', {
-          id: authorizedAccount.id
+          id: authorizedApplication.id
         });
-        
         // TODO: Mark contractor as payment-ready
-        break;
-
-      case 'transfer.paid':
-        const transfer = event.data.object as Stripe.Transfer;
-        console.log('[Stripe Webhook] Transfer paid to contractor:', {
-          id: transfer.id,
-          amount: transfer.amount,
-          destination: transfer.destination
-        });
-        
-        // TODO: Update payout status
         break;
 
       case 'payout.paid':

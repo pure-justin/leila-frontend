@@ -3,7 +3,7 @@
  * Prioritizes quality, structure, and large context understanding
  */
 
-import { VertexAI, TextEmbedding } from '@google-cloud/vertexai';
+import { VertexAI } from '@google-cloud/vertexai';
 import { Firestore, FieldValue, GeoPoint } from '@google-cloud/firestore';
 import { Storage } from '@google-cloud/storage';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -279,11 +279,11 @@ export class VectorMemorySystem {
     let query = this.firestore.collection('vector_memory');
     
     if (params.type) {
-      query = query.where('metadata.type', '==', params.type);
+      query = query.where('metadata.type', '==', params.type) as any;
     }
     
     if (params.minQuality) {
-      query = query.where('qualityScore', '>=', params.minQuality);
+      query = query.where('qualityScore', '>=', params.minQuality) as any;
     }
     
     // Get all documents (we'll do vector search in memory)

@@ -13,7 +13,9 @@
     "deploy:firebase": "npm run build && firebase deploy --only hosting",
     "images": "tsx scripts/generate-service-images.ts",
     "generate:images": "tsx scripts/generate-images.ts",
-    "convert:images": "tsx scripts/convert-to-webp.ts"
+    "convert:images": "tsx scripts/convert-to-webp.ts",
+    "test:booking": "tsx scripts/test-booking-flow.ts",
+    "seed:data": "tsx scripts/seed-test-data.ts"
   },
   "dependencies": {
     "@google-cloud/firestore": "^7.11.1",
@@ -30,6 +32,7 @@
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.3.1",
     "@types/axios": "^0.9.36",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node-fetch": "^2.6.12",
     "@types/qrcode.react": "^1.0.5",
     "@upstash/redis": "^1.35.0",
@@ -37,6 +40,7 @@
     "@vercel/blob": "^1.1.1",
     "autoprefixer": "^10.4.21",
     "axios": "^1.10.0",
+    "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "commander": "^14.0.0",
@@ -69,11 +73,12 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/google.maps": "^3.58.1",
-    "@types/node": "^20",
+    "@types/node": "^20.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "playwright": "^1.53.1",
     "typescript": "^5"
   },
   "overrides": {

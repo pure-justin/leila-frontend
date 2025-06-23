@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBooking } from '@/lib/firebase-api';
 
+export async function GET() {
+  // Health check endpoint
+  return NextResponse.json({
+    status: 'healthy',
+    message: 'Booking API is operational',
+    timestamp: new Date().toISOString(),
+    details: {
+      endpoint: '/api/booking',
+      methods: ['POST', 'GET'],
+      configured: true
+    }
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
+import { getPossibleImagePaths, getServiceImageUrl } from '@/lib/service-image-utils';
 
 interface ServiceImageProps {
   serviceName: string;
@@ -22,6 +23,8 @@ export function ServiceImage({
   priority = false
 }: ServiceImageProps) {
   const [imgSrc, setImgSrc] = useState<string>('');
+  const [fallbackPaths, setFallbackPaths] = useState<string[]>([]);
+  const [currentPathIndex, setCurrentPathIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   // Generate image URL
@@ -35,11 +38,13 @@ export function ServiceImage({
         .replace(/^-+|-+$/g, '')}.jpg`;
     }
     
-    // Use shared-assets folder
-    return `/shared-assets/images/services/${category}/${serviceName
+    // Use service image utility to get the URL
+    const serviceId = serviceName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')}-1-thumb.webp`;
+      .replace(/^-+|-+$/g, '');
+    
+    return getServiceImageUrl(serviceId);
   };
 
   // Handle image load
@@ -49,16 +54,29 @@ export function ServiceImage({
 
   // Handle image error with fallback
   const handleError = () => {
-    // Try alternative formats
-    const currentExt = imgSrc.split('.').pop();
-    const extensions = ['jpg', 'jpeg', 'png', 'webp'];
-    const nextExt = extensions.find(ext => ext !== currentExt);
+    // Initialize fallback paths if not already done
+    if (fallbackPaths.length === 0) {
+      const serviceId = serviceName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      
+      const paths = getPossibleImagePaths(serviceId);
+      setFallbackPaths(paths);
+      setCurrentPathIndex(0);
+      
+      // Try the first fallback
+      if (paths.length > 0) {
+        setImgSrc(paths[0]);
+      }
+      return;
+    }
     
-    if (nextExt) {
-      setImgSrc(imgSrc.replace(/\.[^.]+$/, `.${nextExt}`));
-    } else {
-      // Final fallback to placeholder
-      setImgSrc(`/shared-assets/images/services/placeholder.svg`);
+    // Try next fallback path
+    const nextIndex = currentPathIndex + 1;
+    if (nextIndex < fallbackPaths.length) {
+      setCurrentPathIndex(nextIndex);
+      setImgSrc(fallbackPaths[nextIndex]);
     }
   };
 

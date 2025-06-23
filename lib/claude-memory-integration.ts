@@ -51,9 +51,7 @@ export class ClaudeMemoryIntegration {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json'
-        },
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity
+        }
       });
 
       // Cache locally for quick access
@@ -64,7 +62,7 @@ export class ClaudeMemoryIntegration {
 
       return {
         success: true,
-        contextId: response.data.result.id
+        contextId: (response.data as any).result.id
       };
     } catch (error) {
       console.error('Failed to store context:', error);
@@ -97,7 +95,7 @@ export class ClaudeMemoryIntegration {
         timeout: 300000 // 5 minutes
       });
 
-      const result = response.data.result;
+      const result = (response.data as any).result;
       
       // Cache the response
       this.cacheResponse(query.question, result);
@@ -127,7 +125,8 @@ export class ClaudeMemoryIntegration {
         }
       });
 
-      return response.data.result;
+      const result = (response.data as any).result;
+      return result;
     } catch (error) {
       console.error('Search failed:', error);
       return [];

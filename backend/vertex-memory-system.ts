@@ -140,7 +140,7 @@ export class VertexMemorySystem {
       `;
 
       const indexResult = await indexModel.generateContent(indexPrompt);
-      const index = JSON.parse(indexResult.response.text());
+      const index = JSON.parse(indexResult.response.candidates[0].content.parts[0].text);
 
       // 4. Store metadata and index in Firestore
       await this.firestore.collection('memory_contexts').doc(contextData.id).set({
@@ -276,7 +276,7 @@ export class VertexMemorySystem {
       
       let fullResponse = '';
       for await (const chunk of result.stream) {
-        fullResponse += chunk.text();
+        fullResponse += chunk.candidates[0].content.parts[0].text;
       }
 
       // 6. Post-process response
@@ -292,7 +292,7 @@ export class VertexMemorySystem {
       return {
         response: processed,
         contextsUsed: contexts.length,
-        modelUsed: model.model,
+        modelUsed: 'gemini-2.0',
         processingTime: Date.now() - startTime,
         tokenCount: await this.estimateTokens(fullPrompt + fullResponse),
       };

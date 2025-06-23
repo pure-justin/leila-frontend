@@ -87,7 +87,7 @@ export const SERVICE_IMAGE_MAPPING: Record<string, { category: string; subcatego
   'appliance-maintenance': { category: 'appliance', subcategory: 'refrigerator-repair' },
   
   // Pest Control
-  'pest-inspection': { category: 'pest-control', subcategory: 'inspection' },
+  'pest-inspection': { category: 'pest-control', subcategory: 'general-inspection' },
   'ant-control': { category: 'pest-control', subcategory: 'treatment' },
   'termite-treatment': { category: 'pest-control', subcategory: 'treatment' },
   'rodent-control': { category: 'pest-control', subcategory: 'treatment' },
@@ -96,7 +96,7 @@ export const SERVICE_IMAGE_MAPPING: Record<string, { category: string; subcatego
   'mosquito-control': { category: 'pest-control', subcategory: 'treatment' },
   'cockroach-control': { category: 'pest-control', subcategory: 'treatment' },
   'wildlife-removal': { category: 'pest-control', subcategory: 'treatment' },
-  'preventive-treatment': { category: 'pest-control', subcategory: 'inspection' },
+  'preventive-treatment': { category: 'pest-control', subcategory: 'general-inspection' },
   
   // Default fallback for any unmapped services
   'default': { category: 'handyman', subcategory: 'general-repair' }
