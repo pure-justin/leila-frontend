@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { userPreferencesService, ServiceRecommendation } from '@/lib/user-preferences-service';
 import StreamlinedBookingForm from './StreamlinedBookingForm';
 import QuickActions from './QuickActions';
+import AnimatedHeroGraphic from './AnimatedHeroGraphic';
 
 interface CategorySection {
   id: string;
@@ -221,16 +222,7 @@ export default function PersonalizedHomePage() {
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section with Search */}
         <div className="relative h-96 overflow-hidden">
-          <Image
-            src={getCategoryHeroImage('contractor-services').url}
-            alt={getCategoryHeroImage('contractor-services').alt}
-            fill
-            className="object-cover"
-            priority
-            placeholder="blur"
-            blurDataURL={IMAGE_BLUR_DATA_URL}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
+          <AnimatedHeroGraphic />
           
           <div className="relative z-10 h-full flex flex-col justify-center px-4 lg:px-8 max-w-7xl mx-auto">
             <motion.div
