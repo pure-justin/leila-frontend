@@ -46,7 +46,13 @@ export default function QuickActions({ onServiceSelect }: QuickActionsProps) {
     try {
       const savedHistory = localStorage.getItem('bookingHistory');
       if (savedHistory) {
-        setBookingHistory(JSON.parse(savedHistory));
+        const parsedHistory = JSON.parse(savedHistory);
+        // Convert date strings back to Date objects
+        const historyWithDates = parsedHistory.map((booking: any) => ({
+          ...booking,
+          date: new Date(booking.date)
+        }));
+        setBookingHistory(historyWithDates);
       } else {
         // Mock data for demo
         setBookingHistory([

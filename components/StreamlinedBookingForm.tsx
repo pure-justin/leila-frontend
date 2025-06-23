@@ -156,7 +156,11 @@ export default function StreamlinedBookingForm({
     }
     
     if (data.suggestedDate) {
-      setSelectedDate(data.suggestedDate.toISOString().split('T')[0]);
+      // Handle both Date objects and date strings
+      const dateValue = typeof data.suggestedDate === 'string' 
+        ? new Date(data.suggestedDate) 
+        : data.suggestedDate;
+      setSelectedDate(dateValue.toISOString().split('T')[0]);
       setSelectedTime('morning');
     }
     
