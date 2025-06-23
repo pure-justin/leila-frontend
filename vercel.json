@@ -5,7 +5,7 @@
   "framework": null,
   "outputDirectory": ".next",
   "functions": {
-    "app/api/**/*.ts": {
+    "app/api/**/*": {
       "maxDuration": 30,
       "memory": 512
     }
