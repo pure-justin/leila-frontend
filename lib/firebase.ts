@@ -33,15 +33,17 @@ export const analytics = typeof window !== 'undefined' ?
 // Initialize App Check only on client side
 let appCheck;
 if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
-  try {
-    appCheck = initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
-      isTokenAutoRefreshEnabled: true
-    });
-    console.log('Firebase App Check initialized successfully');
-  } catch (error) {
-    console.warn('Firebase App Check initialization failed:', error);
-  }
+  // Temporarily skip App Check initialization until properly configured
+  console.log('App Check initialization temporarily disabled');
+  // try {
+  //   appCheck = initializeAppCheck(app, {
+  //     provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
+  //     isTokenAutoRefreshEnabled: true
+  //   });
+  //   console.log('Firebase App Check initialized successfully');
+  // } catch (error) {
+  //   console.warn('Firebase App Check initialization failed:', error);
+  // }
 }
 export { appCheck };
 
