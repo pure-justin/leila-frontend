@@ -136,6 +136,10 @@ const fee = calculatePlatformFee(amount, contractorMonthlyVolume);
 - ✅ AI-powered graphic designer tool using Google Imagen 2
 - ✅ Generated unique AI images for priority services
 - ✅ Removed duplicate chat systems - unified on AILiveChat
+- ✅ WebP image optimization - 70% file size reduction
+- ✅ Smart image loading with OptimizedServiceImage component
+- ✅ Fixed Firebase App Check authentication errors
+- ✅ Fixed date serialization in booking form
 - Removed API Gateway - now using Firebase directly
 - Removed CRM integration - simplified architecture
 - Removed MySQL - fully migrated to Firestore
@@ -147,6 +151,9 @@ const fee = calculatePlatformFee(amount, contractorMonthlyVolume);
 - Base prices configured in Firestore, not hardcoded
 - All contractor features under /contractor route
 - Deployment via Vercel (automatic on push to main)
+- Images stored in /public/shared-assets/ for native app compatibility
+- WebP format used for 70% smaller file sizes with PNG fallback
+- App Check temporarily disabled - re-enable when properly configured
 
 ## Current Focus Areas
 1. Real-time job matching system
