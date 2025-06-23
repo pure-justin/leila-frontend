@@ -4,6 +4,7 @@ import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCForPQtgKrRBb21vu5MrAMLKvgYOVOKgI",
@@ -28,6 +29,21 @@ export const storage = getStorage(app);
 export const analytics = typeof window !== 'undefined' ? 
   isSupported().then(yes => yes ? getAnalytics(app) : null) : 
   null;
+
+// Initialize App Check only on client side
+let appCheck;
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+  try {
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
+      isTokenAutoRefreshEnabled: true
+    });
+    console.log('Firebase App Check initialized successfully');
+  } catch (error) {
+    console.warn('Firebase App Check initialization failed:', error);
+  }
+}
+export { appCheck };
 
 // Connect to emulators in development
 if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
