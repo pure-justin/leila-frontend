@@ -59,7 +59,7 @@ export const SERVICE_IMAGES: Record<string, ServiceImage> = {};
 
 // Default fallback image
 export const DEFAULT_SERVICE_IMAGE: ServiceImage = {
-  url: '/shared-assets/images/services/placeholder.jpg',
+  url: '/shared-assets/images/services/placeholder.svg',
   alt: 'Leila Home Services',
   credit: 'AI Generated'
 };
