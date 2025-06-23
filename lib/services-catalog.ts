@@ -24,10 +24,6 @@ export interface ServiceCategory {
   featured?: boolean;
 }
 
-// Use the original catalog as the main catalog
-export const SERVICE_CATALOG = ORIGINAL_CATALOG;
-export const COMPREHENSIVE_SERVICE_CATALOG = ORIGINAL_CATALOG;
-
 // Original catalog kept for reference
 const ORIGINAL_CATALOG: ServiceCategory[] = [
   // HOME MAINTENANCE & REPAIR
@@ -929,3 +925,7 @@ export function getLicensedServices(): ServiceSubcategory[] {
 export function getFeaturedCategories(): ServiceCategory[] {
   return ORIGINAL_CATALOG.filter(category => category.featured === true);
 }
+
+// Use the original catalog as the main catalog - exported at the end to avoid circular reference
+export const SERVICE_CATALOG = ORIGINAL_CATALOG;
+export const COMPREHENSIVE_SERVICE_CATALOG = ORIGINAL_CATALOG;
