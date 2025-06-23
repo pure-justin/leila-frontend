@@ -76,7 +76,7 @@ export default function TestImagesPage() {
           <div key={category.id} className="mb-8">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">{category.name}</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {category.services.map(service => {
+              {category.subcategories.map(service => {
                 const status = loadStatus[service.id] || 'loading';
                 const imageInfo = getServiceImage(service.id);
                 
@@ -86,8 +86,8 @@ export default function TestImagesPage() {
                       {testComponent === 'ServiceImage' ? (
                         <ServiceImage
                           serviceName={service.name}
-                          category={category.id}
-                          className="w-full h-full"
+                          category={service.category || category.id}
+                          className="w-full h-full object-cover"
                         />
                       ) : (
                         <OptimizedServiceImage
