@@ -1,14 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ElevenLabs } from '@elevenlabs/elevenlabs-js';
 import { v4 as uuidv4 } from 'uuid';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
-// Initialize ElevenLabs client
-const elevenlabs = new ElevenLabs({
-  apiKey: process.env.ELEVEN_LABS_API_KEY || 'demo_key'
-});
+// ElevenLabs will be loaded dynamically to avoid build issues
+let elevenlabs: any = null;
+
+// Initialize ElevenLabs client dynamically
+async function getElevenLabsClient() {
+  if (!elevenlabs && process.env.ELEVEN_LABS_API_KEY) {
+    try {
+      const { ElevenLabs } = await import('@elevenlabs/elevenlabs-js');
+      elevenlabs = new ElevenLabs({
+        apiKey: process.env.ELEVEN_LABS_API_KEY
+      });
+    } catch (error) {
+      console.error('Failed to load ElevenLabs:', error);
+    }
+  }
+  return elevenlabs;
+}
 
 // Voice configurations for different personas
 const voiceConfigs = {
@@ -104,7 +116,12 @@ export async function POST(request: NextRequest) {
 
     // Production: Generate with ElevenLabs
     try {
-      const audio = await elevenlabs.textToSpeech.convert(voiceConfig.voiceId, {
+      const client = await getElevenLabsClient();
+      if (!client) {
+        throw new Error('ElevenLabs client not available');
+      }
+      
+      const audio = await client.textToSpeech.convert(voiceConfig.voiceId, {
         text: preprocessText(text, settings?.emotion || 'friendly'),
         model_id: voiceConfig.modelId,
         voice_settings: adjustedSettings,
