@@ -1,0 +1,31 @@
+# Leila Flirty Voice Sample
+
+This would be an MP3 audio file with the following characteristics:
+
+**Voice Profile: Leila Flirty**
+- Tone: Playful, cute, and charming
+- Pitch: Slightly higher than normal (15% increase)
+- Speed: Slightly faster for bubbly energy (5% increase)
+- Style: Flirtatious with playful inflections
+- Emotion: Warm, inviting, with a hint of teasing
+
+**Sample Text:**
+"Hey there handsome! I'm Leila, your personal home service genie. What's your wish today?"
+
+**Voice Characteristics:**
+- Starts with a playful "Hey there" with rising intonation
+- "Handsome" delivered with a slight giggle or smile in the voice
+- "Personal home service genie" with emphasis on "personal" and "genie"
+- Ends with an inviting question, slightly breathy
+- Overall delivery is confident but playful, like a charming friend
+
+**Technical Details:**
+- Model: Bark (supports emotional expression)
+- Voice Preset: Young female, playful tone
+- Post-processing: Light compression for warmth
+- Sample Rate: 44.1kHz for high quality
+
+To generate this voice:
+1. The Hugging Face API will use the Bark model
+2. Emotion markers will be added for playful delivery
+3. Prosody adjusted for flirty characteristics
