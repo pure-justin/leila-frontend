@@ -1,6 +1,6 @@
 {
-  "buildCommand": "rm -rf .next && rm -rf node_modules/.cache && NODE_OPTIONS='--max-old-space-size=4096' next build",
-  "installCommand": "npm ci --prefer-offline --no-audit",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
