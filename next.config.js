@@ -35,13 +35,11 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   // Production optimizations
-  swcMinify: true,
   compress: true,
   productionBrowserSourceMaps: false,
   // Optimize bundle size
   experimental: {
     optimizeCss: true,
-    legacyBrowsers: false,
   },
   // Webpack optimizations
   webpack: (config, { isServer, dev }) => {
