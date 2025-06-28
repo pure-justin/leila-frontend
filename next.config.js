@@ -6,6 +6,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  swcMinify: false, // Disable SWC minification to reduce memory usage
   reactStrictMode: true,
   images: {
     domains: [
