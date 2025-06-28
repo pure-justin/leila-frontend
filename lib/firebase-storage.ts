@@ -91,6 +91,11 @@ export async function uploadImageToStorage(
 }
 
 async function generateImageVariants(file: File): Promise<Record<string, Blob>> {
+  // This function can only run in the browser
+  if (typeof window === 'undefined') {
+    return {};
+  }
+  
   const variants: Record<string, Blob> = {};
   
   // Create an image element

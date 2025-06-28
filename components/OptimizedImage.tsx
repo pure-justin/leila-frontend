@@ -158,18 +158,20 @@ export default function OptimizedImage({
   }, [imageSrc, src, fallbackSrc, onError]);
   
   // Progressive enhancement: show low-quality placeholder first
-  const placeholderDataUrl = `data:image/svg+xml;base64,${Buffer.from(
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#f3f4f6"/>
-      <rect width="100%" height="100%" fill="url(#gradient)" opacity="0.5"/>
-      <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#e5e7eb;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#d1d5db;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-    </svg>`
-  ).toString('base64')}`;
+  const placeholderSvg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="#f3f4f6"/>
+    <rect width="100%" height="100%" fill="url(#gradient)" opacity="0.5"/>
+    <defs>
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#e5e7eb;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#d1d5db;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+  </svg>`;
+  
+  const placeholderDataUrl = `data:image/svg+xml;base64,${typeof window !== 'undefined' 
+    ? btoa(placeholderSvg)
+    : Buffer.from(placeholderSvg).toString('base64')}`;
   
   if (!isInView || !shouldLoad) {
     return (
