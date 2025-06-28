@@ -22,7 +22,6 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   // Optimize build performance
-  swcMinify: true,
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
