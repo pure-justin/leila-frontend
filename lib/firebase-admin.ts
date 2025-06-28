@@ -22,21 +22,8 @@ if (!getApps().length) {
       // Option 1: Use service account from file path (local development)
       const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
       
-      if (serviceAccountPath) {
-        // Load service account from file
-        try {
-          const serviceAccount = require(serviceAccountPath);
-          app = initializeApp({
-            credential: cert(serviceAccount),
-            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-            storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-          });
-        } catch (error) {
-          console.warn('Failed to load service account from file:', error);
-        }
-      } 
-      // Option 2: Use service account from environment variables
-      else if (
+      // Option 1: Use service account from environment variables
+      if (
         process.env.FIREBASE_PRIVATE_KEY &&
         process.env.FIREBASE_CLIENT_EMAIL &&
         (process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID)
@@ -64,7 +51,7 @@ if (!getApps().length) {
         
         console.log('Firebase Admin initialized with service account credentials');
       }
-      // Option 3: Use default credentials (Google Cloud environments)
+      // Option 2: Use default credentials (Google Cloud environments)
       else {
         app = initializeApp({
           projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
