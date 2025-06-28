@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { secureApiHandler, ApiResponse } from '@/lib/api/secure-handler';
+import { serverConfig } from '@/lib/config/secure-config';
 
-// Use server-side only environment variable
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+export const POST = secureApiHandler(async (request) => {
+  const { prompt, context } = await request.json();
 
-export async function POST(request: NextRequest) {
-  try {
-    const { prompt, context } = await request.json();
+  if (!serverConfig.gemini.apiKey) {
+    return ApiResponse.error('AI service not configured', 500);
+  }
 
-    if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json(
-        { error: 'AI service not configured' },
-        { status: 500 }
-      );
-    }
-
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const genAI = new GoogleGenerativeAI(serverConfig.gemini.apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     
     const result = await model.generateContent({
       contents: [{
@@ -29,15 +25,9 @@ export async function POST(request: NextRequest) {
     const response = await result.response;
     const text = response.text();
 
-    return NextResponse.json({ 
-      success: true, 
-      response: text 
-    });
-  } catch (error) {
-    console.error('AI API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate response' },
-      { status: 500 }
-    );
-  }
-}
+    return ApiResponse.success({ response: text });
+}, {
+  allowedMethods: ['POST'],
+  requireAuth: false, // Set to true if authentication is needed
+  rateLimit: 30 // 30 requests per minute
+});

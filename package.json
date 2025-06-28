@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:obfuscated": "next build -c next.config.obfuscated.js",
     "build:production": "bash scripts/prebuild.sh && next build -c next.config.production.js",
     "build:emergency": "rm -rf .next && NODE_OPTIONS='--max-old-space-size=4096' next build",
     "copy:images": "tsx scripts/copy-web-images.ts",
@@ -19,7 +20,9 @@
     "generate:images": "tsx scripts/generate-images.ts",
     "convert:images": "tsx scripts/convert-to-webp.ts",
     "test:booking": "tsx scripts/test-booking-flow.ts",
-    "seed:data": "tsx scripts/seed-test-data.ts"
+    "seed:data": "tsx scripts/seed-test-data.ts",
+    "audit:security": "tsx scripts/audit-security.ts",
+    "check:sensitive": "tsx scripts/check-sensitive-data.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -54,6 +57,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.20.3",
+    "web-push": "^3.6.7",
     "zod": "^3.25.67"
   },
   "devDependencies": {
@@ -62,9 +66,13 @@
     "@types/node": "^20.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
-    "typescript": "^5"
+    "javascript-obfuscator": "^4.1.1",
+    "terser-webpack-plugin": "^5.3.14",
+    "typescript": "^5",
+    "webpack-obfuscator-plugin": "^1.0.2"
   },
   "overrides": {
     "@types/long": "npm:long@latest"

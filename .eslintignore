@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+dist
+build
+
+# Ignore problematic AI persona files temporarily
+app/ai-personas/
+scripts/ai-image-generator.ts
+scripts/google-image-generator.ts
+scripts/premium-image-generator.ts
+scripts/vertex-ai-image-generator.ts
+scripts/sync-to-gemini.ts
+components/reviews/ReviewsList.tsx

@@ -1,11 +1,17 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "NODE_OPTIONS='--max-old-space-size=4096' npm run build",
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
     "NEXT_TELEMETRY_DISABLED": "1",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
   },
-  "regions": ["iad1"]
+  "regions": ["iad1"],
+  "functions": {
+    "app/api/**": {
+      "maxDuration": 30
+    }
+  }
 }

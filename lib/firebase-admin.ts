@@ -24,12 +24,16 @@ if (!getApps().length) {
       
       if (serviceAccountPath) {
         // Load service account from file
-        const serviceAccount = require(serviceAccountPath);
-        app = initializeApp({
-          credential: cert(serviceAccount),
-          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-        });
+        try {
+          const serviceAccount = require(serviceAccountPath);
+          app = initializeApp({
+            credential: cert(serviceAccount),
+            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+            storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+          });
+        } catch (error) {
+          console.warn('Failed to load service account from file:', error);
+        }
       } 
       // Option 2: Use service account from environment variables
       else if (
@@ -95,6 +99,15 @@ export const adminStorage = app ? getStorage(app) : null;
 
 // Export the app instance if needed
 export { app as adminApp };
+
+// Initialize function for routes
+export function initAdmin(): void {
+  // This function ensures admin is initialized
+  // The actual initialization happens above
+  if (!app && typeof window === 'undefined') {
+    console.warn('Firebase Admin not initialized');
+  }
+}
 
 // Helper function to verify admin initialization
 export async function verifyAdminInit(): Promise<boolean> {

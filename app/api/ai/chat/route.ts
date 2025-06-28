@@ -1,36 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { secureApiHandler, ApiResponse } from '@/lib/api/secure-handler';
+import { serverConfig } from '@/lib/config/secure-config';
+import { SYSTEM_PROMPT, CHAT_CONTEXTS, extractBookingIntent, getContextualResponse } from '@/lib/ai/chat-prompts';
 
-// Server-side only - no NEXT_PUBLIC prefix
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+export const POST = secureApiHandler(async (request) => {
+  const { message, context, history } = await request.json();
 
-export async function POST(request: NextRequest) {
-  try {
-    const { message, context, history } = await request.json();
+  if (!message) {
+    return ApiResponse.error('Message is required', 400);
+  }
 
-    if (!message) {
-      return NextResponse.json(
-        { error: 'Message is required' },
-        { status: 400 }
-      );
-    }
+  // Verify API key exists (server-side only)
+  if (!serverConfig.gemini.apiKey) {
+    console.error('Gemini API key not configured');
+    return ApiResponse.error('AI service not configured', 500);
+  }
 
-    // Verify API key exists (server-side only)
-    if (!process.env.GEMINI_API_KEY) {
-      console.error('Gemini API key not configured');
-      return NextResponse.json(
-        { error: 'AI service not configured' },
-        { status: 500 }
-      );
-    }
+  const genAI = new GoogleGenerativeAI(serverConfig.gemini.apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  
+  // Extract intent and context from message
+  const bookingIntent = extractBookingIntent(message);
+  
+  // Build enhanced context
+  let enhancedContext = SYSTEM_PROMPT;
+  
+  if (context === 'customer_support') {
+    enhancedContext += "\n\nYou are specifically helping with customer support. Be extra helpful and patient.";
+  }
+  
+  if (bookingIntent.service) {
+    enhancedContext += `\n\nThe customer seems interested in ${bookingIntent.service} services.`;
+  }
+  
+  if (bookingIntent.urgency === 'emergency') {
+    enhancedContext += "\n\nThis appears to be an emergency. Prioritize immediate assistance and safety.";
+  }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    // Build the prompt with context
-    let prompt = message;
-    if (context) {
-      prompt = `Context: ${context}\n\nUser: ${message}`;
-    }
+    // Build the prompt with enhanced context
+    let prompt = `${enhancedContext}\n\nUser: ${message}\n\nResponse:`;
 
     // Start chat session with history if provided
     const chat = model.startChat({
@@ -45,29 +54,24 @@ export async function POST(request: NextRequest) {
     const response = await result.response;
     const text = response.text();
 
-    return NextResponse.json({
+    return ApiResponse.success({
       response: text,
-      success: true
+      intent: bookingIntent,
+      context: context
     });
-
-  } catch (error) {
-    console.error('AI Chat API Error:', error);
-    
-    // Don't expose internal error details
-    return NextResponse.json(
-      { 
-        error: 'Failed to process AI request',
-        success: false 
-      },
-      { status: 500 }
-    );
-  }
-}
+}, {
+  allowedMethods: ['POST'],
+  requireAuth: false, // Set to true if you want to require authentication
+  rateLimit: 60 // 60 messages per minute
+});
 
 // Also support GET for health check
-export async function GET() {
-  return NextResponse.json({
+export const GET = secureApiHandler(async () => {
+  return ApiResponse.success({
     status: 'ok',
-    configured: !!process.env.GEMINI_API_KEY
+    configured: !!serverConfig.gemini.apiKey
   });
-}
+}, {
+  allowedMethods: ['GET'],
+  requireAuth: false
+});

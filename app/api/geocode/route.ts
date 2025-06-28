@@ -1,26 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { secureApiHandler, ApiResponse } from '@/lib/api/secure-handler';
+import { clientConfig } from '@/lib/config/secure-config';
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { lat, lng } = body;
+export const POST = secureApiHandler(async (request) => {
+  const body = await request.json();
+  const { lat, lng } = body;
 
-    if (!lat || !lng) {
-      return NextResponse.json(
-        { error: 'Latitude and longitude are required' },
-        { status: 400 }
-      );
-    }
+  if (!lat || !lng) {
+    return ApiResponse.error('Latitude and longitude are required', 400);
+  }
 
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    
-    if (!apiKey) {
-      console.error('Google Maps API key not found');
-      return NextResponse.json(
-        { error: 'API configuration error' },
-        { status: 500 }
-      );
-    }
+  const apiKey = clientConfig.google.mapsApiKey;
+  
+  if (!apiKey) {
+    console.error('Google Maps API key not found');
+    return ApiResponse.error('API configuration error', 500);
+  }
 
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
     console.log('Geocoding request for:', lat, lng);
@@ -34,8 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (data.status === 'OK' && data.results && data.results[0]) {
-      return NextResponse.json({
-        success: true,
+      return ApiResponse.success({
         address: data.results[0].formatted_address,
         components: data.results[0].address_components
       });
@@ -56,20 +50,13 @@ export async function POST(request: NextRequest) {
         errorMessage = 'API quota exceeded. Please try again later.';
       }
       
-      return NextResponse.json(
-        { 
-          error: errorMessage, 
-          details: data.status,
-          message: data.error_message 
-        },
-        { status: 400 }
-      );
+      return ApiResponse.error(errorMessage, 400, {
+        details: data.status,
+        message: data.error_message
+      });
     }
-  } catch (error) {
-    console.error('Geocoding error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
+}, {
+  allowedMethods: ['POST'],
+  requireAuth: false,
+  rateLimit: 100 // 100 geocoding requests per minute
+});

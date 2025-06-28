@@ -1,28 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { secureApiHandler, ApiResponse } from '@/lib/api/secure-handler';
+import { serverConfig } from '@/lib/config/secure-config';
 
-export async function POST(request: NextRequest) {
-  try {
-    // Check if Stripe secret key is configured
-    if (!process.env.STRIPE_SECRET_KEY) {
-      console.error('Stripe secret key is not configured');
-      return NextResponse.json(
-        { error: 'Payment system is not configured. Please contact support.' },
-        { status: 500 }
-      );
-    }
+export const POST = secureApiHandler(async (request) => {
+  // Check if Stripe secret key is configured
+  if (!serverConfig.stripe.secretKey) {
+    console.error('Stripe secret key is not configured');
+    return ApiResponse.error('Payment system is not configured. Please contact support.', 500);
+  }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2025-05-28.basil',
-    });
+  const stripe = new Stripe(serverConfig.stripe.secretKey, {
+    apiVersion: '2025-05-28.basil',
+  });
 
     const { amount, metadata = {} } = await request.json();
 
     if (!amount || amount < 50) { // Minimum $0.50
-      return NextResponse.json(
-        { error: 'Invalid amount. Minimum $0.50 required.' },
-        { status: 400 }
-      );
+      return ApiResponse.error('Invalid amount. Minimum $0.50 required.', 400);
     }
 
     // Create payment intent
@@ -38,16 +33,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    return ApiResponse.success({
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
     });
-  } catch (error: any) {
-    console.error('Error creating payment intent:', error);
-    
-    return NextResponse.json(
-      { error: 'Failed to create payment intent' },
-      { status: 500 }
-    );
-  }
-}
+}, {
+  allowedMethods: ['POST'],
+  requireAuth: true, // Require authentication for payment creation
+  rateLimit: 10 // 10 payment attempts per minute
+});

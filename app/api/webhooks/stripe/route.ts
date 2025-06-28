@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { headers } from 'next/headers';
+import { serverConfig } from '@/lib/config/secure-config';
 
-// Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+// Initialize Stripe with secure config
+const stripe = new Stripe(serverConfig.stripe.secretKey, {
   apiVersion: '2025-05-28.basil',
 });
 

@@ -1,11 +1,12 @@
 import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { clientConfig } from './config/secure-config';
 
-// Initialize Stripe with publishable key
+// Initialize Stripe with publishable key from secure config
 let _stripePromise: Promise<Stripe | null>;
 
 export const getStripe = () => {
   if (!_stripePromise) {
-    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    const key = clientConfig.stripe.publishableKey;
     if (!key) {
       console.warn('Stripe publishable key is not set. Payment processing will not work.');
       _stripePromise = Promise.resolve(null);
@@ -21,7 +22,7 @@ export const stripePromise = getStripe();
 
 // Stripe configuration
 export const STRIPE_CONFIG = {
-  isLive: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.includes('pk_live') || false,
+  isLive: clientConfig.stripe.publishableKey?.includes('pk_live') || false,
   currency: 'usd',
 };
 

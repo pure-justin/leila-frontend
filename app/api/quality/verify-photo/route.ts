@@ -1,30 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { secureApiHandler, ApiResponse } from '@/lib/api/secure-handler';
+import { serverConfig } from '@/lib/config/secure-config';
 
-// Server-side only - no NEXT_PUBLIC prefix
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+export const POST = secureApiHandler(async (request) => {
+  const { imageData, prompt } = await request.json();
 
-export async function POST(request: NextRequest) {
-  try {
-    const { imageData, prompt } = await request.json();
+  if (!imageData || !prompt) {
+    return ApiResponse.error('Image data and prompt are required', 400);
+  }
 
-    if (!imageData || !prompt) {
-      return NextResponse.json(
-        { error: 'Image data and prompt are required' },
-        { status: 400 }
-      );
-    }
+  // Verify API key exists (server-side only)
+  if (!serverConfig.gemini.apiKey) {
+    console.error('Gemini API key not configured on server');
+    return ApiResponse.error('AI verification service not configured', 500);
+  }
 
-    // Verify API key exists (server-side only)
-    if (!process.env.GEMINI_API_KEY) {
-      console.error('Gemini API key not configured on server');
-      return NextResponse.json(
-        { error: 'AI verification service not configured' },
-        { status: 500 }
-      );
-    }
-
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const genAI = new GoogleGenerativeAI(serverConfig.gemini.apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     // Analyze image with AI
     const result = await model.generateContent([
@@ -43,25 +36,15 @@ export async function POST(request: NextRequest) {
     // Parse the response to extract score and analysis
     const analysis = parseAIResponse(text);
 
-    return NextResponse.json({
-      success: true,
+    return ApiResponse.success({
       analysis,
       rawResponse: text
     });
-
-  } catch (error) {
-    console.error('Photo verification API Error:', error);
-    
-    // Don't expose internal error details
-    return NextResponse.json(
-      { 
-        error: 'Failed to verify photo',
-        success: false 
-      },
-      { status: 500 }
-    );
-  }
-}
+}, {
+  allowedMethods: ['POST'],
+  requireAuth: true, // Require authentication for photo verification
+  rateLimit: 20 // 20 verifications per minute
+});
 
 function parseAIResponse(response: string): {
   score: number;

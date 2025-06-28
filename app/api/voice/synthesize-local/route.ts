@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { secureApiHandler, ApiResponse } from '@/lib/api/secure-handler';
+import { serverConfig } from '@/lib/config/secure-config';
 
 // Hugging Face Inference API for TTS models
 const HUGGINGFACE_API_URL = 'https://api-inference.huggingface.co/models/';
@@ -79,23 +81,19 @@ const VOICE_PROFILES = {
   }
 };
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { text, voiceId, settings } = body;
+export const POST = secureApiHandler(async (request) => {
+  const body = await request.json();
+  const { text, voiceId, settings } = body;
 
-    if (!text) {
-      return NextResponse.json(
-        { error: 'Text is required' },
-        { status: 400 }
-      );
-    }
+  if (!text) {
+    return ApiResponse.error('Text is required', 400);
+  }
 
     const voiceProfile = VOICE_PROFILES[voiceId as keyof typeof VOICE_PROFILES] || VOICE_PROFILES['leila-warm'];
     const ttsModel = TTS_MODELS[voiceProfile.model as keyof typeof TTS_MODELS];
 
     // Option 1: Use Hugging Face Inference API (free tier available)
-    if (process.env.HUGGINGFACE_API_KEY) {
+    if (serverConfig.huggingface.apiKey) {
       try {
         const processedText = preprocessTextForEmotion(text, settings?.emotion || voiceProfile.settings.emotion);
         
@@ -103,13 +101,14 @@ export async function POST(request: NextRequest) {
         const response = await fetch(`${HUGGINGFACE_API_URL}${ttsModel.model}`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+            'Authorization': `Bearer ${serverConfig.huggingface.apiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             inputs: processedText,
             parameters: {
-              speaker_id: voiceProfile.speaker_id,
+              ...('speaker_id' in voiceProfile ? { speaker_id: voiceProfile.speaker_id } : {}),
+              ...('voice_preset' in voiceProfile ? { voice_preset: voiceProfile.voice_preset } : {}),
               ...voiceProfile.settings
             }
           })
@@ -131,7 +130,7 @@ export async function POST(request: NextRequest) {
         const filepath = join(audioDir, filename);
         await writeFile(filepath, Buffer.from(audioBuffer));
 
-        return NextResponse.json({
+        return ApiResponse.success({
           audioUrl: `/audio/generated/${filename}`,
           duration: estimateDuration(text),
           voiceId: voiceId,
@@ -158,7 +157,7 @@ export async function POST(request: NextRequest) {
         });
 
         const data = await response.json();
-        return NextResponse.json(data);
+        return ApiResponse.success(data);
 
       } catch (error) {
         console.error('Local TTS server error:', error);
@@ -166,23 +165,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Fallback to demo audio
-    return NextResponse.json({
+    return ApiResponse.success({
       audioUrl: `/audio/samples/${voiceId}.mp3`,
       duration: 5.2,
       voiceId: voiceId,
       cached: true,
       demo: true,
-      message: 'Using demo audio. Set HUGGINGFACE_API_KEY or LOCAL_TTS_SERVER_URL for real synthesis.'
+      message: 'Using demo audio. Configure Hugging Face API key for real synthesis.'
     });
-
-  } catch (error) {
-    console.error('Voice synthesis error:', error);
-    return NextResponse.json(
-      { error: 'Failed to synthesize voice' },
-      { status: 500 }
-    );
-  }
-}
+}, {
+  allowedMethods: ['POST'],
+  requireAuth: false,
+  rateLimit: 30 // 30 requests per minute
+});
 
 // Preprocess text to add emotion markers for supported models
 function preprocessTextForEmotion(text: string, emotion: string): string {
