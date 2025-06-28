@@ -1,5 +1,5 @@
 import { Service } from '@/lib/services';
-import ServiceImage from './ServiceImage';
+import UniversalServiceImage from './UniversalServiceImage';
 
 interface ServiceCardProps {
   service: Service;
@@ -11,11 +11,13 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
          onClick={() => onSelect(service.id)}>
       <div className="relative h-48">
-        <ServiceImage 
+        <UniversalServiceImage 
           serviceId={service.id}
+          alt={service.name}
           variant="card"
-          className="w-full h-full"
-          priority={false}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+          className="object-cover"
         />
         <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full p-2">
           <span className="text-2xl">{service.icon}</span>

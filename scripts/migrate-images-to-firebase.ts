@@ -14,7 +14,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: join(process.cwd(), '../.env') });
 
 // Initialize Firebase Admin
-const serviceAccountPath = join(process.cwd(), '../service-account-key.json');
+const serviceAccountPath = join(process.cwd(), '../functions/service-account-key.json');
 const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
 
 initializeApp({
