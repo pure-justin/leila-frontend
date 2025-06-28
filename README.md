@@ -1,4 +1,8 @@
-# Leila Home Services
+# Leila Home Services - Frontend
+
+⚠️ **PROPRIETARY SOFTWARE - DO NOT COPY** ⚠️
+
+This repository contains proprietary code for Leila Home Services. Unauthorized use is prohibited.
 
 AI-powered home service booking platform.
 
@@ -55,3 +59,18 @@ See `.env.complete` for all required variables:
 - Stripe keys
 - Google AI/Maps keys
 - ReCAPTCHA keys
+
+## Security Notice
+
+This is currently a PUBLIC repository. While we work on making it private:
+
+1. **DO NOT** commit any sensitive data, API keys, or credentials
+2. **DO NOT** share internal business logic details in commits
+3. **USE** environment variables for all configuration
+4. **REVIEW** all code before pushing
+
+## Legal
+
+All code is proprietary and confidential. See LICENSE file for details.
+
+© 2024 Leila Home Services. All rights reserved.
