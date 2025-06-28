@@ -1,6 +1,5 @@
 import { Service } from '@/lib/services';
-import { ServiceImage } from './ServiceImageBridge';
-import { getServiceImage } from '@/lib/service-image-mapping';
+import ServiceImage from './ServiceImage';
 
 interface ServiceCardProps {
   service: Service;
@@ -8,18 +7,15 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
-  const imageMapping = getServiceImage(service.id);
-  
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
          onClick={() => onSelect(service.id)}>
       <div className="relative h-48">
         <ServiceImage 
-          category={imageMapping.category}
-          subcategory={imageMapping.subcategory}
+          serviceId={service.id}
           variant="card"
-          alt={`${service.name} service`}
           className="w-full h-full"
+          priority={false}
         />
         <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full p-2">
           <span className="text-2xl">{service.icon}</span>

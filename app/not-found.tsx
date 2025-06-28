@@ -47,11 +47,11 @@ export default function NotFound() {
           
           <div className="pt-4">
             <Link
-              href="/search"
+              href="/services"
               className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200"
             >
               <Search className="w-4 h-4 mr-2" />
-              Search our services
+              Browse our services
             </Link>
           </div>
         </motion.div>
@@ -63,7 +63,7 @@ export default function NotFound() {
           className="mt-12"
         >
           <p className="text-sm text-gray-500">
-            Need help? <Link href="/contact" className="text-blue-600 hover:underline">Contact us</Link>
+            Need help? <Link href="/how-it-works" className="text-blue-600 hover:underline">Learn how it works</Link>
           </p>
         </motion.div>
       </div>

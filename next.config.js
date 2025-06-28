@@ -29,10 +29,10 @@ const nextConfig = {
     // Removed unoptimized to enable Next.js image optimization
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   // Production optimizations
   compress: true,

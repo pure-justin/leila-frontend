@@ -1,19 +1,17 @@
 // Local service images configuration
 // These images are AI-generated and stored locally for optimal performance
 
+import { getServiceImage as getServiceImageMapping } from './service-image-mapping';
+
 export interface ServiceImage {
   url: string;
   alt: string;
   credit?: string;
 }
 
-// Simple fallback for service image mapping
+// Get the correct image mapping for a service
 const getImageMapping = (serviceId: string) => {
-  // Return a fallback image based on service ID
-  return {
-    url: '/images/services/handyman/home-maintenance-1.webp',
-    alt: 'Professional service'
-  };
+  return getServiceImageMapping(serviceId);
 };
 
 // Category hero images - using our AI-generated images
@@ -145,7 +143,7 @@ export function getServiceImage(serviceId: string): ServiceImage {
   ];
   
   // Use the first pattern as default (will be handled by image component fallback)
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${patterns[0]}`;
+  const imageUrl = `/images/services/${mapping.category}/${patterns[0]}`;
   
   return {
     url: imageUrl,
@@ -167,7 +165,7 @@ export function getServiceThumbnail(serviceId: string): ServiceImage {
     `${mapping.subcategory}-1.png`
   ];
   
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${patterns[0]}`;
+  const imageUrl = `/images/services/${mapping.category}/${patterns[0]}`;
   
   return {
     url: imageUrl,
@@ -190,7 +188,7 @@ export function getServiceHeroImage(serviceId: string): ServiceImage {
     `${mapping.subcategory}-card.jpg`
   ];
   
-  const imageUrl = `/shared-assets/images/services/${mapping.category}/${patterns[0]}`;
+  const imageUrl = `/images/services/${mapping.category}/${patterns[0]}`;
   
   return {
     url: imageUrl,

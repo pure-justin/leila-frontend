@@ -5,7 +5,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run copy:images && next build",
+    "build": "next build",
     "build:production": "bash scripts/prebuild.sh && next build -c next.config.production.js",
     "build:emergency": "rm -rf .next && NODE_OPTIONS='--max-old-space-size=4096' next build",
     "copy:images": "tsx scripts/copy-web-images.ts",

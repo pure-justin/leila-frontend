@@ -27,16 +27,6 @@ export default function Home() {
   const isBannerVisible = useReferralBanner();
 
   useEffect(() => {
-    // Check if user is on mobile and redirect to mobile-optimized page
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    
-    // Only redirect if on mobile and not in PWA mode
-    if (isMobile && !isStandalone && typeof window !== 'undefined') {
-      window.location.href = '/m';
-      return;
-    }
-
     // Check if user has saved address
     const savedAddress = localStorage.getItem('userAddress');
     if (!savedAddress) {
