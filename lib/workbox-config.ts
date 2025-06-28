@@ -112,18 +112,18 @@ registerRoute(
   'POST'
 );
 
-// Skip waiting and claim clients
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    (async () => {
-      // Enable navigation preload if supported
-      if ('navigationPreload' in self.registration) {
-        await self.registration.navigationPreload.enable();
-      }
-    })()
-  );
-  self.clients.claim();
-});
+// Skip waiting and claim clients - this runs in service worker context
+// self.addEventListener('activate', (event) => {
+//   event.waitUntil(
+//     (async () => {
+//       // Enable navigation preload if supported
+//       if ('navigationPreload' in self.registration) {
+//         await self.registration.navigationPreload.enable();
+//       }
+//     })()
+//   );
+//   self.clients.claim();
+// });
 
 // Handle navigation requests
 registerRoute(

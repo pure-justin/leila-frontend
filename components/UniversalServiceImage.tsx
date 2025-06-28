@@ -60,7 +60,7 @@ export default function UniversalServiceImage({
   };
   
   const shimmer = (
-    <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite]">
+    <div className="absolute inset-0 -translate-x-full" style={{ animation: 'shimmer 2s infinite' }}>
       <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
     </div>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { migrateImagesToFirebase, generateFirebaseUrlsMapping } from '@/scripts/migrate-images-client';
+// Import will be done dynamically in browser
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -25,6 +25,9 @@ export default function MigrateImagesPage() {
     
     setMigrating(true);
     try {
+      // Dynamically import the migration functions
+      const { migrateImagesToFirebase, generateFirebaseUrlsMapping } = await import('@/scripts/migrate-images-client');
+      
       const migrationResults = await migrateImagesToFirebase();
       setResults(migrationResults);
       
@@ -34,7 +37,7 @@ export default function MigrateImagesPage() {
       
     } catch (error) {
       console.error('Migration error:', error);
-      alert('Migration failed: ' + error.message);
+      alert('Migration failed: ' + (error as Error).message);
     } finally {
       setMigrating(false);
     }

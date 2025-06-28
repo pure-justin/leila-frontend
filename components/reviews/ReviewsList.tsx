@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, ThumbsUp, Filter, ChevronDown, Calendar, User, CheckCircle } from 'lucide-react';
+import { Star, ThumbsUp, Filter, ChevronDown, Calendar, User, CheckCircle, X } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 
