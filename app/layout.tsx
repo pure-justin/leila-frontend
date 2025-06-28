@@ -9,6 +9,8 @@ import Footer from "@/components/Footer";
 import { RecaptchaProvider } from "@/components/RecaptchaProvider";
 import VoiceAssistant from "@/components/voice-assistant";
 import AIChatWidget from "@/components/chat/AIChatWidget";
+import BottomNav from "@/components/BottomNav";
+import ServiceWorkerProvider from "@/components/ServiceWorkerProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,11 +71,14 @@ export default function RootLayout({
       >
         <AuthProvider>
           <RecaptchaProvider>
-            {children}
-            <Footer />
-            <VoiceAssistant />
-            <AIChatWidget />
-            <Analytics />
+            <ServiceWorkerProvider>
+              {children}
+              <Footer />
+              <BottomNav />
+              <VoiceAssistant />
+              <AIChatWidget />
+              <Analytics />
+            </ServiceWorkerProvider>
           </RecaptchaProvider>
         </AuthProvider>
       </body>

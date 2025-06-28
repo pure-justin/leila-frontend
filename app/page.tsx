@@ -65,7 +65,7 @@ export default function Home() {
       {/* Referral Banner - Now positioned below header */}
       <ReferralBanner referralCode={savedReferralCode || undefined} />
 
-      <main className={`transition-all duration-300 ${
+      <main className={`transition-all duration-300 pb-20 md:pb-0 ${
         isBannerVisible ? 'pt-[120px] md:pt-0' : 'pt-[60px] md:pt-0'
       }`}>
         {/* Personalized Home Page with DoorDash-style layout */}

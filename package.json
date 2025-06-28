@@ -22,7 +22,8 @@
     "test:booking": "tsx scripts/test-booking-flow.ts",
     "seed:data": "tsx scripts/seed-test-data.ts",
     "audit:security": "tsx scripts/audit-security.ts",
-    "check:sensitive": "tsx scripts/check-sensitive-data.ts"
+    "check:sensitive": "tsx scripts/check-sensitive-data.ts",
+    "migrate:images": "tsx scripts/migrate-images-to-firebase.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

@@ -206,58 +206,58 @@ export default function PersonalizedHomePage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
-        {/* Hero Section with Search */}
-        <div className="relative h-96 overflow-hidden">
-          <AnimatedHeroGraphic />
-          
-          <div className="relative z-10 h-full flex flex-col justify-center px-4 lg:px-8 max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-white to-purple-50">
+        {/* Hero Section - Native App Style */}
+        <div className="relative px-4 pt-8 pb-6">
+          <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-white"
+              className="text-center mb-8"
             >
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4">
-                {user ? `Welcome back, ${user.displayName?.split(' ')[0] || 'there'}!` : 'Your home, perfectly serviced'}
-              </h1>
-              <p className="text-xl mb-8 text-white/90">
-                From cleaning to repairs, we've got you covered
-              </p>
+              {/* Welcome Message - Native Style */}
+              <div className="mb-2">
+                <p className="text-lg text-purple-700 font-medium">
+                  {user ? 'Welcome back!' : 'Welcome!'}
+                </p>
+                <h1 className="text-3xl lg:text-4xl font-bold text-purple-800 flex items-center justify-center gap-2">
+                  Hey Leila! 👋
+                </h1>
+              </div>
               
-              {/* Modern Animated Search Bar */}
-              <ModernSearchBar
-                value={searchQuery}
-                onChange={setSearchQuery}
-                onSearch={handleServiceSearch}
-              />
-              
-              {/* Quick Stats */}
-              <div className="flex items-center gap-6 mt-6 text-sm">
-                <span className="flex items-center gap-2">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  4.8 average rating
-                </span>
-                <span className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
-                  15-30 min arrival
-                </span>
-                <span className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Available in your area
-                </span>
+              {/* Simple Search Bar - Native Style */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 max-w-md mx-auto">
+                <div className="flex items-center gap-3">
+                  <Search className="w-5 h-5 text-purple-600" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleServiceSearch();
+                      }
+                    }}
+                    placeholder="Search for services..."
+                    className="flex-1 text-lg text-gray-700 placeholder-gray-400 outline-none bg-transparent"
+                  />
+                  <button onClick={handleServiceSearch} className="p-2">
+                    <Search className="w-5 h-5 text-purple-600" />
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
         </div>
 
-        {/* Service Sections */}
-        <div className="max-w-7xl mx-auto py-8">
+        {/* Service Sections - Native Style */}
+        <div className="max-w-7xl mx-auto px-4 pb-8">
           {/* Quick Actions for returning users */}
           {user && !isLoading && (
             <QuickActions onServiceSelect={handleServiceSelect} />
           )}
 
-          <div className="space-y-12">
+          <div className="space-y-8">
           {isLoading ? (
             <div className="space-y-8">
               {[1, 2, 3].map(i => (
@@ -299,30 +299,58 @@ export default function PersonalizedHomePage() {
                 />
               )}
 
-              {/* Trending Now */}
-              <ServiceCategoryRow
-                title="Trending Now"
-                services={getTrendingServices()}
-                onServiceSelect={handleServiceSelect}
-                categoryIcon="🔥"
-                favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
-                viewAllLink="/book?filter=trending"
-              />
+              {/* Popular Services - Native Style */}
+              <div className="mb-8">
+                <h2 className="text-xl font-bold text-purple-800 mb-4 px-4">Popular Services</h2>
+                <div className="grid grid-cols-2 gap-4 px-4">
+                  {getTrendingServices().slice(0, 4).map((service) => (
+                    <motion.div
+                      key={service.id}
+                      onClick={() => handleServiceSelect(service.id)}
+                      className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                          <span className="text-2xl">{service.icon || '🔧'}</span>
+                        </div>
+                        <h3 className="font-semibold text-gray-900 text-sm mb-1">{service.name}</h3>
+                        <div className="flex items-center justify-center gap-1 mb-2">
+                          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                          <span className="text-xs text-gray-600">4.8</span>
+                        </div>
+                        <p className="text-xs text-purple-600 font-medium">
+                          ${service.basePrice} - ${service.basePrice + 100}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
 
-              {/* Category Sections */}
-              {filteredSections.map((section) => (
-                <ServiceCategoryRow
-                  key={section.id}
-                  title={section.title}
-                  services={section.services}
-                  onServiceSelect={handleServiceSelect}
-                  categoryIcon={section.icon}
-                  favorites={favorites}
-                  onToggleFavorite={handleToggleFavorite}
-                  viewAllLink={`/book?category=${section.id}`}
-                />
-              ))}
+              {/* All Categories - Native Style */}
+              <div>
+                <h2 className="text-xl font-bold text-purple-800 mb-4 px-4">All Categories</h2>
+                <div className="grid grid-cols-3 gap-4 px-4">
+                  {filteredSections.slice(0, 6).map((section) => (
+                    <motion.div
+                      key={section.id}
+                      onClick={() => router.push(`/book?category=${section.id}`)}
+                      className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="text-center">
+                        <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-2">
+                          <span className="text-xl">{section.icon}</span>
+                        </div>
+                        <h3 className="font-medium text-gray-900 text-sm">{section.title}</h3>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             </>
           )}
           </div>

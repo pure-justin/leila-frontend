@@ -14,20 +14,20 @@
   --card-foreground: 0 0% 0%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 0%;
-  --primary: 262 83% 58%; /* Purple: #7C3AED */
+  --primary: 262 73% 57%; /* Native app purple: #8B5CF6 */
   --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 0%;
+  --secondary: 262 20% 96%; /* Light purple background */
+  --secondary-foreground: 262 73% 25%;
   --muted: 0 0% 96%;
   --muted-foreground: 0 0% 45%;
-  --accent: 262 83% 58%; /* Purple accent */
+  --accent: 262 73% 57%; /* Purple accent matching native */
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 89%;
-  --input: 0 0% 89%;
-  --ring: 262 83% 58%; /* Purple ring */
-  --radius: 0.5rem;
+  --border: 262 20% 90%; /* Light purple border */
+  --input: 262 20% 95%; /* Light purple input background */
+  --ring: 262 73% 57%; /* Purple ring matching native */
+  --radius: 1rem; /* Larger radius for native feel */
 }
 
 body {
@@ -50,35 +50,35 @@ body {
   }
 }
 
-/* Uber-style components */
-.uber-button {
-  @apply bg-purple-600 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200;
-  @apply hover:bg-purple-700 active:scale-95;
+/* Native app style components */
+.native-button {
+  @apply bg-purple-600 text-white font-semibold px-6 py-4 rounded-2xl transition-all duration-200;
+  @apply hover:bg-purple-700 active:scale-95 shadow-sm;
 }
 
-.uber-button-secondary {
-  @apply bg-gray-200 text-black font-medium px-6 py-3 rounded-lg transition-all duration-200;
-  @apply hover:bg-gray-300 active:scale-95;
+.native-button-secondary {
+  @apply bg-white text-purple-600 font-semibold px-6 py-4 rounded-2xl border border-purple-200 transition-all duration-200;
+  @apply hover:bg-purple-50 active:scale-95 shadow-sm;
 }
 
-.uber-card {
-  @apply bg-white rounded-lg shadow-sm border border-gray-200 transition-all duration-200;
+.native-card {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-200;
   @apply hover:shadow-md;
 }
 
-.uber-input {
-  @apply w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-base transition-all duration-200;
-  @apply focus:bg-white focus:ring-2 focus:ring-purple-600 focus:outline-none;
+.native-input {
+  @apply w-full px-4 py-4 bg-white border border-gray-200 rounded-2xl text-base transition-all duration-200;
+  @apply focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none;
 }
 
-/* Service selection cards - Uber style */
+/* Service selection cards - Native style */
 .service-tile {
-  @apply bg-gray-100 rounded-lg p-6 cursor-pointer transition-all duration-200;
-  @apply hover:bg-gray-200 hover:scale-[1.02] active:scale-[0.98];
+  @apply bg-white rounded-2xl p-6 cursor-pointer transition-all duration-200 border border-gray-100 shadow-sm;
+  @apply hover:shadow-md hover:scale-[1.02] active:scale-[0.98];
 }
 
 .service-tile-selected {
-  @apply bg-purple-600 text-white;
+  @apply bg-purple-600 text-white border-purple-600;
 }
 
 /* Bottom sheet animation */

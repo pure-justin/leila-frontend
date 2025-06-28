@@ -1,12 +1,15 @@
 /* eslint-env serviceworker */
 /* global self, caches, clients */
 
-// Service Worker for Push Notifications
+// Service Worker for Push Notifications and Advanced Caching
 const CACHE_NAME = 'leila-v1';
+const IMAGE_CACHE = 'leila-images-v1';
+const API_CACHE = 'leila-api-v1';
 const urlsToCache = [
   '/',
   '/manifest.json',
   '/favicon-new.ico',
+  '/images/services/placeholder.jpg',
   // Add other important assets
 ];
 
@@ -21,12 +24,83 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// Cache strategies
+const CACHE_STRATEGIES = {
+  networkFirst: async (request, cacheName) => {
+    try {
+      const networkResponse = await fetch(request);
+      if (networkResponse.ok) {
+        const cache = await caches.open(cacheName);
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    } catch (error) {
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) return cachedResponse;
+      throw error;
+    }
+  },
+  
+  cacheFirst: async (request, cacheName) => {
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      // Update cache in background
+      fetch(request).then(response => {
+        if (response.ok) {
+          caches.open(cacheName).then(cache => {
+            cache.put(request, response);
+          });
+        }
+      });
+      return cachedResponse;
+    }
+    
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      const cache = await caches.open(cacheName);
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  }
+};
+
 // Fetch event
 self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+  
+  // Skip non-GET requests
+  if (request.method !== 'GET') return;
+  
+  // Handle image requests
+  if (request.destination === 'image' || 
+      url.pathname.match(/\.(jpg|jpeg|png|webp|svg|gif)$/i) ||
+      url.hostname.includes('firebasestorage.googleapis.com')) {
+    event.respondWith(
+      CACHE_STRATEGIES.cacheFirst(request, IMAGE_CACHE).catch(() => {
+        return caches.match('/images/services/placeholder.jpg');
+      })
+    );
+    return;
+  }
+  
+  // Handle API requests
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      CACHE_STRATEGIES.networkFirst(request, API_CACHE).catch(() => {
+        return new Response(
+          JSON.stringify({ error: 'Offline' }),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+      })
+    );
+    return;
+  }
+  
+  // Default behavior for other requests
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
         return response || fetch(event.request);
       })
   );
@@ -244,3 +318,64 @@ self.addEventListener('pushsubscriptionchange', (event) => {
     })
   );
 });
+
+// Message handling for advanced caching
+self.addEventListener('message', (event) => {
+  if (event.data.type === 'CACHE_IMAGES') {
+    event.waitUntil(cacheImages(event.data.urls));
+  }
+  
+  if (event.data.type === 'CLEAR_OLD_CACHES') {
+    event.waitUntil(clearOldCaches());
+  }
+  
+  if (event.data.type === 'PRELOAD_CRITICAL_IMAGES') {
+    event.waitUntil(preloadCriticalImages());
+  }
+});
+
+// Helper functions for image caching
+async function cacheImages(urls) {
+  const cache = await caches.open(IMAGE_CACHE);
+  return Promise.all(
+    urls.map(url => {
+      return fetch(url).then(response => {
+        if (response.ok) {
+          return cache.put(url, response);
+        }
+      }).catch(() => {
+        console.log('Failed to cache:', url);
+      });
+    })
+  );
+}
+
+async function clearOldCaches() {
+  const cache = await caches.open(IMAGE_CACHE);
+  const requests = await cache.keys();
+  const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+  const now = Date.now();
+  
+  return Promise.all(
+    requests.map(async request => {
+      const response = await cache.match(request);
+      if (response) {
+        const dateHeader = response.headers.get('date');
+        if (dateHeader) {
+          const responseDate = new Date(dateHeader).getTime();
+          if (now - responseDate > maxAge) {
+            return cache.delete(request);
+          }
+        }
+      }
+    })
+  );
+}
+
+async function preloadCriticalImages() {
+  const criticalImages = [
+    '/images/services/placeholder.jpg',
+    // Add other critical images
+  ];
+  return cacheImages(criticalImages);
+}
