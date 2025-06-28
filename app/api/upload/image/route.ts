@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadImageToStorage } from '@/lib/firebase-storage';
-import sharp from 'sharp';
+
+let sharp: any;
+try {
+  sharp = require('sharp');
+} catch (e) {
+  console.log('Sharp not available, image optimization disabled');
+}
 
 export const runtime = 'nodejs';
 export const maxDuration = 60; // 60 seconds timeout
@@ -49,27 +55,29 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadRes
     // Convert to buffer for processing
     const buffer = Buffer.from(await file.arrayBuffer());
     
-    // Check image dimensions and compress if needed
-    const image = sharp(buffer);
-    const metadata = await image.metadata();
-    
-    let processedBuffer = buffer;
     let processedFile = file;
     
-    // If image is too large, resize it
-    if (metadata.width && metadata.width > 2400) {
-      processedBuffer = await image
-        .resize(2400, null, {
-          withoutEnlargement: true,
-          fit: 'inside'
-        })
-        .jpeg({ quality: 90, progressive: true })
-        .toBuffer();
+    // Only process if sharp is available
+    if (sharp) {
+      // Check image dimensions and compress if needed
+      const image = sharp(buffer);
+      const metadata = await image.metadata();
       
-      // Create new file from processed buffer
-      processedFile = new File([processedBuffer], file.name, {
-        type: 'image/jpeg'
-      });
+      // If image is too large, resize it
+      if (metadata.width && metadata.width > 2400) {
+        const processedBuffer = await image
+          .resize(2400, null, {
+            withoutEnlargement: true,
+            fit: 'inside'
+          })
+          .jpeg({ quality: 90, progressive: true })
+          .toBuffer();
+        
+        // Create new file from processed buffer
+        processedFile = new File([processedBuffer], file.name, {
+          type: 'image/jpeg'
+        });
+      }
     }
     
     // Upload to Firebase Storage

@@ -2,7 +2,13 @@ import { initializeApp, cert } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname, basename } from 'path';
-import sharp from 'sharp';
+let sharp: any;
+try {
+  sharp = require('sharp');
+} catch (e) {
+  console.error('Sharp not available, cannot run migration');
+  process.exit(1);
+}
 import dotenv from 'dotenv';
 
 dotenv.config({ path: join(process.cwd(), '../.env') });
