@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/react';
 import "@/lib/firebase-app-check";
 import Footer from "@/components/Footer";
 import { RecaptchaProvider } from "@/components/RecaptchaProvider";
+import VoiceAssistant from "@/components/voice-assistant";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +70,7 @@ export default function RootLayout({
           <RecaptchaProvider>
             {children}
             <Footer />
+            <VoiceAssistant />
             <Analytics />
           </RecaptchaProvider>
         </AuthProvider>
