@@ -30,8 +30,6 @@ const nextConfig = {
     workerThreads: false,
     cpus: 1,
   },
-  // Output optimization
-  output: 'standalone',
 };
 
 module.exports = nextConfig;
