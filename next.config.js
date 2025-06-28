@@ -25,11 +25,6 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
-  // Reduce memory usage during build
-  experimental: {
-    workerThreads: false,
-    cpus: 1,
-  },
 };
 
 module.exports = nextConfig;
