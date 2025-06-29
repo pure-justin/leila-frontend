@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:vercel": "next build --no-lint",
     "build:obfuscated": "next build -c next.config.obfuscated.js",
     "build:production": "bash scripts/prebuild.sh && next build -c next.config.production.js",
     "build:emergency": "rm -rf .next && NODE_OPTIONS='--max-old-space-size=4096' next build",

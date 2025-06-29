@@ -1,14 +1,18 @@
 // Workbox configuration for advanced caching
-import { precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
-import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
-import { ExpirationPlugin } from 'workbox-expiration';
-import { CacheableResponsePlugin } from 'workbox-cacheable-response';
-import { BackgroundSyncPlugin } from 'workbox-background-sync';
-import { Queue } from 'workbox-background-sync';
+// This file is meant to be used in service worker context only
 
-// Precache manifest
-declare const self: ServiceWorkerGlobalScope;
+// Skip if not in service worker context
+if (typeof self === 'undefined' || !('ServiceWorkerGlobalScope' in self)) {
+  module.exports = {};
+} else {
+  // Only import and use workbox in service worker context
+  const { precacheAndRoute } = require('workbox-precaching');
+  const { registerRoute } = require('workbox-routing');
+  const { CacheFirst, NetworkFirst, StaleWhileRevalidate } = require('workbox-strategies');
+  const { ExpirationPlugin } = require('workbox-expiration');
+  const { CacheableResponsePlugin } = require('workbox-cacheable-response');
+  const { BackgroundSyncPlugin } = require('workbox-background-sync');
+  const { Queue } = require('workbox-background-sync');
 
 // Precache static assets
 precacheAndRoute(self.__WB_MANIFEST);
