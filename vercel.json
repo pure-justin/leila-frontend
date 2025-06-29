@@ -1,6 +1,1 @@
-{
-  "framework": "nextjs",
-  "buildCommand": "npm run build || echo 'Build completed with warnings'",
-  "installCommand": "npm install",
-  "regions": ["iad1"]
-}
+{}

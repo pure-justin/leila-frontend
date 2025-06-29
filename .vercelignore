@@ -79,3 +79,5 @@ public/images/services/*/*-thumbnail.*
 # Ignore Firebase Admin SDK if not needed at build time
 lib/firebase-admin.ts
 scripts/firebase-*.ts
+scripts/migrate-*.ts
+app/admin/migrate-images/
