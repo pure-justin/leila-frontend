@@ -7,4 +7,3 @@ export const getSecureConfig = () => ({
 });
 
 export const secureConfig = getSecureConfig();
-EOF < /dev/null
