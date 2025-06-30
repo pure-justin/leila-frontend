@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as fs from 'fs';
 import * as fsPromises from 'fs/promises';
 import * as path from 'path';
-import { CATEGORY_HERO_IMAGES, SERVICE_IMAGES } from '../lib/professional-service-images';
+import { CATEGORY_HERO_IMAGES, SERVICE_IMAGES } from '../lib/service-images';
 
 // Create directories if they don't exist
 async function ensureDirectoryExists(dirPath: string) {
@@ -89,7 +89,7 @@ async function downloadAllServiceImages() {
 
   // Generate updated service images configuration pointing to local assets
   const localImagesConfig = generateLocalImagesConfig();
-  const configPath = path.join(__dirname, '..', 'lib', 'service-images-local.ts');
+  const configPath = path.join(__dirname, '..', 'lib', 'service-images-downloaded.ts');
   await fsPromises.writeFile(configPath, localImagesConfig);
 
   // Summary

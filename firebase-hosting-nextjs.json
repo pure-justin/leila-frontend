@@ -1,12 +1,15 @@
 {
   "hosting": {
     "site": "leila-platform",
-    "public": "out",
+    "public": ".next",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.html"
+        "run": {
+          "serviceId": "leila-nextjs-app",
+          "region": "us-central1"
+        }
       }
     ],
     "headers": [
@@ -27,28 +30,7 @@
             "value": "public, max-age=86400"
           }
         ]
-      },
-      {
-        "source": "**/*.@(js|css)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=31536000"
-          }
-        ]
       }
     ]
-  },
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
-  "functions": {
-    "source": "backend/cloud-functions",
-    "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"],
-    "runtime": "nodejs20"
-  },
-  "storage": {
-    "rules": "storage.rules"
   }
 }

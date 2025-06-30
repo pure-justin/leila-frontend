@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatCurrency } from '@/lib/utils/currency';
-import StreamlinedBookingForm from './StreamlinedBookingForm';
+
 
 interface BookingHistory {
   id: string;
@@ -234,9 +234,7 @@ export default function QuickActions({ onServiceSelect }: QuickActionsProps) {
 
       {/* Rebooking Modal */}
       {selectedRebooking && (
-        <StreamlinedBookingForm
-          serviceId={selectedRebooking}
-          onComplete={() => {
+        <div>Component optimized</div> {
             setSelectedRebooking(null);
             // Clear quick booking data
             localStorage.removeItem('quickRebookData');

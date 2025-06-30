@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Heart, Clock, Star, TrendingUp } from 'lucide-react';
 import { ServiceSubcategory } from '@/lib/comprehensive-services-catalog';
-import { getServiceImage, IMAGE_BLUR_DATA_URL } from '@/lib/service-images-local';
+import { getServiceImage, CATEGORY_HERO_IMAGES, IMAGE_BLUR_DATA_URL } from '@/lib/service-images';
 import { formatCurrency } from '@/lib/utils/currency';
 import { useAuth } from '@/contexts/AuthContext';
-import { userPreferencesService } from '@/lib/user-preferences-service';
+
 
 interface ServiceCategoryRowProps {
   title: string;
@@ -69,17 +69,19 @@ export default function ServiceCategoryRow({
   };
 
   const handleServiceClick = async (serviceId: string) => {
-    if (user) {
-      await userPreferencesService.trackServiceView(user.uid, serviceId);
-    }
+    // TODO: Re-enable user preferences tracking
+    // if (user) {
+    //   await userPreferencesService.trackServiceView(user.uid, serviceId);
+    // }
     onServiceSelect(serviceId);
   };
 
   const handleFavoriteClick = async (e: React.MouseEvent, serviceId: string) => {
     e.stopPropagation();
-    if (user) {
-      await userPreferencesService.toggleFavorite(user.uid, serviceId);
-    }
+    // TODO: Re-enable user preferences tracking
+    // if (user) {
+    //   await userPreferencesService.toggleFavorite(user.uid, serviceId);
+    // }
     onToggleFavorite?.(serviceId);
   };
 

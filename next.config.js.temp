@@ -1,0 +1,33 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  reactStrictMode: true,
+  images: {
+    domains: [
+      'heyleila.com', 
+      'storage.googleapis.com', 
+      'firebasestorage.googleapis.com', 
+      'lh3.googleusercontent.com',
+    ],
+    formats: ['image/avif', 'image/webp'],
+  },
+  // Webpack config for better compatibility
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
+  },
+};
+
+module.exports = nextConfig;

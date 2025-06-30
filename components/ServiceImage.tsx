@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { getServiceImage } from '@/lib/service-images-local';
+import { getServiceImage, CATEGORY_HERO_IMAGES } from '@/lib/service-images';
 
 // Lazy load the LazyImage component itself
 const LazyImage = dynamic(() => import('./LazyImage'), {

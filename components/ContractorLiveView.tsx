@@ -6,7 +6,7 @@ import {
   CheckCircle, XCircle, Phone, MessageCircle,
   TrendingUp, AlertCircle, Battery, Wifi
 } from 'lucide-react';
-import { matchingService, Match } from '@/lib/realtime-matching-service';
+
 import { useAuth } from '@/hooks/useAuth';
 import MapView from './MapView';
 

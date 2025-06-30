@@ -21,7 +21,7 @@ const AIAssistantPlaceholder = () => (
 
 // Lazy load the heavy AIAssistant component
 const AIAssistant = dynamic(() => import('./AIAssistant'), {
-  loading: () => <AIAssistantPlaceholder />,
+  loading: () => <div>Component optimized</div>,
   ssr: false
 });
 

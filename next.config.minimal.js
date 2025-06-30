@@ -6,16 +6,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  reactStrictMode: true,
   images: {
-    domains: [
-      'heyleila.com', 
-      'storage.googleapis.com', 
-      'firebasestorage.googleapis.com', 
-      'lh3.googleusercontent.com',
-    ],
+    unoptimized: true
   },
-  // No custom webpack config to avoid issues
+  output: 'standalone'
 };
 
 module.exports = nextConfig;
