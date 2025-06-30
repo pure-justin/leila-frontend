@@ -1,9 +1,9 @@
 {
-  "buildCommand": "npm run build || true",
-  "outputDirectory": ".next",
   "framework": "nextjs",
   "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run build",
   "env": {
-    "NEXT_TELEMETRY_DISABLED": "1"
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
   }
 }

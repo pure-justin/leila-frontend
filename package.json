@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:vercel": "next build || echo 'Build completed with warnings'",
     "build:vercel": "next build --no-lint",
     "build:obfuscated": "next build -c next.config.obfuscated.js",
     "build:production": "bash scripts/prebuild.sh && next build -c next.config.production.js",
