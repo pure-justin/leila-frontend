@@ -1,6 +1,446 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* Hide reCAPTCHA badge - we'll show attribution in footer */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+  --primary: 262 73% 57%; /* Native app purple: #8B5CF6 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 262 20% 96%; /* Light purple background */
+  --secondary-foreground: 262 73% 25%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 262 73% 57%; /* Purple accent matching native */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 262 20% 90%; /* Light purple border */
+  --input: 262 20% 95%; /* Light purple input background */
+  --ring: 262 73% 57%; /* Purple ring matching native */
+  --radius: 1rem; /* Larger radius for native feel */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Shimmer animation for image loading */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-white text-black;
+  }
+  
+  /* Remove default underlines from all elements */
+  * {
+    text-decoration: none !important;
+  }
+  
+  /* Only underline links when explicitly needed */
+  a.underline {
+    text-decoration: underline !important;
+  }
+}
+
+/* Native app style components */
+.native-button {
+  @apply bg-purple-600 text-white font-semibold px-6 py-4 rounded-2xl transition-all duration-200;
+  @apply hover:bg-purple-700 active:scale-95 shadow-sm;
+}
+
+.native-button-secondary {
+  @apply bg-white text-purple-600 font-semibold px-6 py-4 rounded-2xl border border-purple-200 transition-all duration-200;
+  @apply hover:bg-purple-50 active:scale-95 shadow-sm;
+}
+
+.native-card {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-200;
+  @apply hover:shadow-md;
+}
+
+.native-input {
+  @apply w-full px-4 py-4 bg-white border border-gray-200 rounded-2xl text-base transition-all duration-200;
+  @apply focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 focus:outline-none;
+}
+
+/* Service selection cards - Native style */
+.service-tile {
+  @apply bg-white rounded-2xl p-6 cursor-pointer transition-all duration-200 border border-gray-100 shadow-sm;
+  @apply hover:shadow-md hover:scale-[1.02] active:scale-[0.98];
+}
+
+.service-tile-selected {
+  @apply bg-purple-600 text-white border-purple-600;
+}
+
+/* Bottom sheet animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bottom-sheet {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Map placeholder style */
+.map-container {
+  @apply relative bg-gray-100 rounded-lg overflow-hidden;
+  background-image: 
+    linear-gradient(45deg, #f3f4f6 25%, transparent 25%),
+    linear-gradient(-45deg, #f3f4f6 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f3f4f6 75%),
+    linear-gradient(-45deg, transparent 75%, #f3f4f6 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Status indicator */
+.status-dot {
+  @apply w-2 h-2 bg-green-500 rounded-full;
+  @apply animate-pulse;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbars globally */
 * {
-  margin: 0;
-  padding: 0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* WebKit */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure content is still scrollable */
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Remove all underlines globally */
+* {
+  text-decoration: none !important;
+}
+
+/* Fix input field alignment in contractor profile */
+.contractor-profile input[type="text"],
+.contractor-profile input[type="tel"],
+.contractor-profile input[type="number"],
+.contractor-profile input[type="time"],
+.contractor-profile textarea {
   box-sizing: border-box;
+}
+
+/* Ensure proper image upload button positioning */
+input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Mobile native app feel */
+body {
+  touch-action: pan-y; /* Allow vertical scrolling only */
+  -webkit-touch-callout: none; /* Disable callout on long press */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+}
+
+/* Prevent text selection on mobile */
+@media (max-width: 768px) {
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection in input fields */
+  input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  /* Ensure buttons feel native */
+  button, a {
+    -webkit-tap-highlight-color: rgba(124, 58, 237, 0.1);
+  }
+}
+
+/* Custom scrollbar - hidden by default */
+/* Note: Scrollbars are hidden globally above */
+/* If you need to show scrollbars for specific elements, use the .show-scrollbar class */
+.show-scrollbar {
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+}
+
+.show-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+  height: 6px;
+}
+
+.show-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.show-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+  @apply hover:bg-gray-400;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply bg-gray-200 rounded animate-pulse;
+}
+
+/* Price tag style */
+.price-tag {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* Time estimate badge */
+.time-badge {
+  @apply inline-flex items-center px-2 py-1 rounded text-xs font-medium;
+  @apply bg-blue-100 text-blue-800;
+}
+
+/* Divider with text */
+.divider-text {
+  @apply relative text-center text-sm text-gray-500;
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: '';
+  @apply absolute top-1/2 w-full h-px bg-gray-200;
+}
+
+.divider-text::before {
+  @apply right-full mr-4;
+}
+
+.divider-text::after {
+  @apply left-full ml-4;
+}
+
+/* Floating action button */
+.fab {
+  @apply fixed bottom-6 right-6 w-14 h-14 bg-purple-600 text-white rounded-full shadow-lg;
+  @apply flex items-center justify-center transition-all duration-200;
+  @apply hover:scale-110 active:scale-95;
+}
+
+/* Gradient animations */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #7C3AED, #EC4899, #3B82F6);
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899);
+  background-size: 200% 200%;
+  animation: gradient-shift 20s ease infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7C3AED, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated elements */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Gradient buttons */
+.gradient-button {
+  @apply relative overflow-hidden text-white font-medium px-6 py-3 rounded-lg transition-all duration-300;
+  background: linear-gradient(135deg, #7C3AED, #EC4899);
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
+  @apply hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl;
+}
+
+.gradient-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.gradient-button:hover::before {
+  left: 100%;
+}
+
+/* Gradient cards */
+.gradient-card {
+  @apply relative overflow-hidden rounded-xl p-6 text-white;
+  background: linear-gradient(135deg, #7C3AED, #8B5CF6);
+  @apply shadow-xl;
+}
+
+.gradient-card-hover {
+  @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl;
+}
+
+/* Glassmorphism effect */
+.glass {
+  @apply backdrop-blur-md bg-white/80 border border-white/20 shadow-xl;
+}
+
+.glass-dark {
+  @apply backdrop-blur-md bg-gray-900/80 border border-gray-700/20 shadow-xl;
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+}
+
+/* Animated border gradient */
+.border-gradient {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1px;
+}
+
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0.5rem;
+  padding: 2px;
+  background: linear-gradient(135deg, #7C3AED, #EC4899, #3B82F6);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+}
+
+/* Tab indicator */
+.tab-indicator {
+  @apply absolute bottom-0 left-0 h-1 bg-purple-600 transition-all duration-300;
+}
+
+/* List item hover */
+.list-item {
+  @apply px-4 py-3 transition-colors duration-200 cursor-pointer;
+  @apply hover:bg-gray-50 active:bg-gray-100;
+}
+
+/* Horizontal scrolling container - DoorDash style */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Service card animations */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.shimmer {
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-name: shimmer;
+  animation-timing-function: linear;
+  background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-size: 800px 104px;
+  position: relative;
 }
