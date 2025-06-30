@@ -33,7 +33,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "out-crm/types/**/*.ts"
+    "out-crm/types/**/*.ts",
+    "out/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
@@ -41,7 +42,7 @@
     "functions",
     "app/ai-personas/**/*",
     "scripts/ai-image-generator.ts",
-    "scripts/google-image-generator.ts", 
+    "scripts/google-image-generator.ts",
     "scripts/premium-image-generator.ts",
     "scripts/vertex-ai-image-generator.ts",
     "scripts/sync-to-gemini.ts"
