@@ -1,7 +1,7 @@
 {
   "framework": "nextjs",
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npm run build",
+  "buildCommand": "./build-vercel.sh",
   "env": {
     "NEXT_TELEMETRY_DISABLED": "1",
     "NODE_OPTIONS": "--max-old-space-size=4096"
