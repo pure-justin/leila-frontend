@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  output: 'standalone', // Required for Docker/Railway/Fly deployments
   images: {
     domains: [
       'heyleila.com',
